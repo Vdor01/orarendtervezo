@@ -44,7 +44,7 @@ function App() {
                 {
                     "id": 1,
                     "course": 10,
-                    "type": "Gyakorlat",
+                    "type": "Előadás",
                     "instructor": "Nemes László",
                     "location": "Északi Tömb 7.15 (PC11)",
                     "day": "Péntek",
@@ -81,34 +81,27 @@ function App() {
             "status": {
                 "color": "#C31313",
                 "show": true,
-                "choosen": 0
+                "choosen": {
+                    "Gyakorlat": 0,
+                    "Előadás": 0,
+                    "Egyéb": 0
+                }
             }
         }
     ])
 
-    // const savedEvents = localStorage.getItem('eventsJSON');
-    // if (savedEvents) {
-    //     setEventsJSON(JSON.parse(savedEvents));
-    // } else {
-    //     localStorage.setItem('eventsJSON', JSON.stringify(eventsJSON));
-    // }
+    // useMemo(() => {
+    //     const savedEvents = localStorage.getItem('eventsJSON');
+    //     if (savedEvents) {
+    //         setEventsJSON(JSON.parse(savedEvents));
+    //         console.log('Loaded events from local storage');
+    //     }
+    // }, []);
 
-    // useEffect(() => {
+    // useMemo(() => {
     //     localStorage.setItem('eventsJSON', JSON.stringify(eventsJSON));
+    //     console.log('Saved events to local storage');
     // }, [eventsJSON]);
-
-    useMemo(() => {
-        const savedEvents = localStorage.getItem('eventsJSON');
-        if (savedEvents) {
-            setEventsJSON(JSON.parse(savedEvents));
-            console.log('Loaded events from local storage');
-        }
-    }, []);
-
-    useMemo(() => {
-        localStorage.setItem('eventsJSON', JSON.stringify(eventsJSON));
-        console.log('Saved events to local storage');
-    }, [eventsJSON]);
 
     function getNewSubjectId() {
         if (eventsJSON.length === 0) return 1;
@@ -181,6 +174,27 @@ function App() {
 
     let events = eventsJSON.flatMap(subject => setCourses(subject));
 
+    function isDisplayed(subject, course) {
+        if (typeof subject.status.choosen === 'object') {
+            if (subject.status.choosen[course.type] === 0) return true;
+            if (subject.status.choosen[course.type] === course.course) return true;
+        }
+        if (subject.status.choosen === -1) return true;
+        if ((subject.status.choosen === course.course || subject.status.choosen === 0) && course.show !== false) return true;
+    }
+
+    function isChoosen(subject, course) {
+        if (typeof subject.status.choosen === 'object') {
+            if (subject.status.choosen[course.type] === course.course) return true;
+            if (subject.status.choosen[course.type] !== course.course) return false;
+            return false;
+        }
+
+        if (subject.status.choosen === course.course) return true;
+        if (subject.status.choosen == -1) return true;
+        return false;
+    }
+
     function setCourses(subject) {
         if (!subject.status.show) return [];
         return subject.courses.map(course => ({
@@ -188,24 +202,35 @@ function App() {
             start: getDateOfThisWeeksDay(course.day).toISOString().split('T')[0] + 'T' + course.startTime + ':00',
             end: getDateOfThisWeeksDay(course.day).toISOString().split('T')[0] + 'T' + course.endTime + ':00',
             borderColor: subject.status.color,
-            backgroundColor: subject.status.choosen === course.course ? subject.status.color : '#000000',
-            display: (subject.status.choosen === course.course || subject.status.choosen === 0) && course.show !== false ? '' : 'none',
+            backgroundColor: isChoosen(subject, course) ? subject.status.color : '#000000',
+            display: isDisplayed(subject, course) ? '' : 'none',
             classNames: ['cursor-pointer', (course.type === 'Előadás') ? 'border-dashed' : ''],
             extendedProps: {
                 subjectId: subject.id,
                 instructor: course.instructor,
                 location: course.location,
-                course: course.course
+                course: course.course,
+                type: course.type
             }
         }))
     }
 
-    function setChoosenCourse(subjectId, courseId) {
-        const updatedEvents = eventsJSON.map(event =>
-            event.id === subjectId ? { ...event, status: { ...event.status, choosen: event.status.choosen === courseId ? 0 : courseId } } : event
-        );
-        console.log(updatedEvents); // Log the updated events
-        setEventsJSON(updatedEvents);
+    function setChoosenCourse(subjectId, courseId, type) {
+        const subject = eventsJSON.find(event => event.id === subjectId);
+        if (typeof subject.status.choosen === 'object') {
+            const updatedEvents = eventsJSON.map(event =>
+                event.id === subjectId ? { ...event, status: { ...event.status, choosen: { ...event.status.choosen, [type]: event.status.choosen[type] === courseId ? 0 : courseId } } } : event
+            );
+            console.log(updatedEvents); // Log the updated events
+            setEventsJSON(updatedEvents);
+        } else if (subject.status.choosen !== -1) {
+
+            const updatedEvents = eventsJSON.map(event =>
+                event.id === subjectId ? { ...event, status: { ...event.status, choosen: event.status.choosen === courseId ? 0 : courseId } } : event
+            );
+            console.log(updatedEvents); // Log the updated events
+            setEventsJSON(updatedEvents);
+        }
     }
 
     function addCourse(subjectId, code, type, instructor, location, day, startTime, endTime, notes) {
@@ -284,7 +309,7 @@ function App() {
     }
 
     function onEventClick(info) {
-        setChoosenCourse(info.event.extendedProps.subjectId, info.event.extendedProps.course);
+        setChoosenCourse(info.event.extendedProps.subjectId, info.event.extendedProps.course, info.event.extendedProps.type);
         console.log(info.event.title, info.event.extendedProps.course)
     }
 

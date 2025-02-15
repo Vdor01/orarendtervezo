@@ -161,7 +161,7 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
                                             show={courseShow} />
                                     ))}
                                     <tr>
-                                        <th className='w-1/12'><input type="number" name='code' placeholder="#" className="w-full max-w-xs input input-bordered input-sm" /></th>
+                                        <th className='w-1/12'><input type="number" name='code' min={1} placeholder="#" className="w-full max-w-xs input input-bordered input-sm" /></th>
                                         <th className='w-2/12'>
                                             <select name='type' className="w-full max-w-xs select select-bordered select-sm">
                                                 <option>Gyakorlat</option>

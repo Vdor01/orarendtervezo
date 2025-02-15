@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Courses = ({ subjectId, choosen, course, remover, updater, show: showF }) => {
+const Courses = ({ subjectId, choosen, course, remover, type, show: showF }) => {
 
     let show = course.show;
 
@@ -9,8 +9,16 @@ const Courses = ({ subjectId, choosen, course, remover, updater, show: showF }) 
         showF(subjectId, course.id, show)
     }
 
+    function isChoosen() {
+        if (typeof choosen === 'object') {
+            return choosen[type] === course.course
+        } else if (choosen === course.course) {
+            return true
+        }
+    }
+
     return (
-        <tr className={course.course === choosen ? 'border-success border-2 rounded-lg' : ''}>
+        <tr className={isChoosen() ? 'border-success border-2 rounded-lg' : ''}>
             <th>{course.course}</th>
             <td>{course.type}</td>
             <td>{course.instructor}</td>

@@ -124,11 +124,24 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
         courseAdder(subject.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
     }
 
+    function getStatus() {
+        if (typeof subject.status.choosen === 'object') {
+            let courseTypes = subject.courses.map(course => course.type);
+            let types = [...new Set(courseTypes)];
+
+            let choosen = 0
+            types.forEach(type => {
+                if (subject.status.choosen[type] !== 0) { choosen++ }
+            });
+            if (choosen === types.length) { return 'bg-success text-base-300' } else if (choosen > 0) { return 'bg-info text-base-300' }
+        } else if (subject.status.choosen !== 0) { return 'bg-success text-base-300' }
+    }
+
     return (
         <div className='flex items-center justify-between gap-3'>
             <div className="collapse bg-base-200 collapse-arrow">
                 <input type="checkbox" />
-                <div className={"flex items-center gap-4 text-xl font-medium collapse-title " + (subject.status.choosen !== 0 ? 'bg-success text-base-300' : '')}>
+                <div className={"flex items-center gap-4 text-xl font-medium collapse-title " + (getStatus())}>
                     <span className="w-6 h-6 btn-circle" style={{ backgroundColor: subject.status.color }}></span>
                     <span className="w-2/12 min-w-fit">{code}</span>
                     <span className='pl-3'>{name}</span>
@@ -157,7 +170,7 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
                                             choosen={subject.status.choosen}
                                             course={course}
                                             remover={courseRemover}
-                                            courseUpdater={courseUpdater}
+                                            type={course.type}
                                             show={courseShow} />
                                     ))}
                                     <tr>

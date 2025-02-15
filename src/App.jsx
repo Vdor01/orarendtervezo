@@ -163,7 +163,7 @@ function App() {
 
         const today = new Date();
         const dayIndex = daysOfWeek[dayName];
-        const currentDayIndex = today.getDay();
+        const currentDayIndex = (today.getDay() + 6) % 7;
         const diff = dayIndex - currentDayIndex;
 
         const targetDate = new Date(today);

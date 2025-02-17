@@ -130,6 +130,43 @@ const ImportExport = ({ file, setter }) => {
     )
 }
 
+const Help = () => {
+
+    return (
+        <div className="w-full shadow-xl card bg-base-300 card-compact">
+            <div className="card-body">
+                <h2 className="card-title">Súgó</h2>
+                <div className='flex flex-row pt-3'>
+                    <div className='flex flex-col flex-wrap justify-start w-2/3'>
+                        <h3 className='mb-5 font-bold'>Az oldal</h3>
+                        <p>A weboldal célja, hogy a felhasználó egyszerre láthassa az összes lehetséges óráját és így dönthessen azok felvételéről.</p>
+                        <p>Ezt egyszerűen, a kívánt kurzusra való kattintással megteheti.</p>
+                    </div>
+                    <div className="divider divider-horizontal"></div>
+                    <div>
+                        <h3 className='font-bold '>Tárgyak típusai</h3>
+                        <div className='flex flex-row items-center gap-5 mt-5 mb-2'>
+                            <i className='pi pi-check-circle' style={{ fontSize: '2rem' }}></i>
+                            <p className='text-lg'>Egy kurzus</p>
+                        </div>
+                        <p className='ml-8'>A tárgyból csak egy kurzust választhatunk, típusától (pl. Gyakorlat) függetlenül.</p>
+                        <div className='flex flex-row items-center gap-5 mt-5 mb-2'>
+                            <i className='pi pi-list' style={{ fontSize: '2rem' }}></i>
+                            <p className='text-lg'>Típusunként egy kurzus</p>
+                        </div>
+                        <p className='ml-8'>A tárgyból típusonként egy-egy kurzust választhatunk.</p>
+                        <div className='flex flex-row items-center gap-5 mt-5 mb-2'>
+                            <i className='pi pi-lock' style={{ fontSize: '2rem' }}></i>
+                            <p className='text-lg'>Minden kurzus ki van választva</p>
+                        </div>
+                        <p className='ml-8'>A tárgyból automatikusan minden kurzus ki van választva.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 const Modal = (props) => {
 
     return (
@@ -171,6 +208,8 @@ const Menu = ({ adder, events, setter }) => {
                 return <ServerQuerry adder={adder} />
             case 'Import / Export':
                 return <ImportExport file={events} setter={setter} />
+            case 'Súgó':
+                return <Help />
             default:
                 return <SubjectAdder adder={adder} />
         }

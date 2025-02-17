@@ -198,12 +198,23 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
         } else if (subject.status.choosen !== 0) { return 'bg-success text-base-300' }
     }
 
+    function getIcon() {
+        if (typeof subject.status.choosen === 'object') {
+            return 'list'
+        } else if (subject.status.choosen >= 0) {
+            return 'check-circle'
+        } else {
+            return 'lock'
+        }
+    }
+
     return (
         <div className='flex items-center justify-between gap-3'>
             <div className="collapse bg-base-200 collapse-arrow">
                 <input type="checkbox" />
                 <div className={"flex items-center gap-4 text-xl font-medium collapse-title " + (getStatus())}>
                     <span className="w-6 h-6 btn-circle" style={{ backgroundColor: subject.status.color }}></span>
+                    <i className={'pi pi-' + getIcon()}></i>
                     <span className="w-2/12 min-w-fit">{code}</span>
                     <span className='pl-3'>{name}</span>
                 </div>

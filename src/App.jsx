@@ -124,7 +124,11 @@ function App() {
                 "status": {
                     "color": getRandomHexColor(),
                     "show": true,
-                    "choosen": 0
+                    "choosen": {
+                        "Gyakorlat": 0,
+                        "Előadás": 0,
+                        "Egyéb": 0
+                    }
                 }
             }
         ])

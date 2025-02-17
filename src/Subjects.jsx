@@ -24,9 +24,34 @@ const SubjectModal = ({ subject, updater }) => {
                 <h3 className="text-lg font-bold">Tárgy módosítása</h3>
                 <form method="dialog" id={"subject_form_" + subject.code} className='flex flex-col items-center justify-between gap-3'>
                     <div className="flex w-full gap-3 mt-5">
-                        <input name='color' type="color" defaultValue={color} className="w-1/12 p-0 input input-bordered" />
-                        <input name='code' type="text" placeholder="Kód" defaultValue={code} className="w-4/12 input input-bordered" />
-                        <input name='name' type="text" placeholder="Név" defaultValue={name} className="w-7/12 input input-bordered" />
+                        <label className="w-1/12 form-control">
+                            <div className="label">
+                                <span className="label-text">Szín</span>
+                            </div>
+                            <input name='color' type="color" defaultValue={color} className="w-full p-0 input input-bordered" />
+                        </label>
+                        <label className="w-3/12 form-control">
+                            <div className="label">
+                                <span className="label-text">Kód</span>
+                            </div>
+                            <input name='code' type="text" placeholder="Kód" defaultValue={code} className="w-full input input-bordered" />
+                        </label>
+                        <label className="w-5/12 form-control">
+                            <div className="label">
+                                <span className="label-text">Név</span>
+                            </div>
+                            <input name='name' type="text" placeholder="Név" defaultValue={name} className="w-full input input-bordered" />
+                        </label>
+                        <label className="w-3/12 max-w-xs form-control">
+                            <div className="label">
+                                <span className="label-text">Kurzus típusa</span>
+                            </div>
+                            <select className="select select-bordered">
+                                <option>Egy kurzus</option>
+                                <option>Típusunként egy kurzus</option>
+                                <option>Minden kurzus ki van választva</option>
+                            </select>
+                        </label>
                     </div>
                     <div className="modal-action">
                         {/* if there is a button in form, it will close the modal */}
@@ -66,30 +91,61 @@ const CourseModal = ({ subject, course_id, updater }) => {
                 <h3 className="text-lg font-bold">Kurzus módosítása</h3>
                 <form method="dialog" id={"subject_form_" + course.id} className='flex flex-col items-center justify-between gap-3'>
                     <div className="grid w-full grid-cols-12 gap-5 mt-5">
-                        <input type="number" name='code' placeholder="#" defaultValue={code} className="w-full col-span-2 input input-bordered input-sm" />
-                        <select name='type' defaultValue={type} className="w-full col-span-5 select select-bordered select-sm">
-                            <option id='Gyakorlat'>Gyakorlat</option>
-                            <option id='Előadás'>Előadás</option>
-                        </select>
-                        <input type="text" name='instructor' defaultValue={instructor} placeholder="Példa Béla" className="w-full col-span-5 input input-bordered input-sm" />
-                        <select name='day' defaultValue={day} className="w-full col-span-6 select select-bordered select-sm">
-                            <option id='Hétfő'>Hétfő</option>
-                            <option id='Kedd'>Kedd</option>
-                            <option id='Szerda'>Szerda</option>
-                            <option id='Csütörtök'>Csütörtök</option>
-                            <option id='Péntek'>Péntek</option>
-                        </select>
-                        <div className='flex w-full col-span-6 gap-3'>
-                            <input type="time" name='startTime' defaultValue={startTime} className="input input-bordered input-sm" />
-                            -
-                            <input type="time" name='endTime' defaultValue={endTime} className="input input-bordered input-sm" />
-                        </div>
-                        <input type="text" name='location' defaultValue={location} placeholder="Északi Tömb 7.15 (PC11)" className="w-full col-span-6 input input-bordered input-sm" />
-                        <input type="text" name='notes' defaultValue={notes} placeholder="Megjegyzés" className="w-full col-span-6 input input-bordered input-sm" />
-
-                        {/* <input name='code' type="number" defaultValue={color} className="w-1/12 p-0 input input-bordered" />
-                        <input name='type' type="text" placeholder="Kód" defaultValue={code} className="w-4/12 input input-bordered" />
-                        <input name='name' type="text" placeholder="Név" defaultValue={name} className="w-7/12 input input-bordered" /> */}
+                        <label className="w-full col-span-2 form-control">
+                            <div className="label">
+                                <span className="label-text">Kód</span>
+                            </div>
+                            <input type="number" name='code' min={1} placeholder="#" defaultValue={code} className="w-full input input-bordered input-sm" />
+                        </label>
+                        <label className="w-full col-span-5 form-control">
+                            <div className="label">
+                                <span className="label-text">Típus</span>
+                            </div>
+                            <select name='type' defaultValue={type} className="w-full select select-bordered select-sm">
+                                <option id='Gyakorlat'>Gyakorlat</option>
+                                <option id='Előadás'>Előadás</option>
+                            </select>
+                        </label>
+                        <label className="w-full col-span-5 form-control">
+                            <div className="label">
+                                <span className="label-text">Oktató</span>
+                            </div>
+                            <input type="text" name='instructor' defaultValue={instructor} placeholder="Példa Béla" className="w-full input input-bordered input-sm" />
+                        </label>
+                        <label className="w-full col-span-6 form-control">
+                            <div className="label">
+                                <span className="label-text">Nap</span>
+                            </div>
+                            <select name='day' defaultValue={day} className="w-full select select-bordered select-sm">
+                                <option id='Hétfő'>Hétfő</option>
+                                <option id='Kedd'>Kedd</option>
+                                <option id='Szerda'>Szerda</option>
+                                <option id='Csütörtök'>Csütörtök</option>
+                                <option id='Péntek'>Péntek</option>
+                            </select>
+                        </label>
+                        <label className="w-full col-span-6 form-control">
+                            <div className="label">
+                                <span className="label-text">Idő</span>
+                            </div>
+                            <div className='flex w-full gap-3'>
+                                <input type="time" name='startTime' defaultValue={startTime} className="input input-bordered input-sm" />
+                                -
+                                <input type="time" name='endTime' defaultValue={endTime} className="input input-bordered input-sm" />
+                            </div>
+                        </label>
+                        <label className="w-full col-span-6 form-control">
+                            <div className="label">
+                                <span className="label-text">Helyszín</span>
+                            </div>
+                            <input type="text" name='location' defaultValue={location} placeholder="Északi Tömb 7.15 (PC11)" className="w-full input input-bordered input-sm" />
+                        </label>
+                        <label className="w-full col-span-6 form-control">
+                            <div className="label">
+                                <span className="label-text">Megjegyzés</span>
+                            </div>
+                            <input type="text" name='notes' defaultValue={notes} placeholder="Megjegyzés" className="w-full col-span-6 input input-bordered input-sm" />
+                        </label>
                     </div>
                     <div className="modal-action">
                         {/* if there is a button in form, it will close the modal */}

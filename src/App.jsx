@@ -176,8 +176,8 @@ function App() {
 
     function isDisplayed(subject, course) {
         if (typeof subject.status.choosen === 'object') {
-            if (subject.status.choosen[course.type] === 0) return true;
-            if (subject.status.choosen[course.type] === course.course) return true;
+            if (subject.status.choosen[course.type] === 0 && course.show !== false) return true;
+            if (subject.status.choosen[course.type] === course.course && course.show !== false) return true;
         }
         if (subject.status.choosen === -1) return true;
         if ((subject.status.choosen === course.course || subject.status.choosen === 0) && course.show !== false) return true;

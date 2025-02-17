@@ -163,7 +163,7 @@ function App() {
 
         const today = new Date();
         const dayIndex = daysOfWeek[dayName];
-        const currentDayIndex = (today.getDay() + 6) % 7;
+        const currentDayIndex = today.getDay() === 0 ? 7 : today.getDay(); // Adjust for Sunday being 0
         const diff = dayIndex - currentDayIndex;
 
         const targetDate = new Date(today);
@@ -346,6 +346,7 @@ function App() {
                 dayHeaderFormat={{ weekday: 'long' }}
                 locale={huLocale}
                 timeZone='Europe/Budapest'
+                firstDay={1}
                 eventClick={onEventClick}
                 eventContent={(arg) => (
                     <div className='flex flex-col gap-1'>

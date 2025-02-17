@@ -8,11 +8,16 @@ const SubjectModal = ({ subject, updater }) => {
     let code = subject.code;
     let name = subject.name;
 
+    let type = 'Típusunként egy kurzus';
+    if (typeof subject.status.choosen !== 'object') {
+        subject.status.choosen === -1 ? type = 'Minden kurzus ki van választva' : type = 'Egy kurzus';
+    }
+
     const handleSave = (e) => {
         e.preventDefault();
         var form = document.getElementById("subject_form_" + subject.code);
         var formData = new FormData(form);
-        updater(subject.id, formData.get('code'), formData.get('name'), formData.get('color'));
+        updater(subject.id, formData.get('code'), formData.get('name'), formData.get('color'), formData.get('type'));
         code = formData.get('code');
         name = formData.get('name');
         document.getElementById("subject_modal_" + subject.code).close();
@@ -46,10 +51,10 @@ const SubjectModal = ({ subject, updater }) => {
                             <div className="label">
                                 <span className="label-text">Kurzus típusa</span>
                             </div>
-                            <select className="select select-bordered">
-                                <option>Egy kurzus</option>
-                                <option>Típusunként egy kurzus</option>
-                                <option>Minden kurzus ki van választva</option>
+                            <select name='type' defaultValue={type} className="select select-bordered">
+                                <option id='egy'>Egy kurzus</option>
+                                <option id='tipusonkent'>Típusunként egy kurzus</option>
+                                <option id='fix'>Minden kurzus ki van választva</option>
                             </select>
                         </label>
                     </div>

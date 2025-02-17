@@ -90,18 +90,18 @@ function App() {
         }
     ])
 
-    // useMemo(() => {
-    //     const savedEvents = localStorage.getItem('eventsJSON');
-    //     if (savedEvents) {
-    //         setEventsJSON(JSON.parse(savedEvents));
-    //         console.log('Loaded events from local storage');
-    //     }
-    // }, []);
+    useMemo(() => {
+        const savedEvents = localStorage.getItem('eventsJSON');
+        if (savedEvents) {
+            setEventsJSON(JSON.parse(savedEvents));
+            console.log('Loaded events from local storage');
+        }
+    }, []);
 
-    // useMemo(() => {
-    //     localStorage.setItem('eventsJSON', JSON.stringify(eventsJSON));
-    //     console.log('Saved events to local storage');
-    // }, [eventsJSON]);
+    useMemo(() => {
+        localStorage.setItem('eventsJSON', JSON.stringify(eventsJSON));
+        console.log('Saved events to local storage');
+    }, [eventsJSON]);
 
     function getNewSubjectId() {
         if (eventsJSON.length === 0) return 1;
@@ -134,9 +134,19 @@ function App() {
         setEventsJSON(prevEvents => prevEvents.filter(event => event.id !== id));
     }
 
-    function updateSubject(id, newCode, newName, newColor) {
+    function updateSubject(id, newCode, newName, newColor, type) {
+
+        function typeInsert() {
+            switch (type) {
+                case 'Egy kurzus': return 0;
+                case 'Minden kurzus ki van választva': return -1;
+                case 'Típusunként egy kurzus': return { "Gyakorlat": 0, "Előadás": 0, "Egyéb": 0 };
+            }
+            console.log(type)
+        }
+
         const updatedEvents = eventsJSON.map(event =>
-            event.id === id ? { ...event, code: newCode, name: newName, status: { ...event.status, color: newColor } } : event
+            event.id === id ? { ...event, code: newCode, name: newName, status: { ...event.status, color: newColor, choosen: typeInsert() } } : event
         );
         console.log(updatedEvents); // Log the updated events
         setEventsJSON(updatedEvents);

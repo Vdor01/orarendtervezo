@@ -90,18 +90,38 @@ function App() {
         }
     ])
 
+    const [settings, setSettings] = useState({
+        "show": {
+            "code": false,
+            "time": true,
+            "type": false,
+            "instructor": true,
+            "location": true,
+            "notes": false
+        }
+    })
+
     useMemo(() => {
         const savedEvents = localStorage.getItem('eventsJSON');
         if (savedEvents) {
             setEventsJSON(JSON.parse(savedEvents));
             console.log('Loaded events from local storage');
         }
+
+        const savedSettings = localStorage.getItem('settings');
+        if (savedSettings) {
+            setSettings(JSON.parse(savedSettings));
+            console.log('Loaded settings from local storage');
+        }
     }, []);
 
     useMemo(() => {
         localStorage.setItem('eventsJSON', JSON.stringify(eventsJSON));
         console.log('Saved events to local storage');
-    }, [eventsJSON]);
+
+        localStorage.setItem('settings', JSON.stringify(settings));
+        console.log('Saved settings to local storage');
+    }, [eventsJSON, settings]);
 
     function getNewSubjectId() {
         if (eventsJSON.length === 0) return 1;
@@ -313,6 +333,15 @@ function App() {
         setEventsJSON(updatedEvents);
     }
 
+    function updateSettings(event, value) {
+        setSettings({
+            "show": {
+                ...settings.show,
+                [event]: value
+            }
+        })
+    }
+
     function getRandomHexColor() {
         const letters = '0123456789ABCDEF';
         let color = '#';
@@ -329,7 +358,7 @@ function App() {
 
     return (
         <div className='flex flex-col w-full gap-5'>
-            <Menu adder={addSubject} events={eventsJSON} setter={setEventsJSON} />
+            <Menu adder={addSubject} events={eventsJSON} setter={setEventsJSON} settings={settings} setSettings={updateSettings} />
             <div className='w-full'>
                 <Subjects
                     subjects={eventsJSON}
@@ -364,9 +393,12 @@ function App() {
                 eventClick={onEventClick}
                 eventContent={(arg) => (
                     <div className='flex flex-col gap-1'>
-                        <div>{arg.timeText}</div>
-                        <div>{arg.event.extendedProps.instructor}</div>
-                        <div>{arg.event.extendedProps.location}</div>
+                        {settings.show.code && <div>{arg.event.extendedProps.course}</div>}
+                        {settings.show.time && <div>{arg.timeText}</div>}
+                        {settings.show.type && <div>{arg.event.extendedProps.type}</div>}
+                        {settings.show.instructor && <div>{arg.event.extendedProps.instructor}</div>}
+                        {settings.show.location && <div>{arg.event.extendedProps.location}</div>}
+                        {settings.show.notes && <div>{arg.event.extendedProps.notes}</div>}
                     </div>
                 )}
             />

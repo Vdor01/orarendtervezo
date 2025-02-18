@@ -130,6 +130,53 @@ const ImportExport = ({ file, setter }) => {
     )
 }
 
+const Settings = ({ settings, setSettings }) => {
+
+    let code = settings.code
+    let time = settings.time
+    let type = settings.type
+    let instructor = settings.instructor
+    let location = settings.location
+    let notes = settings.notes
+
+    return (
+        <div className="w-full shadow-xl card bg-base-300 card-compact">
+            <div className="card-body">
+                <h2 className="card-title">Beállítások</h2>
+                <div className='flex flex-row pt-3'>
+                    <div className='grid w-1/4 grid-cols-2 gap-2 form-control'>
+                        <h3 className='col-span-2 mb-5 font-bold'>Megjelenő információk</h3>
+                        <label className="cursor-pointer label">
+                            <span className="label-text">Kód</span>
+                            <input type="checkbox" checked={code} onChange={() => setSettings('code', !code)} className="checkbox" />
+                        </label>
+                        <label className="cursor-pointer label">
+                            <span className="label-text">Idő</span>
+                            <input type="checkbox" checked={time} onChange={() => setSettings('time', !time)} className="checkbox" />
+                        </label>
+                        <label className="cursor-pointer label">
+                            <span className="label-text">Típus</span>
+                            <input type="checkbox" checked={type} onChange={() => setSettings('type', !type)} className="checkbox" />
+                        </label>
+                        <label className="cursor-pointer label">
+                            <span className="label-text">Oktató</span>
+                            <input type="checkbox" checked={instructor} onChange={() => setSettings('instructor', !instructor)} className="checkbox" />
+                        </label>
+                        <label className="cursor-pointer label">
+                            <span className="label-text">Helyszín</span>
+                            <input type="checkbox" checked={location} onChange={() => setSettings('location', !location)} className="checkbox" />
+                        </label>
+                        <label className="cursor-pointer label">
+                            <span className="label-text">Megjegyzés</span>
+                            <input type="checkbox" checked={notes} onChange={() => setSettings('notes', !notes)} className="checkbox" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 const Help = () => {
 
     return (
@@ -141,6 +188,7 @@ const Help = () => {
                         <h3 className='mb-5 font-bold'>Az oldal</h3>
                         <p>A weboldal célja, hogy a felhasználó egyszerre láthassa az összes lehetséges óráját és így dönthessen azok felvételéről.</p>
                         <p>Ezt egyszerűen, a kívánt kurzusra való kattintással megteheti.</p>
+                        <p>Minden alkalommal, amikor kiválaszt egy kurzust, a többi eltűnik, beállítástól függően.</p>
                     </div>
                     <div className="divider divider-horizontal"></div>
                     <div>
@@ -196,7 +244,7 @@ const Button = ({ text, icon, mode, set }) => {
     )
 }
 
-const Menu = ({ adder, events, setter }) => {
+const Menu = ({ adder, events, setter, settings, setSettings }) => {
 
     const [mode, setMode] = useState('Hozzáadás')
 
@@ -208,10 +256,10 @@ const Menu = ({ adder, events, setter }) => {
                 return <ServerQuerry adder={adder} />
             case 'Import / Export':
                 return <ImportExport file={events} setter={setter} />
+            case 'Beállítások':
+                return <Settings settings={settings.show} setSettings={setSettings} />
             case 'Súgó':
                 return <Help />
-            default:
-                return <SubjectAdder adder={adder} />
         }
     }
 

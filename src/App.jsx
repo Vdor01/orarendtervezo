@@ -4,7 +4,6 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 import huLocale from '@fullcalendar/core/locales/hu';
 import './App.css'
-import SubjectAdder from './SubjectAdder';
 import Subjects from './Subjects';
 import './assets/default.json';
 import Menu from './Menu';

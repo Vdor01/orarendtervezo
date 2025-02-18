@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import 'primeicons/primeicons.css';
 import Courses from './Courses';
 
@@ -59,7 +59,6 @@ const SubjectModal = ({ subject, updater }) => {
                         </label>
                     </div>
                     <div className="modal-action">
-                        {/* if there is a button in form, it will close the modal */}
                         <button className="btn btn-error">Mégsem</button>
                         <button className="btn btn-success" onClick={handleSave}>Mentés</button>
                     </div>
@@ -153,7 +152,6 @@ const CourseModal = ({ subject, course_id, updater }) => {
                         </label>
                     </div>
                     <div className="modal-action">
-                        {/* if there is a button in form, it will close the modal */}
                         <button className="btn btn-error">Mégsem</button>
                         <button className="btn btn-success" onClick={handleSave}>Mentés</button>
                     </div>
@@ -181,7 +179,6 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
         e.preventDefault();
         var form = document.getElementById("course_form_" + subject.code);
         var formData = new FormData(form);
-        console.log(formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
         courseAdder(subject.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
     }
 

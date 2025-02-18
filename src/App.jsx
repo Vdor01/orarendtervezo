@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 import huLocale from '@fullcalendar/core/locales/hu';
-import './App.css'
 import Subjects from './Subjects';
-import './assets/default.json';
 import Menu from './Menu';
 
 function App() {
@@ -165,13 +163,11 @@ function App() {
                 case 'Minden kurzus ki van választva': return -1;
                 case 'Típusunként egy kurzus': return { "Gyakorlat": 0, "Előadás": 0, "Egyéb": 0 };
             }
-            console.log(type)
         }
 
         const updatedEvents = eventsJSON.map(event =>
             event.id === id ? { ...event, code: newCode, name: newName, status: { ...event.status, color: newColor, choosen: typeInsert() } } : event
         );
-        console.log(updatedEvents); // Log the updated events
         setEventsJSON(updatedEvents);
     }
 
@@ -179,7 +175,6 @@ function App() {
         const updatedEvents = eventsJSON.map(event =>
             event.id === id ? { ...event, status: { ...event.status, show: show } } : event
         );
-        console.log(updatedEvents); // Log the updated events
         setEventsJSON(updatedEvents);
     }
 
@@ -254,14 +249,12 @@ function App() {
             const updatedEvents = eventsJSON.map(event =>
                 event.id === subjectId ? { ...event, status: { ...event.status, choosen: { ...event.status.choosen, [type]: event.status.choosen[type] === courseId ? 0 : courseId } } } : event
             );
-            console.log(updatedEvents); // Log the updated events
             setEventsJSON(updatedEvents);
         } else if (subject.status.choosen !== -1) {
 
             const updatedEvents = eventsJSON.map(event =>
                 event.id === subjectId ? { ...event, status: { ...event.status, choosen: event.status.choosen === courseId ? 0 : courseId } } : event
             );
-            console.log(updatedEvents); // Log the updated events
             setEventsJSON(updatedEvents);
         }
     }
@@ -286,7 +279,6 @@ function App() {
                 ]
             } : event
         );
-        console.log(updatedEvents); // Log the updated events
         setEventsJSON(updatedEvents);
     }
 
@@ -294,7 +286,6 @@ function App() {
         const updatedEvents = eventsJSON.map(event =>
             event.id === subjectId ? { ...event, courses: event.courses.filter(course => course.id !== courseId) } : event
         );
-        console.log(updatedEvents); // Log the updated events
         setEventsJSON(updatedEvents);
     }
 
@@ -316,7 +307,6 @@ function App() {
                 )
             } : event
         );
-        console.log(updatedEvents); // Log the updated events
         setEventsJSON(updatedEvents);
     }
 
@@ -328,7 +318,6 @@ function App() {
                 )
             } : event
         );
-        console.log(updatedEvents); // Log the updated events
         setEventsJSON(updatedEvents);
     }
 
@@ -352,7 +341,6 @@ function App() {
 
     function onEventClick(info) {
         setChoosenCourse(info.event.extendedProps.subjectId, info.event.extendedProps.course, info.event.extendedProps.type);
-        console.log(info.event.title, info.event.extendedProps.course)
     }
 
     return (

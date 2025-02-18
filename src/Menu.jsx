@@ -12,7 +12,6 @@ const SubjectAdder = ({ adder }) => {
         if (name === '') { name = code }
         if (code === '') { code = name }
         adder(code, name)
-        console.log(subjectName, subjectCode)
     }
 
     return (
@@ -47,7 +46,6 @@ const ServerQuerry = ({ adder }) => {
     const onClick = (e) => {
         e.preventDefault()
         document.getElementById('import_modal').showModal()
-        console.log(subjectNameCode, subjectInstructor)
     }
 
     return (
@@ -226,7 +224,6 @@ const Modal = (props) => {
                 <p className="py-4">{props.secondText}</p>
                 <div className="modal-action">
                     <form method="dialog">
-                        {/* if there is a button in form, it will close the modal */}
                         <button className="btn">Close</button>
                     </form>
                 </div>

@@ -1,0 +1,36 @@
+@startjson
+{
+  "id": 1,
+  "code": "IP-1234ABCD",
+  "name": "Teszt tárgy I.",
+  "courses": [
+    {
+      "id": 1,
+      "course": 90,
+      "type": "Előadás",
+      "instructor": "Példa Béla",
+      "day": "Péntek",
+      "startTime": "12:00",
+      "endTime": "14:00",
+      "notes": "Erasmus kurzus",
+      "show": true
+    },
+    {
+      "id": 2,
+      "course": 1,
+      "type": "Gyakorlat",
+      "instructor": "Teszt Dia",
+      "day": "Szerda",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "notes": "",
+      "show": true
+    }
+  ],
+  "status": {
+    "color": "#0E2F90",
+    "show": true,
+    "choosen": 0
+  }
+}
+@endjson

@@ -1,0 +1,21 @@
+[Button] #ecec0d
+[Subject] #ecec0d
+[CourseModal] #ecec0d
+[Courses] #ecec0d
+
+[App] --> [Menu]
+[App] --> [Subjects]
+[App] --> [FullCalendar]
+
+[Menu] --> [SubjectAdder]
+[Menu] --> [ServerQuery]
+[Menu] --> [ImportExport]
+[Menu] --> [Settings]
+[Menu] --> [Help]
+[Menu] --> [Button]
+
+[Subjects] --> [Subject]
+
+[Subject] --> [Courses]
+[Subject] --> [SubjectModal]
+[Subject] --> [CourseModal]

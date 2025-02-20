@@ -1,8 +1,12 @@
-# React + Vite
+# Órarendtervező
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A weboldal célja, hogy a felhasználó egyszerre láthassa az összes lehetséges óráját és így dönthessen azok felvételéről.
 
-Currently, two official plugins are available:
+## Felhasznált anyagok
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React: https://react.dev 
+- Vite: https://vite.dev 
+- Tailwind: https://tailwindcss.com 
+- daisyUI: https://daisyui.com
+- FullCalendar: https://fullcalendar.io
+- PrimeReact: https://primereact.org 

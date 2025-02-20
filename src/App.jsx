@@ -338,7 +338,6 @@ function App() {
                 [event]: value
             })
         }
-        console.log(settings);
     }
 
     function getRandomHexColor() {

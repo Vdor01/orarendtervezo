@@ -184,7 +184,7 @@ const Settings = ({ settings, setSettings }) => {
                         </label>
                         <label className="cursor-pointer label">
                             <span className="label-text">Időintervallum (perc)</span>
-                            <input type="number" value={interval} onChange={(e) => setSettings('misc', 'slot', e.target.value)} className="w-16 input input-sm" />
+                            <input type="number" step={5} min={10} value={interval} onChange={(e) => setSettings('misc', 'slot', e.target.value)} className="w-16 input input-sm" />
                         </label>
                     </div>
                 </div>
@@ -285,7 +285,7 @@ const Menu = ({ adder, events, setter, settings, setSettings }) => {
         <div className='flex content-between'>
             {modeSwitch(mode)}
             <div className="divider divider-horizontal"></div>
-            <div className='flex flex-col justify-between w-64 gap-3'>
+            <div className='flex flex-col justify-between w-64 gap-3 buttons'>
                 <Button text={'Hozzáadás'} icon={'plus'} mode={mode} set={setMode} />
                 <Button text={'Lekérés'} icon={'server'} mode={mode} set={setMode} isDisabled={true} />
                 <Button text={'Import / Export'} icon={'file-import'} mode={mode} set={setMode} />

@@ -130,43 +130,61 @@ const ImportExport = ({ file, setter }) => {
 
 const Settings = ({ settings, setSettings }) => {
 
-    let code = settings.code
-    let time = settings.time
-    let type = settings.type
-    let instructor = settings.instructor
-    let location = settings.location
-    let notes = settings.notes
+    let code = settings.show.code
+    let time = settings.show.time
+    let type = settings.show.type
+    let instructor = settings.show.instructor
+    let location = settings.show.location
+    let notes = settings.show.notes
+
+    let saturday = settings.saturday
+    let interval = settings.slot
+
+    function setShowSettings(event, value) {
+        setSettings('show', event, value)
+    }
 
     return (
         <div className="w-full shadow-xl card bg-base-300 card-compact">
             <div className="card-body">
                 <h2 className="card-title">Beállítások</h2>
-                <div className='flex flex-row pt-3'>
+                <div className='flex flex-row gap-8 pt-3'>
                     <div className='grid w-1/4 grid-cols-2 gap-2 form-control'>
                         <h3 className='col-span-2 mb-5 font-bold'>Megjelenő információk</h3>
                         <label className="cursor-pointer label">
                             <span className="label-text">Kód</span>
-                            <input type="checkbox" checked={code} onChange={() => setSettings('code', !code)} className="checkbox" />
+                            <input type="checkbox" checked={code} onChange={() => setShowSettings('code', !code)} className="checkbox" />
                         </label>
                         <label className="cursor-pointer label">
                             <span className="label-text">Idő</span>
-                            <input type="checkbox" checked={time} onChange={() => setSettings('time', !time)} className="checkbox" />
+                            <input type="checkbox" checked={time} onChange={() => setShowSettings('time', !time)} className="checkbox" />
                         </label>
                         <label className="cursor-pointer label">
                             <span className="label-text">Típus</span>
-                            <input type="checkbox" checked={type} onChange={() => setSettings('type', !type)} className="checkbox" />
+                            <input type="checkbox" checked={type} onChange={() => setShowSettings('type', !type)} className="checkbox" />
                         </label>
                         <label className="cursor-pointer label">
                             <span className="label-text">Oktató</span>
-                            <input type="checkbox" checked={instructor} onChange={() => setSettings('instructor', !instructor)} className="checkbox" />
+                            <input type="checkbox" checked={instructor} onChange={() => setShowSettings('instructor', !instructor)} className="checkbox" />
                         </label>
                         <label className="cursor-pointer label">
                             <span className="label-text">Helyszín</span>
-                            <input type="checkbox" checked={location} onChange={() => setSettings('location', !location)} className="checkbox" />
+                            <input type="checkbox" checked={location} onChange={() => setShowSettings('location', !location)} className="checkbox" />
                         </label>
                         <label className="cursor-pointer label">
                             <span className="label-text">Megjegyzés</span>
-                            <input type="checkbox" checked={notes} onChange={() => setSettings('notes', !notes)} className="checkbox" />
+                            <input type="checkbox" checked={notes} onChange={() => setShowSettings('notes', !notes)} className="checkbox" />
+                        </label>
+                    </div>
+                    <div className='flex w-1/4 gap-2 form-control'>
+                        <h3 className='mb-5 font-bold'>Naptár</h3>
+                        <label className="cursor-pointer label">
+                            <span className="label-text">Szombat</span>
+                            <input type="checkbox" checked={saturday} onChange={() => setSettings('misc', 'saturday', !saturday)} className="checkbox" />
+                        </label>
+                        <label className="cursor-pointer label">
+                            <span className="label-text">Időintervallum (perc)</span>
+                            <input type="number" value={interval} onChange={(e) => setSettings('misc', 'slot', e.target.value)} className="w-16 input input-sm" />
                         </label>
                     </div>
                 </div>
@@ -257,7 +275,7 @@ const Menu = ({ adder, events, setter, settings, setSettings }) => {
             case 'Import / Export':
                 return <ImportExport file={events} setter={setter} />
             case 'Beállítások':
-                return <Settings settings={settings.show} setSettings={setSettings} />
+                return <Settings settings={settings} setSettings={setSettings} />
             case 'Súgó':
                 return <Help />
         }

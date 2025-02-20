@@ -95,7 +95,9 @@ function App() {
             "instructor": true,
             "location": true,
             "notes": false
-        }
+        },
+        "saturday": false,
+        "slot": 20
     })
 
     useMemo(() => {
@@ -321,13 +323,22 @@ function App() {
         setEventsJSON(updatedEvents);
     }
 
-    function updateSettings(event, value) {
-        setSettings({
-            "show": {
-                ...settings.show,
+    function updateSettings(type, event, value) {
+        if (type === 'show') {
+            setSettings({
+                ...settings,
+                "show": {
+                    ...settings.show,
+                    [event]: value
+                },
+            })
+        } else {
+            setSettings({
+                ...settings,
                 [event]: value
-            }
-        })
+            })
+        }
+        console.log(settings);
     }
 
     function getRandomHexColor() {
@@ -361,7 +372,7 @@ function App() {
             <FullCalendar
                 plugins={[timeGridPlugin, momentTimezonePlugin]}
                 initialView="timeGridWeek"
-                weekends={false}
+                hiddenDays={settings.saturday ? [0] : [0, 6]}
                 events={events}
                 slotMinTime={'08:00:00'}
                 slotMaxTime={'22:00:00'}
@@ -369,7 +380,7 @@ function App() {
                     hour: 'numeric',
                     minute: '2-digit',
                 }}
-                slotDuration={'00:20:00'}
+                slotDuration={'00:' + settings.slot + ':00'}
                 height={'auto'}
                 headerToolbar={false}
                 stickyHeaderDates={false}

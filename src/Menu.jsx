@@ -232,9 +232,12 @@ const Modal = (props) => {
     )
 }
 
-const Button = ({ text, icon, mode, set }) => {
+const Button = ({ text, icon, mode, set, isDisabled }) => {
     return (
-        <button className={"justify-start w-full btn btn-lg hover:border-primary flex-1 " + (mode == text ? "bg-primary text-base-300 hover:bg-primary" : "hover:bg-base-100")} onClick={() => set(text)}>
+        <button
+            className={"justify-start w-full btn btn-lg hover:border-primary flex-1 " + (mode == text ? "bg-primary text-base-300 hover:bg-primary" : "hover:bg-base-100")}
+            onClick={() => set(text)}
+            disabled={isDisabled}>
             <i className={"pi pi-" + icon}></i>
             {text}
         </button>
@@ -266,7 +269,7 @@ const Menu = ({ adder, events, setter, settings, setSettings }) => {
             <div className="divider divider-horizontal"></div>
             <div className='flex flex-col justify-between w-64 gap-3'>
                 <Button text={'Hozzáadás'} icon={'plus'} mode={mode} set={setMode} />
-                <Button text={'Lekérés'} icon={'server'} mode={mode} set={setMode} />
+                <Button text={'Lekérés'} icon={'server'} mode={mode} set={setMode} isDisabled={true} />
                 <Button text={'Import / Export'} icon={'file-import'} mode={mode} set={setMode} />
                 <Button text={'Beállítások'} icon={'cog'} mode={mode} set={setMode} />
                 <Button text={'Súgó'} icon={'question-circle'} mode={mode} set={setMode} />

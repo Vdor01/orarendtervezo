@@ -28,7 +28,7 @@ const Courses = ({ subjectId, choosen, course, remover, type, show: showF }) => 
             <td>{course.notes}</td>
             <td className='flex justify-end gap-2'>
                 <label className="btn btn-circle swap swap-rotate">
-                    <input type="checkbox" onChange={handleChange} />
+                    <input type="checkbox" onChange={handleChange} checked={!show} />
 
                     <div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}></div>
                     <div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}></div>

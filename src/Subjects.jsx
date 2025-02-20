@@ -281,7 +281,7 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
             </div>
             <div className='flex self-start gap-2 mt-1'>
                 <label className="btn btn-circle swap swap-rotate">
-                    <input type="checkbox" onChange={handleChange} />
+                    <input type="checkbox" onChange={handleChange} checked={!show} />
 
                     <div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}></div>
                     <div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}></div>

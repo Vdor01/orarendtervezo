@@ -1,0 +1,5 @@
+{
+    "tabWidth": 4,
+    "editor.formatOnSave": true,
+    "plugins": ["prettier-plugin-tailwindcss"]
+}

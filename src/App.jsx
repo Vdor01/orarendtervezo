@@ -357,6 +357,7 @@ function App() {
                     courseUpdater={updateCourse}
                     courseShow={updateShowCourse} />
             </div>
+            <div className='h-0 divider'></div>
             <FullCalendar
                 plugins={[timeGridPlugin, momentTimezonePlugin]}
                 initialView="timeGridWeek"

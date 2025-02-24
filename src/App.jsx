@@ -16,7 +16,7 @@ function App() {
             "courses": [
                 {
                     "id": 1,
-                    "course": 5,
+                    "course": "5",
                     "type": "Gyakorlat",
                     "instructor": "Kovács Norbert",
                     "location": "Déli Tömb 2-709 (PC 9)",
@@ -40,7 +40,7 @@ function App() {
             "courses": [
                 {
                     "id": 1,
-                    "course": 10,
+                    "course": "10",
                     "type": "Előadás",
                     "instructor": "Nemes László",
                     "location": "Északi Tömb 7.15 (PC11)",
@@ -52,7 +52,7 @@ function App() {
                 },
                 {
                     "id": 2,
-                    "course": 11,
+                    "course": "11",
                     "type": "Gyakorlat",
                     "instructor": "Nemes László",
                     "location": "Északi Tömb 7.15 (PC11)",
@@ -64,7 +64,7 @@ function App() {
                 },
                 {
                     "id": 3,
-                    "course": 12,
+                    "course": "12",
                     "type": "Gyakorlat",
                     "instructor": "Nemes László",
                     "location": "Északi Tömb 7.15 (PC11)",
@@ -365,7 +365,8 @@ function App() {
                     courseAdder={addCourse}
                     courseRemover={removeCourse}
                     courseUpdater={updateCourse}
-                    courseShow={updateShowCourse} />
+                    courseShow={updateShowCourse}
+                    settings={settings} />
             </div>
             <div className='h-0 divider'></div>
             <FullCalendar

@@ -68,7 +68,7 @@ const SubjectModal = ({ subject, updater }) => {
     )
 }
 
-const CourseModal = ({ subject, course_id, updater }) => {
+const CourseModal = ({ subject, course_id, updater, settings }) => {
 
     let course = subject.courses.find(course => course.id === course_id)
 
@@ -81,25 +81,31 @@ const CourseModal = ({ subject, course_id, updater }) => {
     let endTime = course.endTime
     let notes = course.notes
 
+    let error = false
+
     const handleSave = (e) => {
         e.preventDefault();
-        var form = document.getElementById("subject_form_" + course.id);
+        var form = document.getElementById("subject_form_" + subject.id + "_" + course.id);
         var formData = new FormData(form);
-        updater(subject.id, course.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
-        document.getElementById("course_modal_" + subject.id + "_" + course.id).close();
+        error = formData.get('code') === "0" || formData.get('code') === "-1"
+
+        if (!error) {
+            document.getElementById("course_modal_" + subject.id + "_" + course.id).close();
+            updater(subject.id, course.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
+        }
     };
 
     return (
         <dialog id={"course_modal_" + subject.id + "_" + course.id} className="modal">
             <div className="w-11/12 max-w-7xl modal-box">
                 <h3 className="text-lg font-bold">Kurzus módosítása</h3>
-                <form method="dialog" id={"subject_form_" + course.id} className='flex flex-col items-center justify-between gap-3'>
+                <form method="dialog" id={"subject_form_" + subject.id + "_" + course.id} className='flex flex-col items-center justify-between gap-3'>
                     <div className="grid w-full grid-cols-12 gap-5 mt-5">
                         <label className="w-full col-span-2 form-control">
                             <div className="label">
                                 <span className="label-text">Kód</span>
                             </div>
-                            <input type="number" name='code' min={1} placeholder="#" defaultValue={code} className="w-full input input-bordered input-sm" />
+                            <input type="text" name='code' placeholder="#" defaultValue={code} title='Nem lehet 0, vagy -1!' className="w-full input input-bordered input-sm" />
                         </label>
                         <label className="w-full col-span-5 form-control">
                             <div className="label">
@@ -126,6 +132,7 @@ const CourseModal = ({ subject, course_id, updater }) => {
                                 <option id='Szerda'>Szerda</option>
                                 <option id='Csütörtök'>Csütörtök</option>
                                 <option id='Péntek'>Péntek</option>
+                                {settings.saturday && <option id='Szombat'>Szombat</option>}
                             </select>
                         </label>
                         <label className="w-full col-span-6 form-control">
@@ -161,7 +168,7 @@ const CourseModal = ({ subject, course_id, updater }) => {
     )
 }
 
-const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow }) => {
+const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings }) => {
 
     let id = subject.id;
     let code = subject.code;
@@ -259,6 +266,7 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
                                                 <option>Szerda</option>
                                                 <option>Csütörtök</option>
                                                 <option>Péntek</option>
+                                                {settings.saturday && <option>Szombat</option>}
                                             </select>
                                         </th>
                                         <th className='flex items-center w-2/12 h-24 gap-1'>
@@ -294,12 +302,12 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
                 </button>
             </div>
             <SubjectModal subject={subject} updater={subjectUpdater} />
-            {subject.courses.map((course) => (<CourseModal key={course.id} subject={subject} course_id={course.id} updater={courseUpdater} />))}
+            {subject.courses.map((course) => (<CourseModal key={course.id} subject={subject} course_id={course.id} updater={courseUpdater} settings={settings} />))}
         </div>
     )
 }
 
-const Subjects = ({ subjects, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow }) => {
+const Subjects = ({ subjects, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings }) => {
 
     return (
         <div className='flex flex-col gap-5 bg-base-300 card'>
@@ -313,7 +321,8 @@ const Subjects = ({ subjects, subjectUpdater, subjectRemover, subjectShow, cours
                     courseAdder={courseAdder}
                     courseRemover={courseRemover}
                     courseUpdater={courseUpdater}
-                    courseShow={courseShow} />
+                    courseShow={courseShow}
+                    settings={settings} />
             ))}
         </div>
     )

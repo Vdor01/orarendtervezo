@@ -81,18 +81,21 @@ const CourseModal = ({ subject, course_id, updater, settings }) => {
     let endTime = course.endTime
     let notes = course.notes
 
-    let error = false
-
     const handleSave = (e) => {
         e.preventDefault();
         var form = document.getElementById("subject_form_" + subject.id + "_" + course.id);
         var formData = new FormData(form);
-        error = formData.get('code') === "0" || formData.get('code') === "-1"
 
-        if (!error) {
+        let error = formData.get('code') === "0" || formData.get('code') === "-1"
+        var codeInput = document.querySelector(`#subject_form_${subject.id}_${course.id} input[name='code']`);
+        if (error) {
+            codeInput.setCustomValidity("A kód nem lehet 0 vagy -1!");
+        } else {
+            codeInput.setCustomValidity("");
             document.getElementById("course_modal_" + subject.id + "_" + course.id).close();
             updater(subject.id, course.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
         }
+        codeInput.reportValidity();
     };
 
     return (
@@ -105,7 +108,7 @@ const CourseModal = ({ subject, course_id, updater, settings }) => {
                             <div className="label">
                                 <span className="label-text">Kód</span>
                             </div>
-                            <input type="text" name='code' placeholder="#" defaultValue={code} title='Nem lehet 0, vagy -1!' className="w-full input input-bordered input-sm" />
+                            <input type="text" name='code' placeholder="#" defaultValue={code} className="w-full input input-bordered input-sm" />
                         </label>
                         <label className="w-full col-span-5 form-control">
                             <div className="label">
@@ -186,7 +189,16 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
         e.preventDefault();
         var form = document.getElementById("course_form_" + subject.code);
         var formData = new FormData(form);
-        courseAdder(subject.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
+
+        let error = formData.get('code') === "0" || formData.get('code') === "-1"
+        var codeInput = document.querySelector(`#course_form_${subject.code} input[name='code']`);
+        if (error) {
+            codeInput.setCustomValidity("A kód nem lehet 0 vagy -1!");
+        } else {
+            codeInput.setCustomValidity("");
+            courseAdder(subject.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
+        }
+        codeInput.reportValidity();
     }
 
     function getStatus() {
@@ -250,7 +262,7 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
                                             show={courseShow} />
                                     ))}
                                     <tr>
-                                        <th className='w-1/12'><input type="number" name='code' min={1} placeholder="#" className="w-full max-w-xs input input-bordered input-sm" /></th>
+                                        <th className='w-1/12'><input type="text" name='code' placeholder="#" className="w-full max-w-xs input input-bordered input-sm" /></th>
                                         <th className='w-2/12'>
                                             <select name='type' className="w-full max-w-xs select select-bordered select-sm">
                                                 <option>Gyakorlat</option>

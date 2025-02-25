@@ -108,7 +108,7 @@ const CourseModal = ({ subject, course_id, updater, settings }) => {
                             <div className="label">
                                 <span className="label-text">Kód</span>
                             </div>
-                            <input type="text" name='code' placeholder="#" defaultValue={code} className="w-full input input-bordered input-sm" />
+                            <input type="text" name='code' placeholder="#" defaultValue={code} className="w-full input input-bordered input-sm invalid:border-error" />
                         </label>
                         <label className="w-full col-span-5 form-control">
                             <div className="label">
@@ -262,7 +262,7 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
                                             show={courseShow} />
                                     ))}
                                     <tr>
-                                        <th className='w-1/12'><input type="text" name='code' placeholder="#" className="w-full max-w-xs input input-bordered input-sm" /></th>
+                                        <th className='w-1/12'><input type="text" name='code' placeholder="#" className="w-full max-w-xs input input-bordered input-sm invalid:border-error" /></th>
                                         <th className='w-2/12'>
                                             <select name='type' className="w-full max-w-xs select select-bordered select-sm">
                                                 <option>Gyakorlat</option>

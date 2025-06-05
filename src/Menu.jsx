@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const SubjectAdder = ({ adder }) => {
 
@@ -38,13 +38,152 @@ const SubjectAdder = ({ adder }) => {
     )
 }
 
-const ServerQuerry = ({ adder }) => {
+const ServerQuerry = ({ importer }) => {
 
     const [subjectNameCode, setNameCode] = useState('')
     const [subjectInstructor, setInstructor] = useState('')
 
+    const [courses, setCourses] = useState([])
+    const [subjects, setSubjects] = useState([])
+    const [dataIsLoaded, setDataIsLoaded] = useState(false)
+
+    // Helper: parses and accumulates subjects into a given array
+    const parseCourseData = (data, subjectsAccumulator) => {
+        const parser = new DOMParser()
+        const htmlDoc = parser.parseFromString(data, 'text/html')
+
+        if (!htmlDoc || !htmlDoc.getElementById('resulttable')) {
+            console.error('No result table found in response')
+            return []
+        }
+
+        const rows = htmlDoc.querySelectorAll('#resulttable tbody tr')
+        const courses = []
+
+        rows.forEach((row, index) => {
+            const timeInfo = row.querySelector('[data-label="Időpont"]').textContent;
+            const codeInfo = row.querySelector('[data-label="Tárgykód-kurzuskód (típus)"]').textContent
+            const courseName = row.querySelector('[data-label="Tárgynév"]').textContent
+            const location = row.querySelector('[data-label="Helyszín"]').textContent
+            const instructor = row.querySelector('[data-label="Oktató / Megjegyzés"]').textContent.trim()
+
+            const dayMatch = timeInfo.match(/(Hétfő|Hétfo|Kedd|Szerda|Csütörtök|Péntek|Szombat|Vasárnap)/)
+            const timeMatch = timeInfo.match(/(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/)
+
+            if (dayMatch && timeMatch) {
+                const day = dayMatch[1];
+                const startHour = parseInt(timeMatch[1])
+                const startMin = parseInt(timeMatch[2])
+                const endHour = parseInt(timeMatch[3])
+                const endMin = parseInt(timeMatch[4])
+
+                const codeMatch = codeInfo.match(/(.*?)\s+\((.*?)\)/)
+                let code = codeMatch ? codeMatch[1] : codeInfo
+                const subjectMatch = code.match(/^(.*?)\s*-\s*\d+$/)
+                let subject = subjectMatch ? subjectMatch[1] : code
+                if (subject.includes(' ')) {
+                    subject = subject.split(' ')[0]
+                }
+                const type = codeMatch ? codeMatch[2] : ''
+
+                const numberMatch = code.match(/-(\d+)$/)
+                code = numberMatch ? numberMatch[1] : code
+
+                const courseCodeExists = subjectsAccumulator.some(s => s.code === subject);
+                if (!courseCodeExists) {
+                    subjectsAccumulator.push({
+                        id: subjectsAccumulator.length,
+                        code: subject,
+                        name: courseName
+                    });
+                }
+
+                const course = {
+                    "id": index,
+                    "subject": subject,
+                    "name": courseName,
+                    "course": code,
+                    "type": type.charAt(0).toUpperCase() + type.slice(1).toLowerCase(),
+                    "instructor": instructor,
+                    "location": location,
+                    "day": day === 'Hétfo' ? 'Hétfő' : day,
+                    "startTime": `${startHour.toString().padStart(2, '0')}:${startMin.toString().padStart(2, '0')}`,
+                    "endTime": `${endHour.toString().padStart(2, '0')}:${endMin.toString().padStart(2, '0')}`,
+                    "notes": "",
+                    "show": true
+                };
+
+                courses.push(course)
+            }
+        });
+
+        return courses;
+    }
+
+    const fetchData = () => {
+        const currentDate = new Date()
+        const year = currentDate.getFullYear()
+        const month = currentDate.getMonth()
+
+        let academicYear
+        let semester
+
+        if (month >= 7) {
+            academicYear = `${year}-${year + 1}`
+            semester = "1"
+        } else if (month >= 0 && month < 7) {
+            academicYear = `${year - 1}-${year}`
+            semester = "2"
+        }
+
+        const semesterCode = `${academicYear}-${semester}`
+        console.log(`Fetching data for semester: ${semesterCode}`)
+
+        const subjectsAccumulator = []
+
+        if (subjectNameCode !== '' && subjectInstructor !== '') {
+            console.error('TODO : Implement search by subject name and instructor')
+        }
+        else if (subjectNameCode !== '') {
+            fetch(`/tanrendnavigation.php?m=keres_kod_azon&f=${semesterCode}&k=${subjectNameCode}`)
+                .then(response => response.text())
+                .then(data => {
+                    const firstCourses = parseCourseData(data, subjectsAccumulator);
+                    setCourses(firstCourses);
+                    return fetch(`/tanrendnavigation.php?m=keresnevre&f=${semesterCode}&k=${subjectNameCode}`)
+                })
+                .then(response => response.text())
+                .then(data => {
+                    const secondCourses = parseCourseData(data, subjectsAccumulator);
+                    setCourses(prevItems => {
+                        return [...prevItems, ...secondCourses];
+                    });
+                    setSubjects(subjectsAccumulator);
+                    setDataIsLoaded(true);
+                })
+                .catch(error => console.error('Error fetching subjects:', error));
+        }
+        else if (subjectInstructor !== '') {
+            fetch(`/tanrendnavigation.php?m=keres_okt&f=${semesterCode}&k=${subjectInstructor}`)
+                .then(response => response.text())
+                .then(data => {
+                    const courses = parseCourseData(data, subjectsAccumulator);
+                    setCourses(courses);
+                    setSubjects(subjectsAccumulator);
+                    setDataIsLoaded(true);
+                })
+                .catch(error => console.error('Error fetching subjects:', error));
+        }
+    };
+
     const onClick = (e) => {
         e.preventDefault()
+
+        setCourses([])
+        setSubjects([])
+        setDataIsLoaded(false)
+        fetchData();
+
         document.getElementById('import_modal').showModal()
     }
 
@@ -69,7 +208,7 @@ const ServerQuerry = ({ adder }) => {
                 </div>
             </div>
 
-            <Modal firstText={subjectNameCode} secondText={subjectInstructor} />
+            <Modal courses={courses} subjects={subjects} dataIsLoaded={dataIsLoaded} importer={importer} />
         </div>
     )
 }
@@ -232,23 +371,177 @@ const Help = () => {
 }
 
 const Modal = (props) => {
+    const [selectedSubjects, setSelectedSubjects] = useState([]);
+    const [selectedCourses, setSelectedCourses] = useState([]);
+
+    useEffect(() => {
+        setSelectedSubjects([]);
+        setSelectedCourses([]);
+    }, [props.courses]);
+
+    // Helper: get all course ids for a subject
+    const getCourseIdsForSubject = (subjectCode) =>
+        props.courses.filter(c => c.subject === subjectCode).map(c => 'c' + c.id);
+
+    // Subject checkbox handler
+    const handleSubjectChange = (subjectId, subjectCode, checked) => {
+        if (checked) {
+            setSelectedSubjects(prev => [...prev, subjectId]);
+            setSelectedCourses(prev => [
+                ...prev,
+                ...getCourseIdsForSubject(subjectCode).filter(id => !prev.includes(id))
+            ]);
+        } else {
+            setSelectedSubjects(prev => prev.filter(id => id !== subjectId));
+            setSelectedCourses(prev =>
+                prev.filter(id => !getCourseIdsForSubject(subjectCode).includes(id))
+            );
+        }
+    };
+
+    // Course checkbox handler
+    const handleCourseChange = (courseId, subjectId, subjectCode, checked) => {
+        if (checked) {
+            setSelectedCourses(prev => [...prev, courseId]);
+            // If any course is selected, select the subject
+            if (!selectedSubjects.includes(subjectId)) {
+                setSelectedSubjects(prev => [...prev, subjectId]);
+            }
+        } else {
+            setSelectedCourses(prev => prev.filter(id => id !== courseId));
+            // If no courses remain for this subject, unselect the subject
+            const remaining = selectedCourses.filter(id => id !== courseId);
+            const courseIds = getCourseIdsForSubject(subjectCode);
+            if (!courseIds.some(id => remaining.includes(id))) {
+                setSelectedSubjects(prev => prev.filter(id => id !== subjectId));
+            }
+        }
+    };
+
+    // Handle import action
+    const handleImport = () => {
+        const selectedCoursesData = props.courses.filter(course =>
+            selectedCourses.includes('c' + course.id)
+        );
+
+        const selectedSubjectsData = props.subjects.filter(subject =>
+            selectedSubjects.includes('s' + subject.id)
+        );
+
+        // Here you would typically send the selected data to your backend or process it further
+        console.log('Selected Courses:', selectedCoursesData);
+        console.log('Selected Subjects:', selectedSubjectsData);
+
+        // Call the importer function with selected data
+        props.importer(selectedSubjectsData, selectedCoursesData);
+
+        // Close the modal after import
+        document.getElementById('import_modal').close();
+    };
 
     return (
         <dialog id="import_modal" className="modal">
             <div className="w-11/12 max-w-7xl modal-box">
-                <h3 className="text-lg font-bold">Hello!</h3>
-                <p className="py-4">Press ESC key or click the button below to close</p>
-                <p className="py-4">{props.firstText}</p>
-                <p className="py-4">{props.secondText}</p>
-                <div className="modal-action">
-                    <form method="dialog">
-                        <button className="btn">Close</button>
-                    </form>
+                <h3 className="mb-3 text-lg font-bold">Tárgy importálása - {props.courses.length} találat</h3>
+                <div className='flex flex-col items-center justify-between gap-3'>
+                    {props.dataIsLoaded ? (
+                        <div className='w-full overflow-x-auto import-modal'>
+                            <table className='table w-full table-pin-rows bg-base-200'>
+                                {props.subjects.map((subject) => {
+                                    const subjectId = 's' + subject.id;
+                                    const courseIds = getCourseIdsForSubject(subject.code);
+                                    const subjectChecked = selectedSubjects.includes(subjectId);
+
+                                    return (
+                                        <React.Fragment key={subject.code}>
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        <input
+                                                            type='checkbox'
+                                                            className='checkbox'
+                                                            id={subjectId}
+                                                            checked={subjectChecked}
+                                                            onChange={e =>
+                                                                handleSubjectChange(subjectId, subject.code, e.target.checked)
+                                                            }
+                                                        />
+                                                    </th>
+                                                    <th colSpan="3" className='text-lg font-bold'>{subject.code}</th>
+                                                    <th colSpan="3" className='text-lg font-bold'>{subject.name}</th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th>{courseIds.length} db</th>
+                                                </tr>
+                                            </thead>
+                                            {props.courses
+                                                .filter(course => course.subject === subject.code)
+                                                .map((course) => {
+                                                    const courseId = 'c' + course.id;
+                                                    const checked = selectedCourses.includes(courseId);
+                                                    return (
+                                                        <tbody key={course.id}>
+                                                            <tr className={checked ? 'text-success' : ''}>
+                                                                <td></td>
+                                                                <th>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='checkbox'
+                                                                        id={courseId}
+                                                                        checked={checked}
+                                                                        onChange={e =>
+                                                                            handleCourseChange(
+                                                                                courseId,
+                                                                                subjectId,
+                                                                                subject.code,
+                                                                                e.target.checked
+                                                                            )
+                                                                        }
+                                                                    />
+                                                                </th>
+                                                                <td>{course.course}</td>
+                                                                <td>{course.name}</td>
+                                                                <td>{course.type}</td>
+                                                                <td>{course.instructor}</td>
+                                                                <td>{course.location}</td>
+                                                                <td>{course.day}</td>
+                                                                <td>{course.startTime} - {course.endTime}</td>
+                                                                <td>{course.notes}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    );
+                                                })}
+                                        </React.Fragment>
+                                    );
+                                })}
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th>Kód</th>
+                                        <th>Tárgy</th>
+                                        <th>Típus</th>
+                                        <th>Oktató</th>
+                                        <th>Helyszín</th>
+                                        <th>Nap</th>
+                                        <th>Idő</th>
+                                        <th>Megjegyzés</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    ) : <span className="loading loading-spinner loading-md"></span>}
+                    <div className="modal-action">
+                        <form method="dialog" className='flex justify-between w-full gap-3'>
+                            <button className="btn btn-error">Mégsem</button>
+                            <button className="btn btn-success" onClick={handleImport}>Importálás</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </dialog>
-    )
-}
+    );
+};
 
 const Button = ({ text, icon, mode, set, isDisabled }) => {
     return (
@@ -262,7 +555,7 @@ const Button = ({ text, icon, mode, set, isDisabled }) => {
     )
 }
 
-const Menu = ({ adder, events, setter, settings, setSettings }) => {
+const Menu = ({ adder, events, setter, settings, setSettings, importer }) => {
 
     const [mode, setMode] = useState('Hozzáadás')
 
@@ -271,7 +564,7 @@ const Menu = ({ adder, events, setter, settings, setSettings }) => {
             case 'Hozzáadás':
                 return <SubjectAdder adder={adder} />
             case 'Lekérés':
-                return <ServerQuerry adder={adder} />
+                return <ServerQuerry importer={importer} />
             case 'Import / Export':
                 return <ImportExport file={events} setter={setter} />
             case 'Beállítások':
@@ -287,7 +580,7 @@ const Menu = ({ adder, events, setter, settings, setSettings }) => {
             <div className="divider divider-horizontal"></div>
             <div className='flex flex-col justify-between w-64 gap-3 buttons'>
                 <Button text={'Hozzáadás'} icon={'plus'} mode={mode} set={setMode} />
-                <Button text={'Lekérés'} icon={'server'} mode={mode} set={setMode} isDisabled={true} />
+                <Button text={'Lekérés'} icon={'server'} mode={mode} set={setMode} />
                 <Button text={'Import / Export'} icon={'file-import'} mode={mode} set={setMode} />
                 <Button text={'Beállítások'} icon={'cog'} mode={mode} set={setMode} />
                 <Button text={'Súgó'} icon={'question-circle'} mode={mode} set={setMode} />

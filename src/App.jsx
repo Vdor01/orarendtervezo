@@ -8,84 +8,7 @@ import Menu from './Menu';
 
 function App() {
 
-    const [eventsJSON, setEventsJSON] = useState([
-        {
-            "id": 1,
-            "code": "IP-18eKPROGEG",
-            "name": "Konkurens programozás Ea+Gy",
-            "courses": [
-                {
-                    "id": 1,
-                    "course": "5",
-                    "type": "Gyakorlat",
-                    "instructor": "Kovács Norbert",
-                    "location": "Déli Tömb 2-709 (PC 9)",
-                    "day": "Péntek",
-                    "startTime": "12:00",
-                    "endTime": "13:00",
-                    "notes": "",
-                    "show": true
-                }
-            ],
-            "status": {
-                "color": "#0E2F90",
-                "show": true,
-                "choosen": 0
-            }
-        },
-        {
-            "id": 2,
-            "code": "IP-18cSZTEG",
-            "name": "Szoftvertechnológia Ea+GY (F)",
-            "courses": [
-                {
-                    "id": 1,
-                    "course": "10",
-                    "type": "Előadás",
-                    "instructor": "Nemes László",
-                    "location": "Északi Tömb 7.15 (PC11)",
-                    "day": "Péntek",
-                    "startTime": "10:00",
-                    "endTime": "12:00",
-                    "notes": "",
-                    "show": true
-                },
-                {
-                    "id": 2,
-                    "course": "11",
-                    "type": "Gyakorlat",
-                    "instructor": "Nemes László",
-                    "location": "Északi Tömb 7.15 (PC11)",
-                    "day": "Csütörtök",
-                    "startTime": "10:00",
-                    "endTime": "12:00",
-                    "notes": "",
-                    "show": true
-                },
-                {
-                    "id": 3,
-                    "course": "12",
-                    "type": "Gyakorlat",
-                    "instructor": "Nemes László",
-                    "location": "Északi Tömb 7.15 (PC11)",
-                    "day": "Szerda",
-                    "startTime": "08:00",
-                    "endTime": "10:00",
-                    "notes": "",
-                    "show": true
-                }
-            ],
-            "status": {
-                "color": "#C31313",
-                "show": true,
-                "choosen": {
-                    "Gyakorlat": 0,
-                    "Előadás": 0,
-                    "Egyéb": 0
-                }
-            }
-        }
-    ])
+    const [eventsJSON, setEventsJSON] = useState([])
 
     const [settings, setSettings] = useState({
         "show": {
@@ -353,9 +276,58 @@ function App() {
         setChoosenCourse(info.event.extendedProps.subjectId, info.event.extendedProps.course, info.event.extendedProps.type);
     }
 
+    function importFromArrays(subjects, courses) {
+        setEventsJSON(prevEvents => {
+            // Collect existing subject codes and the highest used subject ID
+            const existingSubjectCodes = prevEvents.map(subject => subject.code);
+            let nextSubjectId = prevEvents.length > 0 ? Math.max(...prevEvents.map(s => s.id)) + 1 : 1;
+
+            // Prepare new subjects to add
+            const newSubjects = subjects
+                .filter(subject => !existingSubjectCodes.includes(subject.code))
+                .map(subject => {
+                    // Find courses for this subject
+                    const relevantCourses = courses.filter(course => course.subject === subject.code);
+                    // Assign course IDs starting from 1
+                    let nextCourseId = 1;
+                    const courseArr = relevantCourses.map(course => ({
+                        id: nextCourseId++,
+                        course: course.course,
+                        type: course.type,
+                        instructor: course.instructor,
+                        location: course.location,
+                        day: course.day,
+                        startTime: course.startTime,
+                        endTime: course.endTime,
+                        notes: course.notes,
+                        show: true
+                    }));
+                    // Return the new subject object
+                    return {
+                        id: nextSubjectId++,
+                        code: subject.code,
+                        name: subject.name,
+                        courses: courseArr,
+                        status: {
+                            color: getRandomHexColor(),
+                            show: true,
+                            choosen: {
+                                "Gyakorlat": 0,
+                                "Előadás": 0,
+                                "Egyéb": 0
+                            }
+                        }
+                    };
+                });
+
+            // Return the new state with all new subjects appended
+            return [...prevEvents, ...newSubjects];
+        });
+    }
+
     return (
         <div className='flex flex-col w-full gap-5'>
-            <Menu adder={addSubject} events={eventsJSON} setter={setEventsJSON} settings={settings} setSettings={updateSettings} />
+            <Menu adder={addSubject} events={eventsJSON} setter={setEventsJSON} settings={settings} setSettings={updateSettings} importer={importFromArrays} />
             <div className='w-full'>
                 <Subjects
                     subjects={eventsJSON}

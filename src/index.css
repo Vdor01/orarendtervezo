@@ -50,3 +50,7 @@ h3 {
 .buttons {
     height: 27rem;
 }
+
+.import-modal {
+    height: 42rem;
+}

@@ -145,12 +145,12 @@ const ServerQuerry = ({ importer }) => {
             console.error('TODO : Implement search by subject name and instructor')
         }
         else if (subjectNameCode !== '') {
-            fetch(`/tanrendnavigation.php?m=keres_kod_azon&f=${semesterCode}&k=${subjectNameCode}`)
+            fetch(`https://tanrend.elte.hu?m=keres_kod_azon&f=${semesterCode}&k=${subjectNameCode}`)
                 .then(response => response.text())
                 .then(data => {
                     const firstCourses = parseCourseData(data, subjectsAccumulator);
                     setCourses(firstCourses);
-                    return fetch(`/tanrendnavigation.php?m=keresnevre&f=${semesterCode}&k=${subjectNameCode}`)
+                    return fetch(`https://tanrend.elte.hu?m=keresnevre&f=${semesterCode}&k=${subjectNameCode}`)
                 })
                 .then(response => response.text())
                 .then(data => {
@@ -164,7 +164,7 @@ const ServerQuerry = ({ importer }) => {
                 .catch(error => console.error('Error fetching subjects:', error));
         }
         else if (subjectInstructor !== '') {
-            fetch(`/tanrendnavigation.php?m=keres_okt&f=${semesterCode}&k=${subjectInstructor}`)
+            fetch(`https://tanrend.elte.hu?m=keres_okt&f=${semesterCode}&k=${subjectInstructor}`)
                 .then(response => response.text())
                 .then(data => {
                     const courses = parseCourseData(data, subjectsAccumulator);

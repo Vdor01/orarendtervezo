@@ -141,16 +141,21 @@ const ServerQuerry = ({ importer }) => {
 
         const subjectsAccumulator = []
 
+        const API_BASE =
+            window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+                ? "/tanrendnavigation.php"
+                : "https://tanrend.elte.hu/tanrendnavigation.php";
+
         if (subjectNameCode !== '' && subjectInstructor !== '') {
             console.error('TODO : Implement search by subject name and instructor')
         }
         else if (subjectNameCode !== '') {
-            fetch(`https://tanrend.elte.hu?m=keres_kod_azon&f=${semesterCode}&k=${subjectNameCode}`)
+            fetch(`${API_BASE}?m=keres_kod_azon&f=${semesterCode}&k=${subjectNameCode}`)
                 .then(response => response.text())
                 .then(data => {
                     const firstCourses = parseCourseData(data, subjectsAccumulator);
                     setCourses(firstCourses);
-                    return fetch(`https://tanrend.elte.hu?m=keresnevre&f=${semesterCode}&k=${subjectNameCode}`)
+                    return fetch(`${API_BASE}?m=keresnevre&f=${semesterCode}&k=${subjectNameCode}`)
                 })
                 .then(response => response.text())
                 .then(data => {
@@ -164,7 +169,7 @@ const ServerQuerry = ({ importer }) => {
                 .catch(error => console.error('Error fetching subjects:', error));
         }
         else if (subjectInstructor !== '') {
-            fetch(`https://tanrend.elte.hu?m=keres_okt&f=${semesterCode}&k=${subjectInstructor}`)
+            fetch(`${API_BASE}?m=keres_okt&f=${semesterCode}&k=${subjectInstructor}`)
                 .then(response => response.text())
                 .then(data => {
                     const courses = parseCourseData(data, subjectsAccumulator);

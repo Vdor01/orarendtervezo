@@ -144,7 +144,7 @@ const ServerQuerry = ({ importer }) => {
         const API_BASE =
             window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
                 ? "/tanrendnavigation.php"
-                : "https://tanrend.elte.hu/tanrendnavigation.php";
+                : "/api/tanrend";
 
         if (subjectNameCode !== '' && subjectInstructor !== '') {
             console.error('TODO : Implement search by subject name and instructor')

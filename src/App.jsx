@@ -5,6 +5,7 @@ import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 import huLocale from '@fullcalendar/core/locales/hu';
 import Subjects from './Subjects';
 import Menu from './Menu';
+import Footer from './Footer';
 
 function App() {
 
@@ -326,54 +327,57 @@ function App() {
     }
 
     return (
-        <div className='flex flex-col w-full gap-5'>
-            <Menu adder={addSubject} events={eventsJSON} setter={setEventsJSON} settings={settings} setSettings={updateSettings} importer={importFromArrays} />
-            <div className='w-full'>
-                <Subjects
-                    subjects={eventsJSON}
-                    subjectRemover={removeSubject}
-                    subjectUpdater={updateSubject}
-                    subjectShow={updateShowSubject}
-                    courseAdder={addCourse}
-                    courseRemover={removeCourse}
-                    courseUpdater={updateCourse}
-                    courseShow={updateShowCourse}
-                    settings={settings} />
+        <>
+            <div className='flex flex-col gap-5 m-8 w-fit'>
+                <Menu adder={addSubject} events={eventsJSON} setter={setEventsJSON} settings={settings} setSettings={updateSettings} importer={importFromArrays} />
+                <div className='w-full'>
+                    <Subjects
+                        subjects={eventsJSON}
+                        subjectRemover={removeSubject}
+                        subjectUpdater={updateSubject}
+                        subjectShow={updateShowSubject}
+                        courseAdder={addCourse}
+                        courseRemover={removeCourse}
+                        courseUpdater={updateCourse}
+                        courseShow={updateShowCourse}
+                        settings={settings} />
+                </div>
+                <div className='h-0 divider'></div>
+                <FullCalendar
+                    plugins={[timeGridPlugin, momentTimezonePlugin]}
+                    initialView="timeGridWeek"
+                    hiddenDays={settings.saturday ? [0] : [0, 6]}
+                    events={events}
+                    slotMinTime={'08:00:00'}
+                    slotMaxTime={'22:00:00'}
+                    slotLabelFormat={{
+                        hour: 'numeric',
+                        minute: '2-digit',
+                    }}
+                    slotDuration={'00:' + settings.slot + ':00'}
+                    height={'auto'}
+                    headerToolbar={false}
+                    stickyHeaderDates={false}
+                    allDaySlot={false}
+                    dayHeaderFormat={{ weekday: 'long' }}
+                    locale={huLocale}
+                    timeZone='Europe/Budapest'
+                    firstDay={1}
+                    eventClick={onEventClick}
+                    eventContent={(arg) => (
+                        <div className='flex flex-col gap-1'>
+                            {settings.show.code && <div>{arg.event.extendedProps.course}</div>}
+                            {settings.show.time && <div>{arg.timeText}</div>}
+                            {settings.show.type && <div>{arg.event.extendedProps.type}</div>}
+                            {settings.show.instructor && <div>{arg.event.extendedProps.instructor}</div>}
+                            {settings.show.location && <div>{arg.event.extendedProps.location}</div>}
+                            {settings.show.notes && <div>{arg.event.extendedProps.notes}</div>}
+                        </div>
+                    )}
+                />
             </div>
-            <div className='h-0 divider'></div>
-            <FullCalendar
-                plugins={[timeGridPlugin, momentTimezonePlugin]}
-                initialView="timeGridWeek"
-                hiddenDays={settings.saturday ? [0] : [0, 6]}
-                events={events}
-                slotMinTime={'08:00:00'}
-                slotMaxTime={'22:00:00'}
-                slotLabelFormat={{
-                    hour: 'numeric',
-                    minute: '2-digit',
-                }}
-                slotDuration={'00:' + settings.slot + ':00'}
-                height={'auto'}
-                headerToolbar={false}
-                stickyHeaderDates={false}
-                allDaySlot={false}
-                dayHeaderFormat={{ weekday: 'long' }}
-                locale={huLocale}
-                timeZone='Europe/Budapest'
-                firstDay={1}
-                eventClick={onEventClick}
-                eventContent={(arg) => (
-                    <div className='flex flex-col gap-1'>
-                        {settings.show.code && <div>{arg.event.extendedProps.course}</div>}
-                        {settings.show.time && <div>{arg.timeText}</div>}
-                        {settings.show.type && <div>{arg.event.extendedProps.type}</div>}
-                        {settings.show.instructor && <div>{arg.event.extendedProps.instructor}</div>}
-                        {settings.show.location && <div>{arg.event.extendedProps.location}</div>}
-                        {settings.show.notes && <div>{arg.event.extendedProps.notes}</div>}
-                    </div>
-                )}
-            />
-        </div>
+            <Footer />
+        </>
     )
 }
 

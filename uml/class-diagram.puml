@@ -1,3 +1,5 @@
+@startuml component-diagram
+
 [Button] #ecec0d
 [Subject] #ecec0d
 [CourseModal] #ecec0d
@@ -6,6 +8,7 @@
 [App] --> [Menu]
 [App] --> [Subjects]
 [App] --> [FullCalendar]
+[App] --> [Footer]
 
 [Menu] --> [SubjectAdder]
 [Menu] --> [ServerQuery]
@@ -19,3 +22,5 @@
 [Subject] --> [Courses]
 [Subject] --> [SubjectModal]
 [Subject] --> [CourseModal]
+
+@enduml

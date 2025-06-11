@@ -1,4 +1,4 @@
-@startjson
+@startjson subjects
 {
   "id": 1,
   "code": "IP-1234ABCD",
@@ -13,7 +13,7 @@
       "startTime": "12:00",
       "endTime": "14:00",
       "notes": "Erasmus kurzus",
-      "show": true
+      "show": false
     },
     {
       "id": 2,
@@ -30,7 +30,11 @@
   "status": {
     "color": "#0E2F90",
     "show": true,
-    "choosen": 0
+    "choosen": {
+      "Gyakorlat": 1,
+      "Előadás": 0,
+      "Egyéb": 0
+    }
   }
 }
 @endjson

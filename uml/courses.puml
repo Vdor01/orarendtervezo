@@ -1,0 +1,18 @@
+@startuml Courses
+
+class Courses {
+    .. props ..
+    - string subjectId
+    - JSON choosen
+    - Course course
+    - void remover(subjectId, courseId)
+    - string type
+    - void showF(subjectId, courseId, show)
+    __
+    - boolean show
+    __
+    - void handleChange()
+    - boolean isChoosen()
+}
+
+@enduml

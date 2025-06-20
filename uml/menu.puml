@@ -1,0 +1,101 @@
+@startuml Menu
+
+class Menu {
+    .. props ..
+    + void adder(code, name)
+    + JSON events
+    + void setter()
+    + JSON settings
+    + void setSettings(type, event, value)
+    + void importer(subjects, courses)
+    __
+    + string mode
+    __
+    - Component modeSwitch(param)
+}
+
+class Button {
+    .. props ..
+    - string text
+    - string icon
+    - string mode
+    - void set(mode)
+    - boolean isDisabled
+}
+
+class SubjectAdder {
+    .. props ..
+    + void adder(code, name)
+    __
+    - string subjectName
+    - string subjectCode
+    __
+    - void onClick(event)
+}
+
+class ServerQuerry {
+    .. props ..
+    + void importer(subjects, courses)
+    __
+    - string subjectNameCode
+    - string subjectInstructor
+    + Course[] courses
+    + Subject[] subjects
+    + boolean dataIsLoaded
+    __
+    - Courses[] parseCourseData(data, subjectsAccumulator)
+    - void fetchData()
+    - void onClick(event)
+}
+
+class ImportExport {
+    .. props ..
+    - JSON file
+    - void setter()
+    __
+    - void downloadJSON()
+    - void uploadJSON(event)
+}
+
+class Settings {
+    .. props ..
+    - JSON settings
+    - void setSettings(type, event, value)
+    __
+    - boolean code
+    - boolean time
+    - boolean type
+    - boolean instructor
+    - boolean location
+    - boolean notes
+    __
+    - void setShowSettings(event, value)
+}
+
+class Help {}
+
+class Modal {
+    .. props ..
+    - Course[] courses
+    - Subject[] subjects
+    - boolean dataIsLoaded
+    - void importer(subjects, courses)
+    __
+    - Subject[] selectedSubjects
+    - Course[] selectedCourses
+    __
+    - void getCourseIdsForSubject(subjectCode)
+    - void handleSubjectChange(subjectId, subjectCode, checked)
+    - void handleCourseChange(courseId, subjectId, subjectCode, checked)
+    - void handleImport()
+}
+
+Menu o-- "many" Button
+Menu o-- SubjectAdder
+Menu o-- ServerQuerry
+Menu o-- ImportExport
+Menu o-- Settings
+Menu o-- Help
+ServerQuerry o-- Modal
+
+@enduml

@@ -1,0 +1,57 @@
+@startuml Subjects
+
+class Subjects {
+    .. props ..
+    + Subject[] subjects
+    + void subjectUpdater(id, newCode, newName, newColor, type)
+    + void subjectRemover(id)
+    + void subjectShow(id, show)
+    + void courseAdder(subjectId, code, type, instructor, location, day, startTime, endTime, notes)
+    + void courseRemover(subjectId, courseId)
+    + void courseUpdater(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
+    + void courseShow(subjectId, courseId, show)
+    + JSON settings
+}
+
+class Subject {
+    .. props ..
+    + Subject subject
+    - void subjectUpdater(id, newCode, newName, newColor, type)
+    - void subjectRemover(id)
+    - void subjectShow(id, show)
+    - void courseAdder(subjectId, code, type, instructor, location, day, startTime, endTime, notes)
+    + void courseRemover(subjectId, courseId)
+    + void courseUpdater(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
+    + void courseShow(subjectId, courseId, show)
+    + JSON settings
+    __
+    - void updateButton(subject)
+    - void handleChange()
+    - void handleSubmit(event)
+    - void getStatus()
+    - string getIcon()
+}
+
+class SubjectModal {
+    .. props ..
+    - Subject subject
+    - void updater(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
+    __
+    - void handleSave(event)
+}
+
+class CourseModal {
+    .. props ..
+    - Subject subject
+    - string course_id
+    - void updater(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
+    - JSON settings
+    __
+    - Course course
+    __
+    - void handleSave(event)
+}
+
+Subjects o-- "many" Subject
+Subject o-- SubjectModal
+Subject o-- "many" CourseModal

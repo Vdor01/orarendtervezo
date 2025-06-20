@@ -1,0 +1,7 @@
+@startebnf API
+
+API = "https://tanrend.elte.hu/tanrendnavigation.php?m=", 
+("keres_kod_azon" | "keresnevre" | "keres_okt"), 
+"&f=<szemeszter>&k=<keresett-érték>";
+
+@endebnf

@@ -1,26 +1,11 @@
-@startuml component-diagram
+@startuml FullApp
+!include app.puml
+!include menu.puml
+!include subjects.puml
+!include courses.puml
 
-[Button] #ecec0d
-[Subject] #ecec0d
-[CourseModal] #ecec0d
-[Courses] #ecec0d
-
-[App] --> [Menu]
-[App] --> [Subjects]
-[App] --> [FullCalendar]
-[App] --> [Footer]
-
-[Menu] --> [SubjectAdder]
-[Menu] --> [ServerQuery]
-[Menu] --> [ImportExport]
-[Menu] --> [Settings]
-[Menu] --> [Help]
-[Menu] --> [Button]
-
-[Subjects] --> [Subject]
-
-[Subject] --> [Courses]
-[Subject] --> [SubjectModal]
-[Subject] --> [CourseModal]
+App o-- Menu
+App o-- Subjects
+Subject o-- "many" Courses
 
 @enduml

@@ -1,0 +1,29 @@
+@startuml App
+
+class App {
+    + JSON eventsJSON
+    + JSON settings
+    - JSON events
+
+    - number getNewSubjectId()
+    - number getNewCourseId(subject)
+    + void addSubject(code, name)
+    + void removeSubject(id)
+    + void updateSubject(id, newCode, newName, newColor, type)
+    + void updateShowSubject(id, show)
+    - Date getDateOfThisWeeksDay(dayName)
+    - boolean isDisplayed(subject, course)
+    - boolean isChoosen(subject, course)
+    - Course[] setCourses(subject)
+    - void setChoosenCourse(subjectId, courseId, type)
+    + void addCourse(subjectId, code, type, instructor, location, day, startTime, endTime, notes)
+    + void removeCourse(subjectId, courseId)
+    + void updateCourse(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
+    + void updateShowCourse(subjectId, courseId, show)
+    + void updateSettings(type, event, value)
+    - string getRandomHexColor()
+    + void onEventClick(info)
+    + void importFromArrays(subjects, courses)
+}
+
+@enduml

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Courses = ({ subjectId, choosen, course, remover, type, show: showF }) => {
+const Courses = ({ subjectId, choosen, course, remover, type, show: showF, setter }) => {
 
     let show = course.show;
 
@@ -17,9 +17,13 @@ const Courses = ({ subjectId, choosen, course, remover, type, show: showF }) => 
         }
     }
 
+    function setCourse() {
+        setter(subjectId, course.course, course.type)
+    }
+
     return (
         <tr className={isChoosen() ? 'border-success border-2 rounded-lg' : ''}>
-            <th>{course.course}</th>
+            <th><button className={'btn btn-circle btn-sm ' + (isChoosen() ? 'btn-success' : 'btn-neutral')} onClick={() => setCourse()}>{course.course}</button></th>
             <td>{course.type}</td>
             <td>{course.instructor}</td>
             <td>{course.location}</td>

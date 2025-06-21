@@ -341,7 +341,8 @@ function App() {
                         courseRemover={removeCourse}
                         courseUpdater={updateCourse}
                         courseShow={updateShowCourse}
-                        settings={settings} />
+                        settings={settings}
+                        setter={setChoosenCourse} />
                 </div>
                 <div className='h-0 divider'></div>
                 <FullCalendar

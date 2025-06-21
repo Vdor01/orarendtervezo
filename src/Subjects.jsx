@@ -171,7 +171,7 @@ const CourseModal = ({ subject, course_id, updater, settings }) => {
     )
 }
 
-const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings }) => {
+const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings, setter }) => {
 
     let id = subject.id;
     let code = subject.code;
@@ -259,7 +259,8 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
                                             course={course}
                                             remover={courseRemover}
                                             type={course.type}
-                                            show={courseShow} />
+                                            show={courseShow}
+                                            setter={setter} />
                                     ))}
                                     <tr>
                                         <th className='w-1/12'><input type="text" name='code' placeholder="#" className="w-full max-w-xs input input-bordered input-sm invalid:border-error" /></th>
@@ -319,7 +320,7 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
     )
 }
 
-const Subjects = ({ subjects, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings }) => {
+const Subjects = ({ subjects, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings, setter }) => {
 
     return (
         <div className='flex flex-col gap-5 bg-base-300 card'>
@@ -334,7 +335,8 @@ const Subjects = ({ subjects, subjectUpdater, subjectRemover, subjectShow, cours
                     courseRemover={courseRemover}
                     courseUpdater={courseUpdater}
                     courseShow={courseShow}
-                    settings={settings} />
+                    settings={settings}
+                    setter={setter} />
             ))}
         </div>
     )

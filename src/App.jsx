@@ -28,22 +28,22 @@ function App() {
         const savedEvents = localStorage.getItem('eventsJSON');
         if (savedEvents) {
             setEventsJSON(JSON.parse(savedEvents));
-            console.log('Loaded events from local storage');
+            // console.log('Loaded events from local storage');
         }
 
         const savedSettings = localStorage.getItem('settings');
         if (savedSettings) {
             setSettings(JSON.parse(savedSettings));
-            console.log('Loaded settings from local storage');
+            // console.log('Loaded settings from local storage');
         }
     }, []);
 
     useMemo(() => {
         localStorage.setItem('eventsJSON', JSON.stringify(eventsJSON));
-        console.log('Saved events to local storage');
+        // console.log('Saved events to local storage');
 
         localStorage.setItem('settings', JSON.stringify(settings));
-        console.log('Saved settings to local storage');
+        // console.log('Saved settings to local storage');
     }, [eventsJSON, settings]);
 
     function getNewSubjectId() {
@@ -164,7 +164,8 @@ function App() {
                 instructor: course.instructor,
                 location: course.location,
                 course: course.course,
-                type: course.type
+                type: course.type,
+                notes: course.notes,
             }
         }))
     }

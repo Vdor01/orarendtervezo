@@ -295,29 +295,29 @@ const Settings = ({ settings, setSettings }) => {
                 <div className='flex flex-row gap-8 pt-3'>
                     <div className='grid w-1/4 grid-cols-2 gap-2 form-control'>
                         <h3 className='col-span-2 mb-5 font-bold'>Megjelenő információk</h3>
-                        <label className="cursor-pointer label">
-                            <span className="label-text">Kód</span>
+                        <label className="justify-start gap-3 cursor-pointer label">
                             <input type="checkbox" checked={code} onChange={() => setShowSettings('code', !code)} className="checkbox" />
+                            <span className="label-text">Kurzus</span>
                         </label>
-                        <label className="cursor-pointer label">
-                            <span className="label-text">Idő</span>
+                        <label className="justify-start gap-3 cursor-pointer label">
                             <input type="checkbox" checked={time} onChange={() => setShowSettings('time', !time)} className="checkbox" />
+                            <span className="label-text">Idő</span>
                         </label>
-                        <label className="cursor-pointer label">
-                            <span className="label-text">Típus</span>
+                        <label className="justify-start gap-3 cursor-pointer label">
                             <input type="checkbox" checked={type} onChange={() => setShowSettings('type', !type)} className="checkbox" />
+                            <span className="label-text">Típus</span>
                         </label>
-                        <label className="cursor-pointer label">
-                            <span className="label-text">Oktató</span>
+                        <label className="justify-start gap-3 cursor-pointer label">
                             <input type="checkbox" checked={instructor} onChange={() => setShowSettings('instructor', !instructor)} className="checkbox" />
+                            <span className="label-text">Oktató</span>
                         </label>
-                        <label className="cursor-pointer label">
-                            <span className="label-text">Helyszín</span>
+                        <label className="justify-start gap-3 cursor-pointer label">
                             <input type="checkbox" checked={location} onChange={() => setShowSettings('location', !location)} className="checkbox" />
+                            <span className="label-text">Helyszín</span>
                         </label>
-                        <label className="cursor-pointer label">
-                            <span className="label-text">Megjegyzés</span>
+                        <label className="justify-start gap-3 cursor-pointer label">
                             <input type="checkbox" checked={notes} onChange={() => setShowSettings('notes', !notes)} className="checkbox" />
+                            <span className="label-text">Megjegyzés</span>
                         </label>
                     </div>
                     <div className='flex w-1/4 gap-2 form-control'>

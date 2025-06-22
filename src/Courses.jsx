@@ -22,7 +22,7 @@ const Courses = ({ subjectId, choosen, course, remover, type, show: showF, sette
     }
 
     return (
-        <tr className={isChoosen() ? 'border-success border-2 rounded-lg' : ''}>
+        <tr className={isChoosen() ? 'ring-4 ring-success ring-inset' : ''}>
             <th><button className={'btn btn-circle btn-sm ' + (isChoosen() ? 'btn-success' : 'btn-neutral')} onClick={() => setCourse()}>{course.course}</button></th>
             <td>{course.type}</td>
             <td>{course.instructor}</td>

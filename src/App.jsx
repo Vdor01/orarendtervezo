@@ -327,6 +327,23 @@ function App() {
         });
     }
 
+    function isColorDark(hexColor) {
+        // Remove # if present
+        hexColor = hexColor.replace('#', '');
+
+        // Convert to RGB
+        const r = parseInt(hexColor.substr(0, 2), 16);
+        const g = parseInt(hexColor.substr(2, 2), 16);
+        const b = parseInt(hexColor.substr(4, 2), 16);
+
+        // Calculate perceived brightness
+        // Using relative luminance formula: 0.299*R + 0.587*G + 0.114*B
+        const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
+
+        // Return true if color is dark (brightness below threshold)
+        return brightness < 128;
+    }
+
     return (
         <>
             <div className='flex flex-col gap-5 m-8 w-fit'>
@@ -366,16 +383,21 @@ function App() {
                     timeZone='Europe/Budapest'
                     firstDay={1}
                     eventClick={onEventClick}
-                    eventContent={(arg) => (
-                        <div className='flex flex-col gap-1'>
-                            {settings.show.code && <div>{arg.event.extendedProps.course}</div>}
-                            {settings.show.time && <div>{arg.timeText}</div>}
-                            {settings.show.type && <div>{arg.event.extendedProps.type}</div>}
-                            {settings.show.instructor && <div>{arg.event.extendedProps.instructor}</div>}
-                            {settings.show.location && <div>{arg.event.extendedProps.location}</div>}
-                            {settings.show.notes && <div>{arg.event.extendedProps.notes}</div>}
-                        </div>
-                    )}
+                    eventContent={(arg) => {
+                        const backgroundColor = arg.event.backgroundColor;
+                        const textColor = isColorDark(backgroundColor) ? '#FFFFFF' : '#000000';
+
+                        return (
+                            <div className='flex flex-col gap-1' style={{ color: textColor }}>
+                                {settings.show.code && <div>{arg.event.extendedProps.course}</div>}
+                                {settings.show.time && <div>{arg.timeText}</div>}
+                                {settings.show.type && <div>{arg.event.extendedProps.type}</div>}
+                                {settings.show.instructor && <div>{arg.event.extendedProps.instructor}</div>}
+                                {settings.show.location && <div>{arg.event.extendedProps.location}</div>}
+                                {settings.show.notes && <div>{arg.event.extendedProps.notes}</div>}
+                            </div>
+                        );
+                    }}
                 />
             </div>
             <Footer />

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Courses.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Courses.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react'
+
+/**
+ * Courses component displays a list of courses for a specific subject.
+ * It allows users to choose a course, toggle its visibility, and remove it.
+ * 
+ * @param {number} subjectId - The ID of the subject to which the courses belong.
+ * @param {string|object} choosen - The currently selected course or an object containing the type of the chosen course.
+ * @param {object} course - The course object containing details like course name, type, instructor, location, day, start time, end time, and notes.
+ * @param {function} remover - Function to remove the course from the subject.
+ * @param {string} type - The type of the course (e.g., 'lecture', 'lab').
+ * @param {function} showF - Function to toggle the visibility of the course.
+ * @param {function} setter - Function to set the selected course for the subject.
+ * 
+ * @returns {JSX.Element} A table row containing course details and action buttons.
+ */
+const Courses = ({ subjectId, choosen, course, remover, type, show: showF, setter }) => {
+
+    let show = course.show;
+
+    /**
+     * Handles the change event for toggling course visibility.
+     */
+    function handleChange() {
+        show = !show
+        showF(subjectId, course.id, show)
+    }
+
+    /**
+     * Checks if the current course is the one chosen by the user.
+     * 
+     * @returns {boolean} True if the course is chosen, false otherwise.
+     */
+    function isChoosen() {
+        if (typeof choosen === 'object') {
+            return choosen[type] === course.course
+        } else if (choosen === course.course) {
+            return true
+        }
+    }
+
+    /**
+     * Sets the course as the chosen course for the subject.
+     */
+    function setCourse() {
+        setter(subjectId, course.course, course.type)
+    }
+
+    return (
+        &lt;tr className={isChoosen() ? 'ring-4 ring-success ring-inset' : ''}>
+            &lt;th>&lt;button className={'btn btn-circle btn-sm ' + (isChoosen() ? 'btn-success' : 'btn-neutral')} onClick={() => setCourse()}>{course.course}&lt;/button>&lt;/th>
+            &lt;td>{course.type}&lt;/td>
+            &lt;td>{course.instructor}&lt;/td>
+            &lt;td>{course.location}&lt;/td>
+            &lt;td>{course.day}&lt;/td>
+            &lt;td>{course.startTime}-{course.endTime}&lt;/td>
+            &lt;td>{course.notes}&lt;/td>
+            &lt;td className='flex justify-end gap-2'>
+                &lt;label className="btn btn-circle swap swap-rotate">
+                    &lt;input type="checkbox" onChange={handleChange} checked={!show} />
+
+                    &lt;div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}>&lt;/div>
+                    &lt;div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}>&lt;/div>
+                &lt;/label>
+                &lt;button className="btn btn-circle btn-info" onClick={() => document.getElementById("course_modal_" + subjectId + "_" + course.id).showModal()}>
+                    &lt;i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}>&lt;/i>
+                &lt;/button>
+                &lt;button className="btn btn-circle btn-error" onClick={() => remover(subjectId, course.id)}>
+                    &lt;i className="pi pi-trash" style={{ fontSize: '1.5rem' }}>&lt;/i>
+                &lt;/button>
+            &lt;/td>
+        &lt;/tr>
+    )
+}
+
+export default Courses</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CourseModal">CourseModal</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Help">Help</a></li><li><a href="global.html#ImportExport">ImportExport</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#ServerQuerry">ServerQuerry</a></li><li><a href="global.html#Settings">Settings</a></li><li><a href="global.html#Subject">Subject</a></li><li><a href="global.html#SubjectAdder">SubjectAdder</a></li><li><a href="global.html#SubjectModal">SubjectModal</a></li><li><a href="global.html#Subjects">Subjects</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Jun 29 2025 21:00:38 GMT+0200 (közép-európai nyári idő)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

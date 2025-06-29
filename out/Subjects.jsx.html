@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Subjects.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Subjects.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react'
+import 'primeicons/primeicons.css';
+import Courses from './Courses';
+
+/**
+ * SubjectModal component allows users to modify the details of a subject.
+ * It includes fields for color, code, name, and course type.
+ * @param {Object} subject - The subject object containing details like code, name, and status.
+ * @param {function} updater - Function to update the subject details.
+ * @returns {JSX.Element} A dialog element containing the form for subject modification.
+ */
+const SubjectModal = ({ subject, updater }) => {
+
+    let color = subject.status.color;
+    let code = subject.code;
+    let name = subject.name;
+
+    let type = 'Típusunként egy kurzus';
+    if (typeof subject.status.choosen !== 'object') {
+        subject.status.choosen === -1 ? type = 'Minden kurzus ki van választva' : type = 'Egy kurzus';
+    }
+
+    /**
+     * Handles the save action when the user submits the form.
+     * It collects the form data, calls the updater function, and closes the modal.
+     * 
+     * @param {Event} e - The event object from the form submission.
+     */
+    const handleSave = (e) => {
+        e.preventDefault();
+        var form = document.getElementById("subject_form_" + subject.code);
+        var formData = new FormData(form);
+        updater(subject.id, formData.get('code'), formData.get('name'), formData.get('color'), formData.get('type'));
+        code = formData.get('code');
+        name = formData.get('name');
+        document.getElementById("subject_modal_" + subject.code).close();
+    };
+
+    return (
+        &lt;dialog id={"subject_modal_" + subject.code} className="modal">
+            &lt;div className="w-11/12 max-w-7xl modal-box">
+                &lt;h3 className="text-lg font-bold">Tárgy módosítása&lt;/h3>
+                &lt;form method="dialog" id={"subject_form_" + subject.code} className='flex flex-col items-center justify-between gap-3'>
+                    &lt;div className="flex w-full gap-3 mt-5">
+                        &lt;label className="w-1/12 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Szín&lt;/span>
+                            &lt;/div>
+                            &lt;input name='color' type="color" defaultValue={color} className="w-full p-0 input input-bordered" />
+                        &lt;/label>
+                        &lt;label className="w-3/12 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Kód&lt;/span>
+                            &lt;/div>
+                            &lt;input name='code' type="text" placeholder="Kód" defaultValue={code} className="w-full input input-bordered" />
+                        &lt;/label>
+                        &lt;label className="w-5/12 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Név&lt;/span>
+                            &lt;/div>
+                            &lt;input name='name' type="text" placeholder="Név" defaultValue={name} className="w-full input input-bordered" />
+                        &lt;/label>
+                        &lt;label className="w-3/12 max-w-xs form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Kurzus típusa&lt;/span>
+                            &lt;/div>
+                            &lt;select name='type' defaultValue={type} className="select select-bordered">
+                                &lt;option id='egy'>Egy kurzus&lt;/option>
+                                &lt;option id='tipusonkent'>Típusunként egy kurzus&lt;/option>
+                                &lt;option id='fix'>Minden kurzus ki van választva&lt;/option>
+                            &lt;/select>
+                        &lt;/label>
+                    &lt;/div>
+                    &lt;div className="modal-action">
+                        &lt;button className="btn btn-error">Mégsem&lt;/button>
+                        &lt;button className="btn btn-success" onClick={handleSave}>Mentés&lt;/button>
+                    &lt;/div>
+                &lt;/form>
+            &lt;/div>
+        &lt;/dialog>
+    )
+}
+
+/**
+ * CourseModal component allows users to modify the details of a course within a subject.
+ * It includes fields for course code, type, instructor, location, day, start time, end time, and notes.
+ * 
+ * @param {Object} subject - The subject object containing details like courses.
+ * @param {string} course_id - The ID of the course to be modified.
+ * @param {function} updater - Function to update the course details.
+ * @param {Object} settings - Settings object containing configuration options.
+ * @returns {JSX.Element} A dialog element containing the form for course modification.
+ */
+const CourseModal = ({ subject, course_id, updater, settings }) => {
+
+    let course = subject.courses.find(course => course.id === course_id)
+
+    let code = course.course
+    let type = course.type
+    let instructor = course.instructor
+    let location = course.location
+    let day = course.day
+    let startTime = course.startTime
+    let endTime = course.endTime
+    let notes = course.notes
+
+    /**
+     * Handles the save action when the user submits the course modification form.
+     * It collects the form data, validates the course code, and calls the updater function.
+     * 
+     * @param {Event} e - The event object from the form submission.
+     */
+    const handleSave = (e) => {
+        e.preventDefault();
+        var form = document.getElementById("subject_form_" + subject.id + "_" + course.id);
+        var formData = new FormData(form);
+
+        let error = formData.get('code') === "0" || formData.get('code') === "-1"
+        var codeInput = document.querySelector(`#subject_form_${subject.id}_${course.id} input[name='code']`);
+        if (error) {
+            codeInput.setCustomValidity("A kód nem lehet 0 vagy -1!");
+        } else {
+            codeInput.setCustomValidity("");
+            document.getElementById("course_modal_" + subject.id + "_" + course.id).close();
+            updater(subject.id, course.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
+        }
+        codeInput.reportValidity();
+    };
+
+    return (
+        &lt;dialog id={"course_modal_" + subject.id + "_" + course.id} className="modal">
+            &lt;div className="w-11/12 max-w-7xl modal-box">
+                &lt;h3 className="text-lg font-bold">Kurzus módosítása&lt;/h3>
+                &lt;form method="dialog" id={"subject_form_" + subject.id + "_" + course.id} className='flex flex-col items-center justify-between gap-3'>
+                    &lt;div className="grid w-full grid-cols-12 gap-5 mt-5">
+                        &lt;label className="w-full col-span-2 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Kód&lt;/span>
+                            &lt;/div>
+                            &lt;input type="text" name='code' placeholder="#" defaultValue={code} className="w-full input input-bordered input-sm invalid:border-error" />
+                        &lt;/label>
+                        &lt;label className="w-full col-span-5 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Típus&lt;/span>
+                            &lt;/div>
+                            &lt;select name='type' defaultValue={type} className="w-full select select-bordered select-sm">
+                                &lt;option id='Gyakorlat'>Gyakorlat&lt;/option>
+                                &lt;option id='Előadás'>Előadás&lt;/option>
+                            &lt;/select>
+                        &lt;/label>
+                        &lt;label className="w-full col-span-5 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Oktató&lt;/span>
+                            &lt;/div>
+                            &lt;input type="text" name='instructor' defaultValue={instructor} placeholder="Példa Béla" className="w-full input input-bordered input-sm" />
+                        &lt;/label>
+                        &lt;label className="w-full col-span-6 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Nap&lt;/span>
+                            &lt;/div>
+                            &lt;select name='day' defaultValue={day} className="w-full select select-bordered select-sm">
+                                &lt;option id='Hétfő'>Hétfő&lt;/option>
+                                &lt;option id='Kedd'>Kedd&lt;/option>
+                                &lt;option id='Szerda'>Szerda&lt;/option>
+                                &lt;option id='Csütörtök'>Csütörtök&lt;/option>
+                                &lt;option id='Péntek'>Péntek&lt;/option>
+                                {settings.saturday &amp;&amp; &lt;option id='Szombat'>Szombat&lt;/option>}
+                            &lt;/select>
+                        &lt;/label>
+                        &lt;label className="w-full col-span-6 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Idő&lt;/span>
+                            &lt;/div>
+                            &lt;div className='flex w-full gap-3'>
+                                &lt;input type="time" name='startTime' defaultValue={startTime} className="input input-bordered input-sm" />
+                                -
+                                &lt;input type="time" name='endTime' defaultValue={endTime} className="input input-bordered input-sm" />
+                            &lt;/div>
+                        &lt;/label>
+                        &lt;label className="w-full col-span-6 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Helyszín&lt;/span>
+                            &lt;/div>
+                            &lt;input type="text" name='location' defaultValue={location} placeholder="Északi Tömb 7.15 (PC11)" className="w-full input input-bordered input-sm" />
+                        &lt;/label>
+                        &lt;label className="w-full col-span-6 form-control">
+                            &lt;div className="label">
+                                &lt;span className="label-text">Megjegyzés&lt;/span>
+                            &lt;/div>
+                            &lt;input type="text" name='notes' defaultValue={notes} placeholder="Megjegyzés" className="w-full col-span-6 input input-bordered input-sm" />
+                        &lt;/label>
+                    &lt;/div>
+                    &lt;div className="modal-action">
+                        &lt;button className="btn btn-error">Mégsem&lt;/button>
+                        &lt;button className="btn btn-success" onClick={handleSave}>Mentés&lt;/button>
+                    &lt;/div>
+                &lt;/form>
+            &lt;/div>
+        &lt;/dialog>
+    )
+}
+
+/**
+ * Subject component represents a single subject with its courses.
+ * It includes functionality to update, remove, and show/hide the subject and its courses.
+ * 
+ * @param {Object} subject - The subject object containing details like code, name, courses, and status.
+ * @param {function} subjectUpdater - Function to update the subject details.
+ * @param {function} subjectRemover - Function to remove the subject.
+ * @param {function} subjectShow - Function to toggle the visibility of the subject.
+ * @param {function} courseAdder - Function to add a new course to the subject.
+ * @param {function} courseRemover - Function to remove a course from the subject.
+ * @param {function} courseUpdater - Function to update the course details.
+ * @param {function} courseShow - Function to toggle the visibility of a course.
+ * @param {Object} settings - Settings object containing configuration options.
+ * @param {function} setter - Function to set the selected course for the subject.
+ * @returns {JSX.Element} A div element containing the subject details and its courses.
+ */
+const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings, setter }) => {
+
+    let id = subject.id;
+    let code = subject.code;
+    let name = subject.name;
+    let show = subject.status.show;
+
+    /**
+     * Updates the subject modal to allow editing of the subject details.
+     * 
+     * @param {Object} subject - The subject object containing details like code and name.
+     */
+    function updateButton(subject) { document.getElementById("subject_modal_" + subject.code).showModal() }
+
+    /**
+     * Handles the change event for toggling subject visibility.
+     * It updates the visibility state and calls the subjectShow function.
+     */
+    function handleChange() {
+        show = !show
+        subjectShow(id, show)
+    }
+
+    /**
+     * Handles the submission of the course form.
+     * It collects the form data, validates the course code, and calls the courseAdder function.
+     * 
+     * @param {Event} e - The event object from the form submission.
+     */
+    function handleSubmit(e) {
+        e.preventDefault();
+        var form = document.getElementById("course_form_" + subject.code);
+        var formData = new FormData(form);
+
+        let error = formData.get('code') === "0" || formData.get('code') === "-1"
+        var codeInput = document.querySelector(`#course_form_${subject.code} input[name='code']`);
+        if (error) {
+            codeInput.setCustomValidity("A kód nem lehet 0 vagy -1!");
+        } else {
+            codeInput.setCustomValidity("");
+            courseAdder(subject.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
+        }
+        codeInput.reportValidity();
+    }
+
+    /**
+     * Determines the status of the subject based on the chosen courses.
+     * 
+     * @returns {string} A string representing the CSS class for the subject status.
+     */
+    function getStatus() {
+        if (typeof subject.status.choosen === 'object') {
+            let courseTypes = subject.courses.map(course => course.type);
+            let types = [...new Set(courseTypes)];
+
+            let choosen = 0
+            types.forEach(type => {
+                if (subject.status.choosen[type] !== 0) { choosen++ }
+            });
+            if (choosen === types.length) { return 'bg-success text-base-300' } else if (choosen > 0) { return 'bg-info text-base-300' }
+        } else if (subject.status.choosen !== 0) { return 'bg-success text-base-300' }
+    }
+
+    /**
+     * Determines the icon to display based on the subject's status.
+     * 
+     * @return {string} A string representing the icon class for the subject status.
+     */
+    function getIcon() {
+        if (typeof subject.status.choosen === 'object') {
+            return 'list'
+        } else if (subject.status.choosen >= 0) {
+            return 'check-circle'
+        } else {
+            return 'lock'
+        }
+    }
+
+    return (
+        &lt;div className='flex items-center justify-between gap-3'>
+            &lt;div className="collapse bg-base-200 collapse-arrow">
+                &lt;input type="checkbox" />
+                &lt;div className={"flex items-center gap-4 text-xl font-medium collapse-title " + (getStatus())}>
+                    &lt;span className="w-6 h-6 btn-circle" style={{ backgroundColor: subject.status.color }}>&lt;/span>
+                    &lt;i className={'pi pi-' + getIcon()}>&lt;/i>
+                    &lt;span className="w-2/12 min-w-fit">{code}&lt;/span>
+                    &lt;span className='pl-3'>{name}&lt;/span>
+                &lt;/div>
+                &lt;div className="collapse-content">
+                    &lt;div className="overflow-x-auto">
+                        &lt;form id={"course_form_" + subject.code} onSubmit={(e) => e.preventDefault()}>
+                            &lt;table className="table table-auto table-zebra">
+                                &lt;thead>
+                                    &lt;tr>
+                                        &lt;th>Kurzus&lt;/th>
+                                        &lt;th>Típus&lt;/th>
+                                        &lt;th>Oktató&lt;/th>
+                                        &lt;th>Hely&lt;/th>
+                                        &lt;th>Nap&lt;/th>
+                                        &lt;th>Időpont&lt;/th>
+                                        &lt;th>Megjegyzés&lt;/th>
+                                        &lt;th>&lt;/th>
+                                    &lt;/tr>
+                                &lt;/thead>
+                                &lt;tbody>
+                                    {subject.courses.map((course, index) => (
+                                        &lt;Courses
+                                            key={index}
+                                            subjectId={id}
+                                            choosen={subject.status.choosen}
+                                            course={course}
+                                            remover={courseRemover}
+                                            type={course.type}
+                                            show={courseShow}
+                                            setter={setter} />
+                                    ))}
+                                    &lt;tr>
+                                        &lt;th className='w-1/12'>&lt;input type="text" name='code' placeholder="#" className="w-full max-w-xs input input-bordered input-sm invalid:border-error" />&lt;/th>
+                                        &lt;th className='w-2/12'>
+                                            &lt;select name='type' className="w-full max-w-xs select select-bordered select-sm">
+                                                &lt;option>Gyakorlat&lt;/option>
+                                                &lt;option>Előadás&lt;/option>
+                                            &lt;/select>
+                                        &lt;/th>
+                                        &lt;th className='w-2/12'>&lt;input type="text" name='instructor' placeholder="Példa Béla" className="w-full max-w-xs input input-bordered input-sm" />&lt;/th>
+                                        &lt;th className='w-2/12'>&lt;input type="text" name='location' placeholder="Északi Tömb 7.15 (PC11)" className="w-full max-w-xs input input-bordered input-sm" />&lt;/th>
+                                        &lt;th className='w-2/12'>
+                                            &lt;select name='day' className="w-full max-w-xs select select-bordered select-sm">
+                                                &lt;option>Hétfő&lt;/option>
+                                                &lt;option>Kedd&lt;/option>
+                                                &lt;option>Szerda&lt;/option>
+                                                &lt;option>Csütörtök&lt;/option>
+                                                &lt;option>Péntek&lt;/option>
+                                                {settings.saturday &amp;&amp; &lt;option>Szombat&lt;/option>}
+                                            &lt;/select>
+                                        &lt;/th>
+                                        &lt;th className='flex items-center w-2/12 h-24 gap-1'>
+                                            &lt;input type="time" name='startTime' className="input input-bordered input-sm" />
+                                            -
+                                            &lt;input type="time" name='endTime' className="input input-bordered input-sm" />
+                                        &lt;/th>
+                                        &lt;th className='w-2/12'>&lt;input type="text" name='notes' placeholder="Megjegyzés" className="w-full max-w-xs input input-bordered input-sm" />&lt;/th>
+                                        &lt;th className='w-1/12 text-right'>
+                                            &lt;button className="btn btn-circle btn-success" onClick={handleSubmit}>
+                                                &lt;i className="pi pi-plus" style={{ fontSize: '1.5rem' }}>&lt;/i>
+                                            &lt;/button>
+                                        &lt;/th>
+                                    &lt;/tr>
+                                &lt;/tbody>
+                            &lt;/table>
+                        &lt;/form>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/div>
+            &lt;div className='flex self-start gap-2 mt-1'>
+                &lt;label className="btn btn-circle swap swap-rotate">
+                    &lt;input type="checkbox" onChange={handleChange} checked={!show} />
+
+                    &lt;div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}>&lt;/div>
+                    &lt;div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}>&lt;/div>
+                &lt;/label>
+                &lt;button className="btn btn-circle btn-info" onClick={() => updateButton(subject)}>
+                    &lt;i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}>&lt;/i>
+                &lt;/button>
+                &lt;button className="btn btn-circle btn-error" onClick={() => subjectRemover(id)}>
+                    &lt;i className="pi pi-trash" style={{ fontSize: '1.5rem' }}>&lt;/i>
+                &lt;/button>
+            &lt;/div>
+            &lt;SubjectModal subject={subject} updater={subjectUpdater} />
+            {subject.courses.map((course) => (&lt;CourseModal key={course.id} subject={subject} course_id={course.id} updater={courseUpdater} settings={settings} />))}
+        &lt;/div>
+    )
+}
+
+/**
+ * Subjects component renders a list of subjects.
+ * It maps through the subjects array and renders a Subject component for each subject.
+ * 
+ * @param {Array} subjects - An array of subject objects.
+ * @param {function} subjectUpdater - Function to update the subject details.
+ * @param {function} subjectRemover - Function to remove a subject.
+ * @param {function} subjectShow - Function to toggle the visibility of a subject.
+ * @param {function} courseAdder - Function to add a new course to a subject.
+ * @param {function} courseRemover - Function to remove a course from a subject.
+ * @param {function} courseUpdater - Function to update the course details.
+ * @param {function} courseShow - Function to toggle the visibility of a course.
+ * @param {Object} settings - Settings object containing configuration options.
+ * @param {function} setter - Function to set the selected course for the subject.
+ * @returns {JSX.Element} A div element containing a list of Subject components.
+ */
+const Subjects = ({ subjects, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings, setter }) => {
+
+    return (
+        &lt;div className='flex flex-col gap-5 bg-base-300 card'>
+            {subjects.map((subject) => (
+                &lt;Subject
+                    key={subject.id}
+                    subject={subject}
+                    subjectRemover={subjectRemover}
+                    subjectUpdater={subjectUpdater}
+                    subjectShow={subjectShow}
+                    courseAdder={courseAdder}
+                    courseRemover={courseRemover}
+                    courseUpdater={courseUpdater}
+                    courseShow={courseShow}
+                    settings={settings}
+                    setter={setter} />
+            ))}
+        &lt;/div>
+    )
+}
+
+export default Subjects</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#Button">Button</a></li><li><a href="global.html#CourseModal">CourseModal</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Help">Help</a></li><li><a href="global.html#ImportExport">ImportExport</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#ServerQuerry">ServerQuerry</a></li><li><a href="global.html#Settings">Settings</a></li><li><a href="global.html#Subject">Subject</a></li><li><a href="global.html#SubjectAdder">SubjectAdder</a></li><li><a href="global.html#SubjectModal">SubjectModal</a></li><li><a href="global.html#Subjects">Subjects</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Jun 29 2025 21:00:38 GMT+0200 (közép-európai nyári idő)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

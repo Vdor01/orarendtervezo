@@ -2,6 +2,13 @@ import React from 'react'
 import 'primeicons/primeicons.css';
 import Courses from './Courses';
 
+/**
+ * SubjectModal component allows users to modify the details of a subject.
+ * It includes fields for color, code, name, and course type.
+ * @param {Object} subject - The subject object containing details like code, name, and status.
+ * @param {function} updater - Function to update the subject details.
+ * @returns {JSX.Element} A dialog element containing the form for subject modification.
+ */
 const SubjectModal = ({ subject, updater }) => {
 
     let color = subject.status.color;
@@ -13,6 +20,12 @@ const SubjectModal = ({ subject, updater }) => {
         subject.status.choosen === -1 ? type = 'Minden kurzus ki van választva' : type = 'Egy kurzus';
     }
 
+    /**
+     * Handles the save action when the user submits the form.
+     * It collects the form data, calls the updater function, and closes the modal.
+     * 
+     * @param {Event} e - The event object from the form submission.
+     */
     const handleSave = (e) => {
         e.preventDefault();
         var form = document.getElementById("subject_form_" + subject.code);
@@ -68,6 +81,16 @@ const SubjectModal = ({ subject, updater }) => {
     )
 }
 
+/**
+ * CourseModal component allows users to modify the details of a course within a subject.
+ * It includes fields for course code, type, instructor, location, day, start time, end time, and notes.
+ * 
+ * @param {Object} subject - The subject object containing details like courses.
+ * @param {string} course_id - The ID of the course to be modified.
+ * @param {function} updater - Function to update the course details.
+ * @param {Object} settings - Settings object containing configuration options.
+ * @returns {JSX.Element} A dialog element containing the form for course modification.
+ */
 const CourseModal = ({ subject, course_id, updater, settings }) => {
 
     let course = subject.courses.find(course => course.id === course_id)
@@ -81,6 +104,12 @@ const CourseModal = ({ subject, course_id, updater, settings }) => {
     let endTime = course.endTime
     let notes = course.notes
 
+    /**
+     * Handles the save action when the user submits the course modification form.
+     * It collects the form data, validates the course code, and calls the updater function.
+     * 
+     * @param {Event} e - The event object from the form submission.
+     */
     const handleSave = (e) => {
         e.preventDefault();
         var form = document.getElementById("subject_form_" + subject.id + "_" + course.id);
@@ -171,6 +200,22 @@ const CourseModal = ({ subject, course_id, updater, settings }) => {
     )
 }
 
+/**
+ * Subject component represents a single subject with its courses.
+ * It includes functionality to update, remove, and show/hide the subject and its courses.
+ * 
+ * @param {Object} subject - The subject object containing details like code, name, courses, and status.
+ * @param {function} subjectUpdater - Function to update the subject details.
+ * @param {function} subjectRemover - Function to remove the subject.
+ * @param {function} subjectShow - Function to toggle the visibility of the subject.
+ * @param {function} courseAdder - Function to add a new course to the subject.
+ * @param {function} courseRemover - Function to remove a course from the subject.
+ * @param {function} courseUpdater - Function to update the course details.
+ * @param {function} courseShow - Function to toggle the visibility of a course.
+ * @param {Object} settings - Settings object containing configuration options.
+ * @param {function} setter - Function to set the selected course for the subject.
+ * @returns {JSX.Element} A div element containing the subject details and its courses.
+ */
 const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings, setter }) => {
 
     let id = subject.id;
@@ -178,13 +223,28 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
     let name = subject.name;
     let show = subject.status.show;
 
+    /**
+     * Updates the subject modal to allow editing of the subject details.
+     * 
+     * @param {Object} subject - The subject object containing details like code and name.
+     */
     function updateButton(subject) { document.getElementById("subject_modal_" + subject.code).showModal() }
 
+    /**
+     * Handles the change event for toggling subject visibility.
+     * It updates the visibility state and calls the subjectShow function.
+     */
     function handleChange() {
         show = !show
         subjectShow(id, show)
     }
 
+    /**
+     * Handles the submission of the course form.
+     * It collects the form data, validates the course code, and calls the courseAdder function.
+     * 
+     * @param {Event} e - The event object from the form submission.
+     */
     function handleSubmit(e) {
         e.preventDefault();
         var form = document.getElementById("course_form_" + subject.code);
@@ -201,6 +261,11 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
         codeInput.reportValidity();
     }
 
+    /**
+     * Determines the status of the subject based on the chosen courses.
+     * 
+     * @returns {string} A string representing the CSS class for the subject status.
+     */
     function getStatus() {
         if (typeof subject.status.choosen === 'object') {
             let courseTypes = subject.courses.map(course => course.type);
@@ -214,6 +279,11 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
         } else if (subject.status.choosen !== 0) { return 'bg-success text-base-300' }
     }
 
+    /**
+     * Determines the icon to display based on the subject's status.
+     * 
+     * @return {string} A string representing the icon class for the subject status.
+     */
     function getIcon() {
         if (typeof subject.status.choosen === 'object') {
             return 'list'
@@ -320,6 +390,22 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
     )
 }
 
+/**
+ * Subjects component renders a list of subjects.
+ * It maps through the subjects array and renders a Subject component for each subject.
+ * 
+ * @param {Array} subjects - An array of subject objects.
+ * @param {function} subjectUpdater - Function to update the subject details.
+ * @param {function} subjectRemover - Function to remove a subject.
+ * @param {function} subjectShow - Function to toggle the visibility of a subject.
+ * @param {function} courseAdder - Function to add a new course to a subject.
+ * @param {function} courseRemover - Function to remove a course from a subject.
+ * @param {function} courseUpdater - Function to update the course details.
+ * @param {function} courseShow - Function to toggle the visibility of a course.
+ * @param {Object} settings - Settings object containing configuration options.
+ * @param {function} setter - Function to set the selected course for the subject.
+ * @returns {JSX.Element} A div element containing a list of Subject components.
+ */
 const Subjects = ({ subjects, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings, setter }) => {
 
     return (

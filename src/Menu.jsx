@@ -1,10 +1,23 @@
 import React, { useEffect, useState } from 'react'
 
+/**
+ * SubjectAdder component allows users to add a new subject by providing its name and code.
+ * 
+ * @param {function} adder - Function to call when the user clicks the "Hozzáadás" button.
+ * @returns {JSX.Element} A form for adding a subject with input fields for name and code.
+ */
 const SubjectAdder = ({ adder }) => {
 
     const [subjectName, setName] = useState('')
     const [subjectCode, setCode] = useState('')
 
+    /**
+     * Handles the click event for adding a subject.
+     * It prevents the default form submission, checks if the name or code is empty,
+     * and calls the adder function with the provided name and code.
+     * 
+     * @param {Event} e - The click event object.
+     */
     const onClick = (e) => {
         e.preventDefault()
         let code = subjectCode
@@ -38,6 +51,12 @@ const SubjectAdder = ({ adder }) => {
     )
 }
 
+/**
+ * ServerQuerry component allows users to search for subjects by name or instructor.
+ * 
+ * @param {function} importer - Function to call when the user clicks the "Keresés" button. 
+ * @returns {JSX.Element} A form for searching subjects with input fields for name/code and instructor.
+ */
 const ServerQuerry = ({ importer }) => {
 
     const [subjectNameCode, setNameCode] = useState('')
@@ -47,7 +66,13 @@ const ServerQuerry = ({ importer }) => {
     const [subjects, setSubjects] = useState([])
     const [dataIsLoaded, setDataIsLoaded] = useState(false)
 
-    // Helper: parses and accumulates subjects into a given array
+    /**
+     * Parses the course data from the HTML response and extracts relevant information.
+     * 
+     * @param {string} data - The HTML response containing course data.
+     * @param {Array} subjectsAccumulator - An array to accumulate unique subjects found in the response.
+     * @returns {Array} An array of course objects with parsed details.
+     */
     const parseCourseData = (data, subjectsAccumulator) => {
         const parser = new DOMParser()
         const htmlDoc = parser.parseFromString(data, 'text/html')
@@ -120,6 +145,11 @@ const ServerQuerry = ({ importer }) => {
         return courses;
     }
 
+    /**
+     * Fetches course data based on the current semester and subject name or instructor.
+     * It determines the current academic year and semester based on the current date,
+     * constructs the appropriate API endpoint, and fetches the data.
+     */
     const fetchData = () => {
         const currentDate = new Date()
         const year = currentDate.getFullYear()
@@ -181,6 +211,13 @@ const ServerQuerry = ({ importer }) => {
         }
     };
 
+    /**
+     * Handles the click event for searching subjects.
+     * It prevents the default action, resets the courses and subjects state,
+     * sets the dataIsLoaded state to false, and calls fetchData to retrieve new data.
+     * 
+     * @param {Event} e - The click event object.
+     */
     const onClick = (e) => {
         e.preventDefault()
 
@@ -218,8 +255,20 @@ const ServerQuerry = ({ importer }) => {
     )
 }
 
+/**
+ * ImportExport component allows users to import and export the current schedule as a JSON file.
+ * 
+ * @param {object} file - The current schedule data to be exported or imported.
+ * @param {function} setter - Function to update the schedule data when importing.
+ * @return {JSX.Element} A card containing buttons for exporting and importing the schedule.
+ */
 const ImportExport = ({ file, setter }) => {
 
+    /**
+     * Downloads the current file as a JSON file.
+     * It creates a Blob from the file data, generates a URL for it,
+     * and triggers a download by creating an anchor element and clicking it programmatically.
+     */
     const downloadJSON = () => {
         const blob = new Blob([JSON.stringify(file)], { type: 'application/json' })
 
@@ -231,6 +280,13 @@ const ImportExport = ({ file, setter }) => {
         url.click()
     }
 
+    /**
+     * Handles the file upload event.
+     * It reads the selected file as text, parses it as JSON,
+     * and updates the state with the parsed data.
+     * 
+     * @param {Event} e - The event object from the file input.
+     */
     const uploadJSON = (e) => {
         e.preventDefault()
 
@@ -272,6 +328,15 @@ const ImportExport = ({ file, setter }) => {
     )
 }
 
+/**
+ * Settings component allows users to customize the display settings of the schedule.
+ * It includes options to show/hide course code, time, type, instructor, location, and notes,
+ * as well as settings for the calendar display such as showing Saturday and setting the time interval.
+ * 
+ * @param {object} settings - The current settings object containing display preferences.
+ * @param {function} setSettings - Function to update the settings state.
+ * @return {JSX.Element} A card containing checkboxes and input fields for various settings.
+ */
 const Settings = ({ settings, setSettings }) => {
 
     let code = settings.show.code
@@ -284,6 +349,12 @@ const Settings = ({ settings, setSettings }) => {
     let saturday = settings.saturday
     let interval = settings.slot
 
+    /**
+     * Sets the visibility of a specific setting based on user interaction.
+     * 
+     * @param {string} event - The name of the setting to update (e.g., 'code', 'time').
+     * @param {boolean} value - The new value for the setting (true to show, false to hide).
+     */
     function setShowSettings(event, value) {
         setSettings('show', event, value)
     }
@@ -337,6 +408,12 @@ const Settings = ({ settings, setSettings }) => {
     )
 }
 
+/**
+ * Help component provides information about the website's purpose and how to use it.
+ * It explains the functionality of the site, how to select courses, and the types of subjects available.
+ * 
+ * @returns {JSX.Element} A card containing help information with headings and paragraphs.
+ */
 const Help = () => {
 
     return (
@@ -375,6 +452,12 @@ const Help = () => {
     )
 }
 
+/**
+ * Modal component displays a dialog for importing subjects and courses.
+ * It allows users to select subjects and courses from a list, and import them into the application.
+ * @param {object} props - Contains courses, subjects, dataIsLoaded, and importer function.
+ * @returns {JSX.Element} A dialog element containing a table of subjects and courses with checkboxes for selection.
+ */
 const Modal = (props) => {
     const [selectedSubjects, setSelectedSubjects] = useState([]);
     const [selectedCourses, setSelectedCourses] = useState([]);
@@ -384,11 +467,23 @@ const Modal = (props) => {
         setSelectedCourses([]);
     }, [props.courses]);
 
-    // Helper: get all course ids for a subject
+    /**
+     * Gets all course IDs for a given subject code.
+     * 
+     * @param {string} subjectCode - The code of the subject for which to get course IDs.
+     * @returns {Array} An array of course IDs prefixed with 'c'.
+     */
     const getCourseIdsForSubject = (subjectCode) =>
         props.courses.filter(c => c.subject === subjectCode).map(c => 'c' + c.id);
 
-    // Subject checkbox handler
+    /**
+     * Handles the change event for subject checkboxes.
+     * It updates the selected subjects and courses based on whether the checkbox is checked or not.
+     * 
+     * @param {string} subjectId - The ID of the subject being changed.
+     * @param {string} subjectCode - The code of the subject being changed.
+     * @param {boolean} checked - Indicates whether the checkbox is checked or not.
+     */
     const handleSubjectChange = (subjectId, subjectCode, checked) => {
         if (checked) {
             setSelectedSubjects(prev => [...prev, subjectId]);
@@ -404,17 +499,22 @@ const Modal = (props) => {
         }
     };
 
-    // Course checkbox handler
+    /**
+     * Handles the change event for course checkboxes.
+     * It updates the selected courses and subjects based on whether the checkbox is checked or not.
+     * @param {string} courseId - The ID of the course being changed.
+     * @param {string} subjectId - The ID of the subject associated with the course.
+     * @param {string} subjectCode - The code of the subject associated with the course.
+     * @param {boolean} checked - Indicates whether the checkbox is checked or not.
+     */
     const handleCourseChange = (courseId, subjectId, subjectCode, checked) => {
         if (checked) {
             setSelectedCourses(prev => [...prev, courseId]);
-            // If any course is selected, select the subject
             if (!selectedSubjects.includes(subjectId)) {
                 setSelectedSubjects(prev => [...prev, subjectId]);
             }
         } else {
             setSelectedCourses(prev => prev.filter(id => id !== courseId));
-            // If no courses remain for this subject, unselect the subject
             const remaining = selectedCourses.filter(id => id !== courseId);
             const courseIds = getCourseIdsForSubject(subjectCode);
             if (!courseIds.some(id => remaining.includes(id))) {
@@ -423,7 +523,10 @@ const Modal = (props) => {
         }
     };
 
-    // Handle import action
+    /**
+     * Handles the import action when the user clicks the "Importálás" button.
+     * It collects the selected courses and subjects, logs them, and calls the importer function.
+     */
     const handleImport = () => {
         const selectedCoursesData = props.courses.filter(course =>
             selectedCourses.includes('c' + course.id)
@@ -433,14 +536,8 @@ const Modal = (props) => {
             selectedSubjects.includes('s' + subject.id)
         );
 
-        // Here you would typically send the selected data to your backend or process it further
-        console.log('Selected Courses:', selectedCoursesData);
-        console.log('Selected Subjects:', selectedSubjectsData);
-
-        // Call the importer function with selected data
         props.importer(selectedSubjectsData, selectedCoursesData);
 
-        // Close the modal after import
         document.getElementById('import_modal').close();
     };
 
@@ -548,6 +645,16 @@ const Modal = (props) => {
     );
 };
 
+/**
+ * Button component renders a button with an icon and text.
+ * It applies different styles based on the current mode and whether the button is disabled.
+ * @param {string} text - The text to display on the button.
+ * @param {string} icon - The icon class to display on the button.
+ * @param {string} mode - The current mode to determine the button's style.
+ * @param {function} set - Function to set the current mode when the button is clicked.
+ * @param {boolean} isDisabled - Indicates whether the button should be disabled.
+ * @returns {JSX.Element} A button element with the specified text, icon, and styles.
+ */
 const Button = ({ text, icon, mode, set, isDisabled }) => {
     return (
         <button
@@ -560,6 +667,19 @@ const Button = ({ text, icon, mode, set, isDisabled }) => {
     )
 }
 
+/**
+ * Menu component serves as the main navigation menu for the application.
+ * It allows users to switch between different modes such as adding subjects, querying the server,
+ * importing/exporting data, adjusting settings, and accessing help.
+ * 
+ * @param {function} adder - Function to add subjects.
+ * @param {Array} events - Array of events to be displayed or managed.
+ * @param {function} setter - Function to set the state of the application.
+ * @param {object} settings - Current settings of the application.
+ * @param {function} setSettings - Function to update the settings state.
+ * @param {function} importer - Function to handle data import.
+ * @return {JSX.Element} A div containing the current mode's content and a set of buttons to switch modes.
+ */
 const Menu = ({ adder, events, setter, settings, setSettings, importer }) => {
 
     const [mode, setMode] = useState('Hozzáadás')

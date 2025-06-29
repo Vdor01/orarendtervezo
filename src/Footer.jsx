@@ -1,3 +1,8 @@
+/**
+ * Footer component that displays the footer of the application.
+ * 
+ * @returns {JSX.Element} The footer element containing information and links.
+ */
 function Footer() {
     return (
         <footer className="items-center p-4 footer sm:footer-horizontal bg-neutral text-neutral-content">

@@ -1,14 +1,36 @@
 import React from 'react'
 
+/**
+ * Courses component displays a list of courses for a specific subject.
+ * It allows users to choose a course, toggle its visibility, and remove it.
+ * 
+ * @param {number} subjectId - The ID of the subject to which the courses belong.
+ * @param {string|object} choosen - The currently selected course or an object containing the type of the chosen course.
+ * @param {object} course - The course object containing details like course name, type, instructor, location, day, start time, end time, and notes.
+ * @param {function} remover - Function to remove the course from the subject.
+ * @param {string} type - The type of the course (e.g., 'lecture', 'lab').
+ * @param {function} showF - Function to toggle the visibility of the course.
+ * @param {function} setter - Function to set the selected course for the subject.
+ * 
+ * @returns {JSX.Element} A table row containing course details and action buttons.
+ */
 const Courses = ({ subjectId, choosen, course, remover, type, show: showF, setter }) => {
 
     let show = course.show;
 
+    /**
+     * Handles the change event for toggling course visibility.
+     */
     function handleChange() {
         show = !show
         showF(subjectId, course.id, show)
     }
 
+    /**
+     * Checks if the current course is the one chosen by the user.
+     * 
+     * @returns {boolean} True if the course is chosen, false otherwise.
+     */
     function isChoosen() {
         if (typeof choosen === 'object') {
             return choosen[type] === course.course
@@ -17,6 +39,9 @@ const Courses = ({ subjectId, choosen, course, remover, type, show: showF, sette
         }
     }
 
+    /**
+     * Sets the course as the chosen course for the subject.
+     */
     function setCourse() {
         setter(subjectId, course.course, course.type)
     }

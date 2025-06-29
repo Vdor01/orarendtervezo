@@ -195,7 +195,7 @@ const ServerQuerry = ({ importer }) => {
     return (
         <div className="w-full shadow-xl card bg-base-300 card-compact">
             <div className="card-body">
-                <h2 className="card-title">Tárgy importálása ELTE TO szerverről</h2>
+                <h2 className="card-title">Tárgy importálása ELTE Tanrend adatbázisból</h2>
                 <label className="w-full form-control">
                     <div className="label">
                         <span className="label-text">Tárgy neve / kódja</span>

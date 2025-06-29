@@ -1,0 +1,99 @@
+@startuml use-case
+
+!theme plain
+' !pragma layout smetana
+
+skinparam linetype ortho
+' skinparam linetype polyline
+' skinparam nodesep 100
+' skinparam ranksep 80
+
+left to right direction
+
+actor "Egyetemi hallgató" as Student
+actor "ELTE Tanrend API" as API
+
+rectangle "Órarend-tervező rendszer" {
+    package "Tárgy kezelés" {
+        usecase "Tárgy létrehozása" as TC
+        usecase "Tárgy létrehozása\n(manuális)" as UC1
+        usecase "Tárgy szerkesztése" as UC2
+        usecase "Tárgy törlése" as UC3
+        usecase "Tárgy lekérdezése" as UC4
+        usecase "Tárgy hozzáadása\nlekérdezésből" as UC5
+    }
+    
+    package "Kurzus kezelés" {
+        usecase "Kurzus hozzáadása" as UC6
+        usecase "Kurzus szerkesztése" as UC7
+        usecase "Kurzus törlése" as UC8
+        usecase "Kurzus kiválasztása" as UC9
+        usecase "Kurzus elrejtése" as UC10
+    }
+    
+    package "Órarend kezelés" {
+        usecase "Órarend megtekintése" as UC11
+        usecase "Órarend exportálása\n(JSON)" as UC12
+        usecase "Órarend importálása\n(JSON)" as UC13
+    }
+    
+    package "Rendszer beállítások" {
+        usecase "Beállítások módosítása" as UC14
+        usecase "Súgó megtekintése" as UC15
+    }
+}
+
+' Kapcsolatok a hallgatóval
+Student --> UC1
+Student --> UC2
+Student --> UC3
+Student --> UC4
+Student --> UC5
+Student --> UC6
+Student --> UC7
+Student --> UC8
+Student --> UC9
+Student --> UC10
+Student --> UC11
+Student --> UC12
+Student --> UC13
+Student --> UC14
+Student --> UC15
+
+' Kapcsolat az API-val
+API --> UC4 : szolgáltatja az adatokat
+
+' Kapcsolatok a tárgy kezeléssel
+TC <|-- UC1
+TC <|-- UC5
+
+' Include kapcsolatok
+UC3 .> UC8 : <<include>>
+UC13 .> UC1 : <<include>>
+UC13 .> UC6 : <<include>>
+UC5 .> UC6 : <<include>>
+
+' Extend kapcsolatok
+UC4 .> UC5 : <<extend>>
+
+note right of UC4
+    Tárgy neve/kódja vagy
+    oktató neve alapján
+end note
+
+note right of UC9
+    Kiválasztás típusa függ
+    a tárgy beállításától:
+    - Egy kurzus
+    - Típusonként egy kurzus
+    - Minden kurzus
+end note
+
+note right of UC14
+    - Megjelenő információk
+    - Órarend beállítások
+    - Szombat megjelenítése
+    - Időintervallum
+end note
+
+@enduml

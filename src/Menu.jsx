@@ -191,8 +191,27 @@ const ServerQuerry = ({ importer }) => {
                 .then(data => {
                     const secondCourses = parseCourseData(data, subjectsAccumulator);
                     setCourses(prevItems => {
-                        return [...prevItems, ...secondCourses];
+                        const allCourses = [...prevItems, ...secondCourses];
+
+                        const uniqueCourses = allCourses.filter((course, index, self) => {
+                            return index === self.findIndex(c =>
+                                c.subject === course.subject &&
+                                c.course === course.course &&
+                                c.type === course.type &&
+                                c.day === course.day &&
+                                c.startTime === course.startTime &&
+                                c.endTime === course.endTime &&
+                                c.instructor === course.instructor &&
+                                c.location === course.location
+                            );
+                        });
+
+                        return uniqueCourses.map((course, index) => ({
+                            ...course,
+                            id: index
+                        }));
                     });
+
                     setSubjects(subjectsAccumulator);
                     setDataIsLoaded(true);
                 })

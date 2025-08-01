@@ -9,11 +9,16 @@ function Footer() {
             <aside className="items-center grid-flow-col">
                 <p>Készült <i className="pi pi-heart-fill"></i>-el.</p>
             </aside>
-            <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+            <aside className="place-self-center justify-self-center">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScF0AuHjVeq3Qh8QWloaXTaTEut2f4nS-g9quhce-OK0rDGwA/viewform?usp=dialog" target="_blank" className="btn btn-link">
+                    Visszajelzés küldése <i className='text-md pi pi-external-link'></i>
+                </a>
+            </aside>
+            <aside className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
                 <a href="https://github.com/Vdor01/orarendtervezo" target="_blank">
                     <i className='text-2xl pi pi-github'></i>
                 </a>
-            </nav>
+            </aside>
         </footer>
     )
 }

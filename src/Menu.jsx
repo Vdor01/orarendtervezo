@@ -67,6 +67,31 @@ const ServerQuerry = ({ importer }) => {
     const [dataIsLoaded, setDataIsLoaded] = useState(false)
 
     /**
+     * Generates a list of semesters based on the current date.
+     * 
+     * @returns {Array} An array of semester strings in the format "YYYY-YYYY-X", where X is the semester number.
+     */
+    const getSemesters = () => {
+        const currentYear = new Date().getFullYear()
+        const currentMonth = new Date().getMonth()
+        const semesters = []
+
+        if (currentMonth >= 6) {
+            semesters.push(`${currentYear}-${currentYear + 1}-1`)
+            semesters.push(`${currentYear - 1}-${currentYear}-2`)
+            semesters.push(`${currentYear - 1}-${currentYear}-1`)
+        } else {
+            semesters.push(`${currentYear - 1}-${currentYear}-2`)
+            semesters.push(`${currentYear - 1}-${currentYear}-1`)
+            semesters.push(`${currentYear - 2}-${currentYear - 1}-2`)
+        }
+
+        return semesters
+    }
+
+    const [semester, setSemester] = useState(getSemesters()[0])
+
+    /**
      * Parses the course data from the HTML response and extracts relevant information.
      * 
      * @param {string} data - The HTML response containing course data.
@@ -151,23 +176,7 @@ const ServerQuerry = ({ importer }) => {
      * constructs the appropriate API endpoint, and fetches the data.
      */
     const fetchData = () => {
-        const currentDate = new Date()
-        const year = currentDate.getFullYear()
-        const month = currentDate.getMonth()
-
-        let academicYear
-        let semester
-
-        if (month >= 7) {
-            academicYear = `${year}-${year + 1}`
-            semester = "1"
-        } else if (month >= 0 && month < 7) {
-            academicYear = `${year - 1}-${year}`
-            semester = "2"
-        }
-
-        const semesterCode = `${academicYear}-${semester}`
-        console.log(`Fetching data for semester: ${semesterCode}`)
+        console.log(`Fetching data for semester: ${semester}`)
 
         const subjectsAccumulator = []
 
@@ -180,12 +189,12 @@ const ServerQuerry = ({ importer }) => {
             console.error('TODO : Implement search by subject name and instructor')
         }
         else if (subjectNameCode !== '') {
-            fetch(`${API_BASE}?m=keres_kod_azon&f=${semesterCode}&k=${subjectNameCode}`)
+            fetch(`${API_BASE}?m=keres_kod_azon&f=${semester}&k=${subjectNameCode}`)
                 .then(response => response.text())
                 .then(data => {
                     const firstCourses = parseCourseData(data, subjectsAccumulator);
                     setCourses(firstCourses);
-                    return fetch(`${API_BASE}?m=keresnevre&f=${semesterCode}&k=${subjectNameCode}`)
+                    return fetch(`${API_BASE}?m=keresnevre&f=${semester}&k=${subjectNameCode}`)
                 })
                 .then(response => response.text())
                 .then(data => {
@@ -218,7 +227,7 @@ const ServerQuerry = ({ importer }) => {
                 .catch(error => console.error('Error fetching subjects:', error));
         }
         else if (subjectInstructor !== '') {
-            fetch(`${API_BASE}?m=keres_okt&f=${semesterCode}&k=${subjectInstructor}`)
+            fetch(`${API_BASE}?m=keres_okt&f=${semester}&k=${subjectInstructor}`)
                 .then(response => response.text())
                 .then(data => {
                     const courses = parseCourseData(data, subjectsAccumulator);
@@ -250,7 +259,7 @@ const ServerQuerry = ({ importer }) => {
 
     return (
         <div className="w-full shadow-xl card bg-base-300 card-compact">
-            <div className="card-body">
+            <form className="card-body" id='subject_search_form'>
                 <h2 className="card-title">Tárgy importálása ELTE Tanrend adatbázisból</h2>
                 <label className="w-full form-control">
                     <div className="label">
@@ -265,9 +274,14 @@ const ServerQuerry = ({ importer }) => {
                     <input type="text" placeholder="Oktató neve" value={subjectInstructor} onChange={(e) => setInstructor(e.target.value)} className="w-full input input-bordered" />
                 </label>
                 <div className="justify-center mt-5 card-actions">
+                    <select className="select" value={semester} onChange={(e) => setSemester(e.target.value)}>
+                        {semester && getSemesters().map((sem, index) => (
+                            <option key={index} value={sem}>{sem}</option>
+                        ))}
+                    </select>
                     <button className="btn btn-primary" onClick={(e) => onClick(e)}>Keresés</button>
                 </div>
-            </div>
+            </form>
 
             <Modal courses={courses} subjects={subjects} dataIsLoaded={dataIsLoaded} importer={importer} />
         </div>

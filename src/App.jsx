@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { createRef, useMemo, useState } from 'react'
+import { exportTimetableWithCanvas } from './CanvasExport'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
@@ -29,6 +30,8 @@ function App() {
         "slot": 20
     })
 
+    const timetableRef = createRef();
+
     useMemo(() => {
         const savedEvents = localStorage.getItem('eventsJSON');
         if (savedEvents) {
@@ -46,6 +49,32 @@ function App() {
 
         localStorage.setItem('settings', JSON.stringify(settings));
     }, [eventsJSON, settings]);
+
+    /**
+     * Exports the timetable as a PNG image using different export methods.
+     */
+    async function exportTimetableAsPNGHandler() {
+        try {
+            console.log("Export handler called");
+
+            const calendarElement = timetableRef.current?.elRef?.current?.querySelector('.fc') ||
+                timetableRef.current?.el?.querySelector('.fc') ||
+                timetableRef.current?.querySelector?.('.fc') ||
+                document.querySelector('.fc');
+
+            if (calendarElement) {
+                console.log("Exporting with Canvas...");
+                await exportTimetableWithCanvas(calendarElement);
+                console.log("Canvas export completed");
+            } else {
+                console.error("Calendar element not found for Canvas export");
+                console.log("Available elements with fc class:", document.querySelectorAll('.fc'));
+            }
+        } catch (error) {
+            console.error('Export failed:', error);
+            alert('Export failed: ' + error.message);
+        }
+    }
 
     /**
      * Gives a new subject ID based on the last subject ID in the eventsJSON array.
@@ -495,7 +524,7 @@ function App() {
     return (
         <>
             <div className='flex flex-col gap-5 m-8 w-fit'>
-                <Menu adder={addSubject} events={eventsJSON} setter={setEventsJSON} settings={settings} setSettings={updateSettings} importer={importFromArrays} />
+                <Menu adder={addSubject} events={eventsJSON} setter={setEventsJSON} settings={settings} setSettings={updateSettings} importer={importFromArrays} exportTimetable={exportTimetableAsPNGHandler} />
                 <div className='w-full'>
                     <Subjects
                         subjects={eventsJSON}
@@ -511,6 +540,7 @@ function App() {
                 </div>
                 <div className='h-0 divider'></div>
                 <FullCalendar
+                    ref={timetableRef}
                     plugins={[timeGridPlugin, momentTimezonePlugin]}
                     initialView="timeGridWeek"
                     hiddenDays={settings.saturday ? [0] : [0, 6]}

@@ -293,9 +293,10 @@ const ServerQuerry = ({ importer }) => {
  * 
  * @param {object} file - The current schedule data to be exported or imported.
  * @param {function} setter - Function to update the schedule data when importing.
+ * @param {function} exportTimetable - Function to export the timetable as PNG.
  * @return {JSX.Element} A card containing buttons for exporting and importing the schedule.
  */
-const ImportExport = ({ file, setter }) => {
+const ImportExport = ({ file, setter, exportTimetable }) => {
 
     /**
      * Downloads the current file as a JSON file.
@@ -341,19 +342,25 @@ const ImportExport = ({ file, setter }) => {
             <div className="card-body">
                 <h2 className="card-title">Órarend importálása / exportálása</h2>
                 <div className='flex justify-center gap-5'>
-                    <button className={"justify-start btn btn-lg btn-outline"} onClick={() => downloadJSON()}>
-                        <i className={"pi pi-file-export"}></i>
-                        Exportálás
+                    <button className={"justify-start btn btn-lg btn-outline"} onClick={() => exportTimetable()}>
+                        <i className={"pi pi-image"}></i>
+                        PNG Exportálása
                     </button>
                 </div>
-                <div className="divider"></div>
+                <div className="divider">JSON</div>
                 <form id='importer'>
-                    <div className='flex justify-center gap-5'>
-                        <input type="file" name='file' className="w-full max-w-lg file-input file-input-lg file-input-bordered" accept='.json' />
-                        <button className={"justify-start btn btn-lg btn-outline"} onClick={(e) => uploadJSON(e)}>
-                            <i className={"pi pi-file-import"}></i>
-                            Importálás
+                    <div className='flex flex-col items-center justify-center gap-5'>
+                        <button className={"justify-start btn btn-lg btn-outline w-fit"} onClick={() => downloadJSON()}>
+                            <i className={"pi pi-file-export"}></i>
+                            Exportálás
                         </button>
+                        <div className='flex gap-2'>
+                            <input type="file" name='file' className="w-full max-w-lg file-input file-input-lg file-input-bordered" accept='.json' />
+                            <button className={"justify-start btn btn-lg btn-outline"} onClick={(e) => uploadJSON(e)}>
+                                <i className={"pi pi-file-import"}></i>
+                                Importálás
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -713,7 +720,7 @@ const Button = ({ text, icon, mode, set, isDisabled }) => {
  * @param {function} importer - Function to handle data import.
  * @return {JSX.Element} A div containing the current mode's content and a set of buttons to switch modes.
  */
-const Menu = ({ adder, events, setter, settings, setSettings, importer }) => {
+const Menu = ({ adder, events, setter, settings, setSettings, importer, exportTimetable }) => {
 
     const [mode, setMode] = useState('Hozzáadás')
 
@@ -724,7 +731,7 @@ const Menu = ({ adder, events, setter, settings, setSettings, importer }) => {
             case 'Lekérés':
                 return <ServerQuerry importer={importer} />
             case 'Import / Export':
-                return <ImportExport file={events} setter={setter} />
+                return <ImportExport file={events} setter={setter} exportTimetable={exportTimetable} />
             case 'Beállítások':
                 return <Settings settings={settings} setSettings={setSettings} />
             case 'Súgó':

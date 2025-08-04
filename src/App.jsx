@@ -7,6 +7,7 @@ import huLocale from '@fullcalendar/core/locales/hu';
 import Subjects from './Subjects';
 import Menu from './Menu';
 import Footer from './Footer';
+import { Analytics } from '@vercel/analytics/react';
 
 /**
  * The main application component that manages the calendar and subjects.
@@ -579,6 +580,7 @@ function App() {
                 />
             </div>
             <Footer />
+            <Analytics />
         </>
     )
 }

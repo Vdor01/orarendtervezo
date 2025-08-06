@@ -8,6 +8,7 @@ import Subjects from './Subjects';
 import Menu from './Menu';
 import Footer from './Footer';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import { AppProviders, useTimetable, useSettings } from './contexts';
 
 /**
@@ -218,6 +219,7 @@ function TimetableApp() {
             </div>
             <Footer />
             <Analytics />
+            <SpeedInsights />
         </>
     )
 }

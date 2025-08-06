@@ -524,6 +524,9 @@ function App() {
 
     return (
         <>
+            <div className="justify-center px-5 shadow-sm navbar bg-info">
+                <p>Az oldal jelenleg aktív fejlesztés alatt van, türelmeteket kérem. Bármilyen észrevétel és javaslat a fejlesztéshez fontos számomra!</p>
+            </div>
             <div className='flex flex-col gap-5 m-8 w-fit'>
                 <Menu adder={addSubject} events={eventsJSON} setter={setEventsJSON} settings={settings} setSettings={updateSettings} importer={importFromArrays} exportTimetable={exportTimetableAsPNGHandler} />
                 <div className='w-full'>

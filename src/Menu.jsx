@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
+import { useTimetable, useSettings } from './contexts'
 
 /**
  * SubjectAdder component allows users to add a new subject by providing its name and code.
  * 
- * @param {function} adder - Function to call when the user clicks the "Hozzáadás" button.
  * @returns {JSX.Element} A form for adding a subject with input fields for name and code.
  */
-const SubjectAdder = ({ adder }) => {
+const SubjectAdder = () => {
+    const { addSubject } = useTimetable();
 
     const [subjectName, setName] = useState('')
     const [subjectCode, setCode] = useState('')
@@ -24,7 +25,7 @@ const SubjectAdder = ({ adder }) => {
         let name = subjectName
         if (name === '') { name = code }
         if (code === '') { code = name }
-        adder(code, name)
+        addSubject(code, name)
     }
 
     return (
@@ -54,10 +55,10 @@ const SubjectAdder = ({ adder }) => {
 /**
  * ServerQuerry component allows users to search for subjects by name or instructor.
  * 
- * @param {function} importer - Function to call when the user clicks the "Keresés" button. 
  * @returns {JSX.Element} A form for searching subjects with input fields for name/code and instructor.
  */
-const ServerQuerry = ({ importer }) => {
+const ServerQuerry = () => {
+    const { importFromArrays } = useTimetable();
 
     const [subjectNameCode, setNameCode] = useState('')
     const [subjectInstructor, setInstructor] = useState('')
@@ -283,20 +284,21 @@ const ServerQuerry = ({ importer }) => {
                 </div>
             </form>
 
-            <Modal courses={courses} subjects={subjects} dataIsLoaded={dataIsLoaded} importer={importer} />
+            <Modal courses={courses} subjects={subjects} dataIsLoaded={dataIsLoaded} importer={importFromArrays} />
         </div>
     )
 }
 
 /**
  * ImportExport component allows users to import and export the current schedule as a JSON file.
+ * It also provides functionality to download the current schedule as a PNG file.
  * 
- * @param {object} file - The current schedule data to be exported or imported.
- * @param {function} setter - Function to update the schedule data when importing.
  * @param {function} exportTimetable - Function to export the timetable as PNG.
  * @return {JSX.Element} A card containing buttons for exporting and importing the schedule.
  */
-const ImportExport = ({ file, setter, exportTimetable }) => {
+const ImportExport = ({ exportTimetable }) => {
+
+    const { eventsJSON, setEventsJSON } = useTimetable();
 
     /**
      * Downloads the current file as a JSON file.
@@ -304,7 +306,7 @@ const ImportExport = ({ file, setter, exportTimetable }) => {
      * and triggers a download by creating an anchor element and clicking it programmatically.
      */
     const downloadJSON = () => {
-        const blob = new Blob([JSON.stringify(file)], { type: 'application/json' })
+        const blob = new Blob([JSON.stringify(eventsJSON)], { type: 'application/json' })
 
         const url = document.createElement('a')
         url.href = URL.createObjectURL(blob)
@@ -331,7 +333,7 @@ const ImportExport = ({ file, setter, exportTimetable }) => {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const json = JSON.parse(event.target.result);
-                setter(json);
+                setEventsJSON(json);
             };
             reader.readAsText(file);
         }
@@ -373,11 +375,11 @@ const ImportExport = ({ file, setter, exportTimetable }) => {
  * It includes options to show/hide course code, time, type, instructor, location, and notes,
  * as well as settings for the calendar display such as showing Saturday and setting the time interval.
  * 
- * @param {object} settings - The current settings object containing display preferences.
- * @param {function} setSettings - Function to update the settings state.
  * @return {JSX.Element} A card containing checkboxes and input fields for various settings.
  */
-const Settings = ({ settings, setSettings }) => {
+const Settings = () => {
+
+    const { settings, updateSettings } = useSettings();
 
     let code = settings.show.code
     let time = settings.show.time
@@ -396,7 +398,7 @@ const Settings = ({ settings, setSettings }) => {
      * @param {boolean} value - The new value for the setting (true to show, false to hide).
      */
     function setShowSettings(event, value) {
-        setSettings('show', event, value)
+        updateSettings('show', event, value)
     }
 
     return (
@@ -435,11 +437,11 @@ const Settings = ({ settings, setSettings }) => {
                         <h3 className='mb-5 font-bold'>Naptár</h3>
                         <label className="cursor-pointer label">
                             <span className="label-text">Szombat</span>
-                            <input type="checkbox" checked={saturday} onChange={() => setSettings('misc', 'saturday', !saturday)} className="checkbox" />
+                            <input type="checkbox" checked={saturday} onChange={() => updateSettings('misc', 'saturday', !saturday)} className="checkbox" />
                         </label>
                         <label className="cursor-pointer label">
                             <span className="label-text">Időintervallum (perc)</span>
-                            <input type="number" step={5} min={10} value={interval} onChange={(e) => setSettings('misc', 'slot', e.target.value)} className="w-16 input input-sm" />
+                            <input type="number" step={5} min={10} value={interval} onChange={(e) => updateSettings('misc', 'slot', e.target.value)} className="w-16 input input-sm" />
                         </label>
                     </div>
                 </div>
@@ -721,20 +723,19 @@ const Button = ({ text, icon, mode, set, isDisabled }) => {
  * @param {function} importer - Function to handle data import.
  * @return {JSX.Element} A div containing the current mode's content and a set of buttons to switch modes.
  */
-const Menu = ({ adder, events, setter, settings, setSettings, importer, exportTimetable }) => {
-
+const Menu = ({ exportTimetable }) => {
     const [mode, setMode] = useState('Hozzáadás')
 
     function modeSwitch(param) {
         switch (param) {
             case 'Hozzáadás':
-                return <SubjectAdder adder={adder} />
+                return <SubjectAdder />
             case 'Lekérés':
-                return <ServerQuerry importer={importer} />
+                return <ServerQuerry />
             case 'Import / Export':
-                return <ImportExport file={events} setter={setter} exportTimetable={exportTimetable} />
+                return <ImportExport exportTimetable={exportTimetable} />
             case 'Beállítások':
-                return <Settings settings={settings} setSettings={setSettings} />
+                return <Settings />
             case 'Súgó':
                 return <Help />
         }

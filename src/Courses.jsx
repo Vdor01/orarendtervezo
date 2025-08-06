@@ -1,20 +1,20 @@
 import React from 'react'
+import { useTimetable } from './contexts'
 
 /**
  * Courses component displays a list of courses for a specific subject.
  * It allows users to choose a course, toggle its visibility, and remove it.
+ * Uses Context API to access timetable functions.
  * 
  * @param {number} subjectId - The ID of the subject to which the courses belong.
  * @param {string|object} choosen - The currently selected course or an object containing the type of the chosen course.
  * @param {object} course - The course object containing details like course name, type, instructor, location, day, start time, end time, and notes.
- * @param {function} remover - Function to remove the course from the subject.
  * @param {string} type - The type of the course (e.g., 'lecture', 'lab').
- * @param {function} showF - Function to toggle the visibility of the course.
- * @param {function} setter - Function to set the selected course for the subject.
  * 
  * @returns {JSX.Element} A table row containing course details and action buttons.
  */
-const Courses = ({ subjectId, choosen, course, remover, type, show: showF, setter }) => {
+const Courses = ({ subjectId, choosen, course, type }) => {
+    const { removeCourse, updateShowCourse, setChoosenCourse } = useTimetable();
 
     let show = course.show;
 
@@ -23,7 +23,7 @@ const Courses = ({ subjectId, choosen, course, remover, type, show: showF, sette
      */
     function handleChange() {
         show = !show
-        showF(subjectId, course.id, show)
+        updateShowCourse(subjectId, course.id, show)
     }
 
     /**
@@ -43,7 +43,7 @@ const Courses = ({ subjectId, choosen, course, remover, type, show: showF, sette
      * Sets the course as the chosen course for the subject.
      */
     function setCourse() {
-        setter(subjectId, course.course, course.type)
+        setChoosenCourse(subjectId, course.course, course.type)
     }
 
     return (
@@ -65,7 +65,7 @@ const Courses = ({ subjectId, choosen, course, remover, type, show: showF, sette
                 <button className="btn btn-circle btn-info" onClick={() => document.getElementById("course_modal_" + subjectId + "_" + course.id).showModal()}>
                     <i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}></i>
                 </button>
-                <button className="btn btn-circle btn-error" onClick={() => remover(subjectId, course.id)}>
+                <button className="btn btn-circle btn-error" onClick={() => removeCourse(subjectId, course.id)}>
                     <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
                 </button>
             </td>

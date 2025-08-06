@@ -1,15 +1,17 @@
 import React from 'react'
 import 'primeicons/primeicons.css';
 import Courses from './Courses';
+import { useTimetable, useSettings } from './contexts';
 
 /**
  * SubjectModal component allows users to modify the details of a subject.
  * It includes fields for color, code, name, and course type.
+ * Uses Context API to access timetable functions.
  * @param {Object} subject - The subject object containing details like code, name, and status.
- * @param {function} updater - Function to update the subject details.
  * @returns {JSX.Element} A dialog element containing the form for subject modification.
  */
-const SubjectModal = ({ subject, updater }) => {
+const SubjectModal = ({ subject }) => {
+    const { updateSubject } = useTimetable();
 
     let color = subject.status.color;
     let code = subject.code;
@@ -22,7 +24,7 @@ const SubjectModal = ({ subject, updater }) => {
 
     /**
      * Handles the save action when the user submits the form.
-     * It collects the form data, calls the updater function, and closes the modal.
+     * It collects the form data, calls the updateSubject function, and closes the modal.
      * 
      * @param {Event} e - The event object from the form submission.
      */
@@ -30,7 +32,7 @@ const SubjectModal = ({ subject, updater }) => {
         e.preventDefault();
         var form = document.getElementById("subject_form_" + subject.code);
         var formData = new FormData(form);
-        updater(subject.id, formData.get('code'), formData.get('name'), formData.get('color'), formData.get('type'));
+        updateSubject(subject.id, formData.get('code'), formData.get('name'), formData.get('color'), formData.get('type'));
         code = formData.get('code');
         name = formData.get('name');
         document.getElementById("subject_modal_" + subject.code).close();
@@ -84,14 +86,15 @@ const SubjectModal = ({ subject, updater }) => {
 /**
  * CourseModal component allows users to modify the details of a course within a subject.
  * It includes fields for course code, type, instructor, location, day, start time, end time, and notes.
+ * Uses Context API to access timetable and settings functions.
  * 
  * @param {Object} subject - The subject object containing details like courses.
  * @param {string} course_id - The ID of the course to be modified.
- * @param {function} updater - Function to update the course details.
- * @param {Object} settings - Settings object containing configuration options.
  * @returns {JSX.Element} A dialog element containing the form for course modification.
  */
-const CourseModal = ({ subject, course_id, updater, settings }) => {
+const CourseModal = ({ subject, course_id }) => {
+    const { updateCourse } = useTimetable();
+    const { settings } = useSettings();
 
     let course = subject.courses.find(course => course.id === course_id)
 
@@ -106,7 +109,7 @@ const CourseModal = ({ subject, course_id, updater, settings }) => {
 
     /**
      * Handles the save action when the user submits the course modification form.
-     * It collects the form data, validates the course code, and calls the updater function.
+     * It collects the form data, validates the course code, and calls the updateCourse function.
      * 
      * @param {Event} e - The event object from the form submission.
      */
@@ -122,7 +125,7 @@ const CourseModal = ({ subject, course_id, updater, settings }) => {
         } else {
             codeInput.setCustomValidity("");
             document.getElementById("course_modal_" + subject.id + "_" + course.id).close();
-            updater(subject.id, course.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
+            updateCourse(subject.id, course.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
         }
         codeInput.reportValidity();
     };
@@ -203,20 +206,14 @@ const CourseModal = ({ subject, course_id, updater, settings }) => {
 /**
  * Subject component represents a single subject with its courses.
  * It includes functionality to update, remove, and show/hide the subject and its courses.
+ * Uses Context API to access all timetable and settings functions.
  * 
  * @param {Object} subject - The subject object containing details like code, name, courses, and status.
- * @param {function} subjectUpdater - Function to update the subject details.
- * @param {function} subjectRemover - Function to remove the subject.
- * @param {function} subjectShow - Function to toggle the visibility of the subject.
- * @param {function} courseAdder - Function to add a new course to the subject.
- * @param {function} courseRemover - Function to remove a course from the subject.
- * @param {function} courseUpdater - Function to update the course details.
- * @param {function} courseShow - Function to toggle the visibility of a course.
- * @param {Object} settings - Settings object containing configuration options.
- * @param {function} setter - Function to set the selected course for the subject.
  * @returns {JSX.Element} A div element containing the subject details and its courses.
  */
-const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings, setter }) => {
+const Subject = ({ subject }) => {
+    const { removeSubject, updateShowSubject, addCourse } = useTimetable();
+    const { settings } = useSettings();
 
     let id = subject.id;
     let code = subject.code;
@@ -232,16 +229,16 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
 
     /**
      * Handles the change event for toggling subject visibility.
-     * It updates the visibility state and calls the subjectShow function.
+     * It updates the visibility state and calls the updateShowSubject function.
      */
     function handleChange() {
         show = !show
-        subjectShow(id, show)
+        updateShowSubject(id, show)
     }
 
     /**
      * Handles the submission of the course form.
-     * It collects the form data, validates the course code, and calls the courseAdder function.
+     * It collects the form data, validates the course code, and calls the addCourse function.
      * 
      * @param {Event} e - The event object from the form submission.
      */
@@ -256,7 +253,7 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
             codeInput.setCustomValidity("A kód nem lehet 0 vagy -1!");
         } else {
             codeInput.setCustomValidity("");
-            courseAdder(subject.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
+            addCourse(subject.id, formData.get('code'), formData.get('type'), formData.get('instructor'), formData.get('location'), formData.get('day'), formData.get('startTime'), formData.get('endTime'), formData.get('notes'));
         }
         codeInput.reportValidity();
     }
@@ -327,10 +324,7 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
                                             subjectId={id}
                                             choosen={subject.status.choosen}
                                             course={course}
-                                            remover={courseRemover}
-                                            type={course.type}
-                                            show={courseShow}
-                                            setter={setter} />
+                                            type={course.type} />
                                     ))}
                                     <tr>
                                         <th className='w-1/12'><input type="text" name='code' placeholder="#" className="w-full max-w-xs input input-bordered input-sm invalid:border-error" /></th>
@@ -380,12 +374,12 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
                 <button className="btn btn-circle btn-info" onClick={() => updateButton(subject)}>
                     <i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}></i>
                 </button>
-                <button className="btn btn-circle btn-error" onClick={() => subjectRemover(id)}>
+                <button className="btn btn-circle btn-error" onClick={() => removeSubject(id)}>
                     <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
                 </button>
             </div>
-            <SubjectModal subject={subject} updater={subjectUpdater} />
-            {subject.courses.map((course) => (<CourseModal key={course.id} subject={subject} course_id={course.id} updater={courseUpdater} settings={settings} />))}
+            <SubjectModal subject={subject} />
+            {subject.courses.map((course) => (<CourseModal key={course.id} subject={subject} course_id={course.id} />))}
         </div>
     )
 }
@@ -393,36 +387,19 @@ const Subject = ({ subject, subjectUpdater, subjectRemover, subjectShow, courseA
 /**
  * Subjects component renders a list of subjects.
  * It maps through the subjects array and renders a Subject component for each subject.
+ * Uses Context API to access the subjects list.
  * 
- * @param {Array} subjects - An array of subject objects.
- * @param {function} subjectUpdater - Function to update the subject details.
- * @param {function} subjectRemover - Function to remove a subject.
- * @param {function} subjectShow - Function to toggle the visibility of a subject.
- * @param {function} courseAdder - Function to add a new course to a subject.
- * @param {function} courseRemover - Function to remove a course from a subject.
- * @param {function} courseUpdater - Function to update the course details.
- * @param {function} courseShow - Function to toggle the visibility of a course.
- * @param {Object} settings - Settings object containing configuration options.
- * @param {function} setter - Function to set the selected course for the subject.
  * @returns {JSX.Element} A div element containing a list of Subject components.
  */
-const Subjects = ({ subjects, subjectUpdater, subjectRemover, subjectShow, courseAdder, courseRemover, courseUpdater, courseShow, settings, setter }) => {
+const Subjects = () => {
+    const { eventsJSON } = useTimetable();
 
     return (
         <div className='flex flex-col gap-5 bg-base-300 card'>
-            {subjects.map((subject) => (
+            {eventsJSON.map((subject) => (
                 <Subject
                     key={subject.id}
-                    subject={subject}
-                    subjectRemover={subjectRemover}
-                    subjectUpdater={subjectUpdater}
-                    subjectShow={subjectShow}
-                    courseAdder={courseAdder}
-                    courseRemover={courseRemover}
-                    courseUpdater={courseUpdater}
-                    courseShow={courseShow}
-                    settings={settings}
-                    setter={setter} />
+                    subject={subject} />
             ))}
         </div>
     )

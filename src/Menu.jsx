@@ -588,9 +588,9 @@ const Modal = (props) => {
         <dialog id="import_modal" className="modal">
             <div className="w-11/12 max-w-7xl modal-box">
                 <h3 className="mb-3 text-lg font-bold">Tárgy importálása - {props.courses.length} találat</h3>
-                <div className='flex flex-col items-center justify-between gap-3'>
+                <div className='flex flex-col h-full gap-3'>
                     {props.dataIsLoaded ? (
-                        <div className='w-full overflow-x-auto import-modal'>
+                        <div className='flex-1 w-full overflow-auto import-modal'>
                             <table className='table w-full table-pin-rows bg-base-200'>
                                 {props.subjects.map((subject) => {
                                     const subjectId = 's' + subject.id;
@@ -675,9 +675,13 @@ const Modal = (props) => {
                                 </tfoot>
                             </table>
                         </div>
-                    ) : <span className="loading loading-spinner loading-md"></span>}
-                    <div className="modal-action">
-                        <form method="dialog" className='flex justify-between w-full gap-3'>
+                    ) : (
+                        <div className='flex items-center justify-center flex-1'>
+                            <span className="loading loading-spinner loading-md"></span>
+                        </div>
+                    )}
+                    <div className="shrink-0">
+                        <form method="dialog" className='flex justify-center w-full gap-12'>
                             <button className="btn btn-error">Mégsem</button>
                             <button className="btn btn-success" onClick={handleImport}>Importálás</button>
                         </form>
@@ -701,7 +705,7 @@ const Modal = (props) => {
 const Button = ({ text, icon, mode, set, isDisabled }) => {
     return (
         <button
-            className={"justify-start w-full btn btn-lg hover:border-primary flex-1 " + (mode == text ? "bg-primary text-base-300 hover:bg-primary" : "hover:bg-base-100")}
+            className={"2xl:btn-lg justify-start w-full btn btn-md hover:border-primary flex-1 " + (mode == text ? "bg-primary text-base-300 hover:bg-primary" : "hover:bg-base-100")}
             onClick={() => set(text)}
             disabled={isDisabled}>
             <i className={"pi pi-" + icon}></i>

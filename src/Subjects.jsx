@@ -293,7 +293,7 @@ const Subject = ({ subject }) => {
 
     return (
         <div className='flex items-center justify-between gap-3'>
-            <div className="collapse bg-base-200 collapse-arrow">
+            <div className="collapse bg-base-200 collapse-arrow shrink">
                 <input type="checkbox" />
                 <div className={"flex items-center gap-4 text-xl font-medium collapse-title " + (getStatus())}>
                     <span className="w-6 h-6 btn-circle" style={{ backgroundColor: subject.status.color }}></span>
@@ -301,10 +301,10 @@ const Subject = ({ subject }) => {
                     <span className="w-2/12 min-w-fit">{code}</span>
                     <span className='pl-3'>{name}</span>
                 </div>
-                <div className="collapse-content">
-                    <div className="overflow-x-auto">
+                <div className="overflow-auto collapse-content">
+                    <div className="overflow-x-scroll">
                         <form id={"course_form_" + subject.code} onSubmit={(e) => e.preventDefault()}>
-                            <table className="table table-auto table-zebra">
+                            <table className="table table-auto xl:table-md table-sm table-pin-cols">
                                 <thead>
                                     <tr>
                                         <th>Kurzus</th>

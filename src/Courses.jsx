@@ -55,7 +55,7 @@ const Courses = ({ subjectId, choosen, course, type }) => {
             <td>{course.day}</td>
             <td>{course.startTime}-{course.endTime}</td>
             <td>{course.notes}</td>
-            <td className='flex justify-end gap-2'>
+            <th className='flex justify-end gap-2'>
                 <label className="btn btn-circle swap swap-rotate">
                     <input type="checkbox" onChange={handleChange} checked={!show} />
 
@@ -68,7 +68,7 @@ const Courses = ({ subjectId, choosen, course, type }) => {
                 <button className="btn btn-circle btn-error" onClick={() => removeCourse(subjectId, course.id)}>
                     <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
                 </button>
-            </td>
+            </th>
         </tr>
     )
 }

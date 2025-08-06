@@ -466,6 +466,7 @@ const Help = () => {
                         <p>A weboldal célja, hogy a felhasználó egyszerre láthassa az összes lehetséges óráját és így dönthessen azok felvételéről.</p>
                         <p>Ezt egyszerűen, a kívánt kurzusra való kattintással megteheti.</p>
                         <p>Minden alkalommal, amikor kiválaszt egy kurzust, a többi eltűnik, beállítástól függően.</p>
+                        <p>Bővebb információk megtalálhatók a <a href="https://github.com/Vdor01/orarendtervezo/wiki" className='btn-link' target="_blank" rel="noopener noreferrer">wiki oldalon</a>.</p>
                     </div>
                     <div className="divider divider-horizontal"></div>
                     <div>

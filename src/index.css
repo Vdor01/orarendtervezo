@@ -20,6 +20,10 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.table :where(.table-pin-cols tr th) {
+    background-color: transparent;
+}
+
 .fc th {
     text-transform: capitalize;
 }
@@ -52,5 +56,5 @@ h3 {
 }
 
 .import-modal {
-    height: 42rem;
+    max-height: calc(70vh - 8rem);
 }

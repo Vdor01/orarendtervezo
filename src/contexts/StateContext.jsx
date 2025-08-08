@@ -26,7 +26,7 @@ export const StateProvider = ({ children }) => {
             "slot": 20
         },
         "currentState": {
-            "menu": "Beállítások",
+            "menu": "Hozzáadás",
             "settings": "show"
         }
     });

@@ -32,6 +32,7 @@ const Timetable = () => {
             display: isDisplayed(subject, course) ? '' : 'none',
             classNames: ['cursor-pointer', (course.type === 'Előadás') ? 'border-dashed' : ''],
             extendedProps: {
+                title: subject.name,
                 subjectId: subject.id,
                 instructor: course.instructor,
                 location: course.location,
@@ -83,6 +84,7 @@ const Timetable = () => {
 
                 return (
                     <div className='flex flex-col gap-1' style={{ color: textColor }}>
+                        {settings.show.name && <div>{arg.event.extendedProps.title}</div>}
                         {settings.show.code && <div>{arg.event.extendedProps.course}</div>}
                         {settings.show.time && <div>{arg.timeText}</div>}
                         {settings.show.type && <div>{arg.event.extendedProps.type}</div>}

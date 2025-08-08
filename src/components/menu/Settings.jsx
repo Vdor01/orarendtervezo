@@ -12,7 +12,7 @@ const Settings = () => {
     const { settings, updateSettings } = useSettings();
 
     const { show, saturday, slot } = settings;
-    const { code, time, type, instructor, location, notes } = show;
+    const { name, code, time, type, instructor, location, notes } = show;
 
     /**
      * Sets the visibility of a specific setting based on user interaction.
@@ -31,6 +31,15 @@ const Settings = () => {
                 <div className='flex flex-row gap-8 pt-3'>
                     <div className='grid w-1/4 grid-cols-2 gap-2 form-control'>
                         <h3 className='col-span-2 mb-5 font-bold'>Megjelenő információk</h3>
+                        <label className="justify-start gap-3 cursor-pointer label">
+                            <input
+                                type="checkbox"
+                                checked={name}
+                                onChange={() => setShowSettings('name', !name)}
+                                className="checkbox"
+                            />
+                            <span className="label-text">Név</span>
+                        </label>
                         <label className="justify-start gap-3 cursor-pointer label">
                             <input
                                 type="checkbox"

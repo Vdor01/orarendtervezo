@@ -28,7 +28,7 @@ src/
 ├── contexts/           # React Context API
 │   ├── index.jsx
 │   ├── TimetableContext.jsx
-│   └── SettingsContext.jsx
+│   └── StateContext.jsx
 ├── utils/              # Segédfüggvények
 │   ├── timetableUtils.js
 │   └── CanvasExport.js
@@ -59,7 +59,7 @@ src/
 
 - **Timetable**: FullCalendar komponens wrapper
 - **TimetableContext**: Órarend állapot kezelés
-- **SettingsContext**: Beállítások állapot kezelés
+- **StateContext**: Alkalmazás állapot kezelés (korábbi SettingsContext)
 
 ### Utility Függvények
 

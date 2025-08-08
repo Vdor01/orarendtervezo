@@ -1,15 +1,17 @@
 import React from "react";
 import { TimetableProvider } from "./TimetableContext";
-import { SettingsProvider } from "./SettingsContext";
+import { StateProvider } from "./StateContext";
 
 export const AppProviders = ({ children }) => {
     return (
-        <SettingsProvider>
+        <StateProvider>
             <TimetableProvider>{children}</TimetableProvider>
-        </SettingsProvider>
+        </StateProvider>
     );
 };
 
 // Re-export hooks for convenience
 export { useTimetable } from "./TimetableContext";
-export { useSettings } from "./SettingsContext";
+export { useAppState } from "./StateContext";
+// Backward compatibility
+export { useAppState as useSettings } from "./StateContext";

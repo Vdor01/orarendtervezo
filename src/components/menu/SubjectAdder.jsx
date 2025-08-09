@@ -21,6 +21,7 @@ const SubjectAdder = () => {
      */
     const onClick = (e) => {
         e.preventDefault();
+
         let code = subjectCode;
         let name = subjectName;
         if (name === '') { name = code; }
@@ -30,7 +31,7 @@ const SubjectAdder = () => {
 
     return (
         <div className="w-full shadow-xl card bg-base-300 card-compact">
-            <div className="card-body">
+            <form className="card-body" id='subject_adder_form'>
                 <h2 className="card-title">Tárgy hozzáadása</h2>
                 <label className="w-full form-control">
                     <div className="label">
@@ -61,7 +62,7 @@ const SubjectAdder = () => {
                         Hozzáadás
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
     );
 };

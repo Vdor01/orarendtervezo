@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../contexts';
 
 /**
@@ -12,7 +12,20 @@ const Settings = () => {
     const { settings, updateSettings } = useSettings();
 
     const { show, saturday, slot } = settings;
-    const { code, time, type, instructor, location, notes } = show;
+    const { name, code, time, type, instructor, location, notes } = show;
+
+    // Helyi state az időintervallum mező számára
+    const [slotInputValue, setSlotInputValue] = useState(slot.toString());
+
+    // Frissítjük a helyi state-et, ha a globális slot érték változik
+    useEffect(() => {
+        setSlotInputValue(slot.toString());
+    }, [slot]);
+
+    const MIN_SLOT = 10;
+    const MAX_SLOT = 60;
+    const DEFAULT_SLOT = 20;
+    const SLOT_STEP = 5;
 
     /**
      * Sets the visibility of a specific setting based on user interaction.
@@ -31,6 +44,15 @@ const Settings = () => {
                 <div className='flex flex-row gap-8 pt-3'>
                     <div className='grid w-1/4 grid-cols-2 gap-2 form-control'>
                         <h3 className='col-span-2 mb-5 font-bold'>Megjelenő információk</h3>
+                        <label className="justify-start gap-3 cursor-pointer label">
+                            <input
+                                type="checkbox"
+                                checked={name}
+                                onChange={() => setShowSettings('name', !name)}
+                                className="checkbox"
+                            />
+                            <span className="label-text">Név</span>
+                        </label>
                         <label className="justify-start gap-3 cursor-pointer label">
                             <input
                                 type="checkbox"
@@ -101,10 +123,27 @@ const Settings = () => {
                             <span className="label-text">Időintervallum (perc)</span>
                             <input
                                 type="number"
-                                step={5}
-                                min={10}
-                                value={slot}
-                                onChange={(e) => updateSettings('misc', 'slot', e.target.value)}
+                                step={SLOT_STEP}
+                                min={MIN_SLOT}
+                                max={MAX_SLOT}
+                                value={slotInputValue}
+                                onChange={(e) => {
+                                    setSlotInputValue(e.target.value);
+                                    const value = parseInt(e.target.value);
+                                    if (!isNaN(value) && value >= MIN_SLOT && value <= MAX_SLOT) {
+                                        updateSettings('misc', 'slot', value);
+                                    }
+                                }}
+                                onBlur={(e) => {
+                                    const value = parseInt(e.target.value);
+                                    if (isNaN(value) || value < MIN_SLOT) {
+                                        setSlotInputValue(DEFAULT_SLOT.toString());
+                                        updateSettings('misc', 'slot', DEFAULT_SLOT);
+                                    } else if (value > MAX_SLOT) {
+                                        setSlotInputValue(MAX_SLOT.toString());
+                                        updateSettings('misc', 'slot', MAX_SLOT);
+                                    }
+                                }}
                                 className="w-16 input input-sm"
                             />
                         </label>

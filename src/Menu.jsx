@@ -7,6 +7,7 @@ import {
     Help,
     Button
 } from './components';
+import { useSettings } from './contexts';
 
 /**
  * Menu component serves as the main navigation menu for the application.
@@ -17,7 +18,14 @@ import {
  * @return {JSX.Element} A div containing the current mode's content and a set of buttons to switch modes.
  */
 const Menu = ({ exportTimetable }) => {
-    const [mode, setMode] = useState('Hozzáadás');
+
+    const { state, updateState } = useSettings();
+    const [mode, setMode] = useState(state.currentState.menu);
+
+    const handleModeChange = (newMode) => {
+        setMode(newMode);
+        updateState('currentState', 'menu', newMode);
+    };
 
     const modeSwitch = (param) => {
         switch (param) {
@@ -41,11 +49,11 @@ const Menu = ({ exportTimetable }) => {
             {modeSwitch(mode)}
             <div className="divider divider-horizontal"></div>
             <div className='flex flex-col justify-between w-64 gap-3 buttons'>
-                <Button text={'Hozzáadás'} icon={'plus'} mode={mode} set={setMode} />
-                <Button text={'Lekérés'} icon={'server'} mode={mode} set={setMode} />
-                <Button text={'Import / Export'} icon={'file-import'} mode={mode} set={setMode} />
-                <Button text={'Beállítások'} icon={'cog'} mode={mode} set={setMode} />
-                <Button text={'Súgó'} icon={'question-circle'} mode={mode} set={setMode} />
+                <Button text={'Hozzáadás'} icon={'plus'} mode={mode} set={handleModeChange} />
+                <Button text={'Lekérés'} icon={'server'} mode={mode} set={handleModeChange} />
+                <Button text={'Import / Export'} icon={'file-import'} mode={mode} set={handleModeChange} />
+                <Button text={'Beállítások'} icon={'cog'} mode={mode} set={handleModeChange} />
+                <Button text={'Súgó'} icon={'question-circle'} mode={mode} set={handleModeChange} />
             </div>
         </div>
     );

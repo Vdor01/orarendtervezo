@@ -1,14 +1,21 @@
-@startjson settings
+@startjson state
 {
-    "show": {
-        "code": false,
-        "time": true,
-        "type": false,
-        "instructor": true,
-        "location": true,
-        "notes": false
+    "settings": {
+        "show": {
+            "name": true,
+            "code": false,
+            "time": true,
+            "type": false,
+            "instructor": true,
+            "location": true,
+            "notes": false
+        },
+        "saturday": false,
+        "slot": 20
     },
-    "saturday": false,
-    "slot": 20
+    "currentState": {
+        "menu": "Beállítások",
+        "settings": "show"
+    }
 }
 @endjson

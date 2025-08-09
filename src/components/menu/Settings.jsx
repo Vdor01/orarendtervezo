@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../contexts';
 
 /**
@@ -13,6 +13,19 @@ const Settings = () => {
 
     const { show, saturday, slot } = settings;
     const { name, code, time, type, instructor, location, notes } = show;
+
+    // Helyi state az időintervallum mező számára
+    const [slotInputValue, setSlotInputValue] = useState(slot.toString());
+
+    // Frissítjük a helyi state-et, ha a globális slot érték változik
+    useEffect(() => {
+        setSlotInputValue(slot.toString());
+    }, [slot]);
+
+    const MIN_SLOT = 10;
+    const MAX_SLOT = 60;
+    const DEFAULT_SLOT = 20;
+    const SLOT_STEP = 5;
 
     /**
      * Sets the visibility of a specific setting based on user interaction.
@@ -110,10 +123,27 @@ const Settings = () => {
                             <span className="label-text">Időintervallum (perc)</span>
                             <input
                                 type="number"
-                                step={5}
-                                min={10}
-                                value={slot}
-                                onChange={(e) => updateSettings('misc', 'slot', e.target.value)}
+                                step={SLOT_STEP}
+                                min={MIN_SLOT}
+                                max={MAX_SLOT}
+                                value={slotInputValue}
+                                onChange={(e) => {
+                                    setSlotInputValue(e.target.value);
+                                    const value = parseInt(e.target.value);
+                                    if (!isNaN(value) && value >= MIN_SLOT && value <= MAX_SLOT) {
+                                        updateSettings('misc', 'slot', value);
+                                    }
+                                }}
+                                onBlur={(e) => {
+                                    const value = parseInt(e.target.value);
+                                    if (isNaN(value) || value < MIN_SLOT) {
+                                        setSlotInputValue(DEFAULT_SLOT.toString());
+                                        updateSettings('misc', 'slot', DEFAULT_SLOT);
+                                    } else if (value > MAX_SLOT) {
+                                        setSlotInputValue(MAX_SLOT.toString());
+                                        updateSettings('misc', 'slot', MAX_SLOT);
+                                    }
+                                }}
                                 className="w-16 input input-sm"
                             />
                         </label>

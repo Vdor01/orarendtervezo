@@ -194,6 +194,10 @@ const ServerQuery = () => {
     const onClick = (e) => {
         e.preventDefault();
 
+        if (subjectNameCode === '' && subjectInstructor === '') {
+            alert('Kérlek adj meg legalább egy keresési feltételt!');
+            return;
+        }
         setCourses([]);
         setSubjects([]);
         setDataIsLoaded(false);

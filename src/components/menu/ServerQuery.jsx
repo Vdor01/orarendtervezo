@@ -134,16 +134,22 @@ const ServerQuery = () => {
                 ? "/tanrendnavigation.php"
                 : "/api/tanrend";
 
+        function getApiUrl(mode) {
+            const API_URL = `${API_BASE}?m=${mode}&f=${semester}&k=${encodeURIComponent(subjectNameCode)}`;
+            console.log(`Fetching data from: ${API_URL}`);
+            return API_URL;
+        }
+
         if (subjectNameCode !== '' && subjectInstructor !== '') {
             console.error('TODO : Implement search by subject name and instructor');
         }
         else if (subjectNameCode !== '') {
-            fetch(`${API_BASE}?m=keres_kod_azon&f=${semester}&k=${subjectNameCode}`)
+            fetch(getApiUrl('keres_kod_azon'))
                 .then(response => response.text())
                 .then(data => {
                     const firstCourses = parseCourseData(data, subjectsAccumulator);
                     setCourses(firstCourses);
-                    return fetch(`${API_BASE}?m=keresnevre&f=${semester}&k=${subjectNameCode}`);
+                    return fetch(getApiUrl('keresnevre'));
                 })
                 .then(response => response.text())
                 .then(data => {
@@ -176,7 +182,7 @@ const ServerQuery = () => {
                 .catch(error => console.error('Error fetching subjects:', error));
         }
         else if (subjectInstructor !== '') {
-            fetch(`${API_BASE}?m=keres_okt&f=${semester}&k=${subjectInstructor}`)
+            fetch(getApiUrl('keres_okt'))
                 .then(response => response.text())
                 .then(data => {
                     const courses = parseCourseData(data, subjectsAccumulator);

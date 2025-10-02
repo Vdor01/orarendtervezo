@@ -24,8 +24,14 @@ const SubjectAdder = () => {
 
         let code = subjectCode;
         let name = subjectName;
+        if (code === '' && name === '') {
+            alert('Legalább a tárgy nevét vagy kódját meg kell adni!');
+            return;
+        }
         if (name === '') { name = code; }
-        if (code === '') { code = name; }
+        if (code === '') { code = name.replace(/\s+/g, '_').toLowerCase(); }
+
+        console.log(`Adding subject: ${name} (${code})`);
         addSubject(code, name);
     };
 

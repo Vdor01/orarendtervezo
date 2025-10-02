@@ -72,6 +72,10 @@ const Subject = ({ subject }) => {
             codeInput.reportValidity();
         } else if (emptyFields) {
             // Do nothing, as the individual fields have already reported their validity
+        } else if (formData.get('startTime') >= formData.get('endTime')) {
+            const endTimeInput = document.querySelector(`#course_form_${subject.code} input[name='endTime']`);
+            endTimeInput.setCustomValidity("A végidőpontnak nagyobbnak kell lennie, mint a kezdőidőpont!");
+            endTimeInput.reportValidity();
         } else {
             codeInput.setCustomValidity("");
             addCourse(

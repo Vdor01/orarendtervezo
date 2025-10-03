@@ -46,14 +46,14 @@ const Subject = ({ subject }) => {
      */
     function handleSubmit(e) {
         e.preventDefault();
-        const form = document.getElementById("course_form_" + subject.code);
+        const form = document.getElementById("course_form_" + subject.id);
         const formData = new FormData(form);
 
         let emptyFields = false;
 
         const dataNames = ['code', 'instructor', 'location', 'startTime', 'endTime'];
         dataNames.forEach(name => {
-            const input = form.querySelector(`#course_form_${subject.code} input[name='${name}']`);
+            const input = form.querySelector(`#course_form_${subject.id} input[name='${name}']`);
             if (!input.value) {
                 input.setCustomValidity("Ennek a mezőnek a kitöltése kötelező!");
                 input.reportValidity();
@@ -63,7 +63,7 @@ const Subject = ({ subject }) => {
             }
         });
 
-        const codeInput = document.querySelector(`#course_form_${subject.code} input[name='code']`);
+        const codeInput = document.querySelector(`#course_form_${subject.id} input[name='code']`);
         const codeInputValue = codeInput.value;
         const codeError = codeInputValue === "0" || codeInputValue === "-1";
 
@@ -73,7 +73,7 @@ const Subject = ({ subject }) => {
         } else if (emptyFields) {
             // Do nothing, as the individual fields have already reported their validity
         } else if (formData.get('startTime') >= formData.get('endTime')) {
-            const endTimeInput = document.querySelector(`#course_form_${subject.code} input[name='endTime']`);
+            const endTimeInput = document.querySelector(`#course_form_${subject.id} input[name='endTime']`);
             endTimeInput.setCustomValidity("A végidőpontnak nagyobbnak kell lennie, mint a kezdőidőpont!");
             endTimeInput.reportValidity();
         } else {
@@ -145,7 +145,7 @@ const Subject = ({ subject }) => {
                 </div>
                 <div className="overflow-auto collapse-content">
                     <div className="overflow-x-scroll">
-                        <form id={"course_form_" + subject.code} onSubmit={(e) => e.preventDefault()}>
+                        <form id={"course_form_" + subject.id} onSubmit={(e) => e.preventDefault()}>
                             <table className="table table-auto xl:table-md table-sm table-pin-cols">
                                 <thead>
                                     <tr>

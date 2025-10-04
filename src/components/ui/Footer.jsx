@@ -5,8 +5,8 @@
  */
 function Footer() {
     return (
-        <footer className="items-center p-4 footer sm:footer-horizontal bg-neutral text-neutral-content">
-            <aside className="items-center grid-flow-col">
+        <footer className="flex items-center justify-between p-4 sm:footer-horizontal bg-neutral text-neutral-content gap-y-0">
+            <aside className="items-center">
                 <p>Készült <i className="pi pi-heart-fill"></i>-el.</p>
             </aside>
             <aside className="place-self-center justify-self-center">

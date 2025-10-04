@@ -46,14 +46,36 @@ const Subject = ({ subject }) => {
      */
     function handleSubmit(e) {
         e.preventDefault();
-        const form = document.getElementById("course_form_" + subject.code);
+        const form = document.getElementById("course_form_" + subject.id);
         const formData = new FormData(form);
 
-        const error = formData.get('code') === "0" || formData.get('code') === "-1";
-        const codeInput = document.querySelector(`#course_form_${subject.code} input[name='code']`);
+        let emptyFields = false;
 
-        if (error) {
+        const dataNames = ['code', 'instructor', 'location', 'startTime', 'endTime'];
+        dataNames.forEach(name => {
+            const input = form.querySelector(`#course_form_${subject.id} input[name='${name}']`);
+            if (!input.value) {
+                input.setCustomValidity("Ennek a mezőnek a kitöltése kötelező!");
+                input.reportValidity();
+                emptyFields = true;
+            } else {
+                input.setCustomValidity("");
+            }
+        });
+
+        const codeInput = document.querySelector(`#course_form_${subject.id} input[name='code']`);
+        const codeInputValue = codeInput.value;
+        const codeError = codeInputValue === "0" || codeInputValue === "-1";
+
+        if (codeError) {
             codeInput.setCustomValidity("A kód nem lehet 0 vagy -1!");
+            codeInput.reportValidity();
+        } else if (emptyFields) {
+            // Do nothing, as the individual fields have already reported their validity
+        } else if (formData.get('startTime') >= formData.get('endTime')) {
+            const endTimeInput = document.querySelector(`#course_form_${subject.id} input[name='endTime']`);
+            endTimeInput.setCustomValidity("A végidőpontnak nagyobbnak kell lennie, mint a kezdőidőpont!");
+            endTimeInput.reportValidity();
         } else {
             codeInput.setCustomValidity("");
             addCourse(
@@ -68,7 +90,6 @@ const Subject = ({ subject }) => {
                 formData.get('notes')
             );
         }
-        codeInput.reportValidity();
     }
 
     /**
@@ -124,7 +145,7 @@ const Subject = ({ subject }) => {
                 </div>
                 <div className="overflow-auto collapse-content">
                     <div className="overflow-x-scroll">
-                        <form id={"course_form_" + subject.code} onSubmit={(e) => e.preventDefault()}>
+                        <form id={"course_form_" + subject.id} onSubmit={(e) => e.preventDefault()}>
                             <table className="table table-auto xl:table-md table-sm table-pin-cols">
                                 <thead>
                                     <tr>
@@ -168,7 +189,7 @@ const Subject = ({ subject }) => {
                                                 type="text"
                                                 name='instructor'
                                                 placeholder="Példa Béla"
-                                                className="w-full max-w-xs input input-bordered input-sm"
+                                                className="w-full max-w-xs input input-bordered input-sm invalid:border-error"
                                             />
                                         </th>
                                         <th className='w-2/12'>
@@ -176,7 +197,7 @@ const Subject = ({ subject }) => {
                                                 type="text"
                                                 name='location'
                                                 placeholder="Északi Tömb 7.15 (PC11)"
-                                                className="w-full max-w-xs input input-bordered input-sm"
+                                                className="w-full max-w-xs input input-bordered input-sm invalid:border-error"
                                             />
                                         </th>
                                         <th className='w-2/12'>
@@ -193,13 +214,13 @@ const Subject = ({ subject }) => {
                                             <input
                                                 type="time"
                                                 name='startTime'
-                                                className="input input-bordered input-sm"
+                                                className="input input-bordered input-sm invalid:border-error"
                                             />
                                             -
                                             <input
                                                 type="time"
                                                 name='endTime'
-                                                className="input input-bordered input-sm"
+                                                className="input input-bordered input-sm invalid:border-error"
                                             />
                                         </th>
                                         <th className='w-2/12'>

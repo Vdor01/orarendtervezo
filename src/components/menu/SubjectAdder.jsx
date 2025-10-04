@@ -11,6 +11,7 @@ const SubjectAdder = () => {
 
     const [subjectName, setName] = useState('');
     const [subjectCode, setCode] = useState('');
+    const [isError, setIsError] = useState(false);
 
     /**
      * Handles the click event for adding a subject.
@@ -24,8 +25,15 @@ const SubjectAdder = () => {
 
         let code = subjectCode;
         let name = subjectName;
+        if (code === '' && name === '') {
+            setIsError(true);
+            return;
+        }
+        setIsError(false);
         if (name === '') { name = code; }
-        if (code === '') { code = name; }
+        if (code === '') { code = name.replace(/\s+/g, '_').toLowerCase(); }
+
+        console.log(`Adding subject: ${name} (${code})`);
         addSubject(code, name);
     };
 
@@ -62,6 +70,11 @@ const SubjectAdder = () => {
                         Hozzáadás
                     </button>
                 </div>
+                {isError &&
+                    <p className="mt-3 text-center text-error">
+                        Tárgy hozzáadásához legalább a név vagy a kód megadása szükséges!
+                    </p>
+                }
             </form>
         </div>
     );

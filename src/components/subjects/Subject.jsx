@@ -4,6 +4,7 @@ import Courses from '../../Courses';
 import SubjectModal from './SubjectModal';
 import CourseModal from './CourseModal';
 import { useTimetable, useSettings } from '../../contexts';
+import CourseAdder from './CourseAdder';
 
 /**
  * Subject component represents a single subject with its courses.
@@ -169,7 +170,7 @@ const Subject = ({ subject }) => {
                                             type={course.type}
                                         />
                                     ))}
-                                    <tr>
+                                    {/* <tr>
                                         <th className='w-1/12'>
                                             <input
                                                 type="text"
@@ -236,10 +237,11 @@ const Subject = ({ subject }) => {
                                                 <i className="pi pi-plus" style={{ fontSize: '1.5rem' }}></i>
                                             </button>
                                         </th>
-                                    </tr>
+                                    </tr> */}
                                 </tbody>
                             </table>
                         </form>
+                        <CourseAdder subject={subject} />
                     </div>
                 </div>
             </div>

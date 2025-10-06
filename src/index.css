@@ -58,3 +58,20 @@ h3 {
 .import-modal {
     max-height: calc(70vh - 8rem);
 }
+
+.fieldset {
+    min-width: 0;
+    border: 1px solid hsl(var(--border-color, var(--fallback-bc)) / 0.2);
+    border-radius: 0.5rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.fieldset-legend {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--base-content));
+    margin-bottom: 0.25rem;
+    padding: 0 0.25rem;
+}

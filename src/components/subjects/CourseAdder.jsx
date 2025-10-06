@@ -1,10 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSettings, useTimetable } from '../../contexts';
 
 const CourseAdder = ({ subject }) => {
 
     const { addCourse } = useTimetable();
     const { settings } = useSettings();
+
+    const [errors, setErrors] = useState({
+        code: false,
+        instructor: false,
+        location: false,
+        startTime: false,
+        endTime: false
+    });
 
     /**
      * Handles the submission of the course form.
@@ -23,11 +31,10 @@ const CourseAdder = ({ subject }) => {
         dataNames.forEach(name => {
             const input = form.querySelector(`#course_form_${subject.id} input[name='${name}']`);
             if (!input.value) {
-                input.setCustomValidity("Ennek a mezőnek a kitöltése kötelező!");
-                input.reportValidity();
+                setErrors(prev => ({ ...prev, [name]: true }));
                 emptyFields = true;
             } else {
-                input.setCustomValidity("");
+                setErrors(prev => ({ ...prev, [name]: false }));
             }
         });
 
@@ -42,7 +49,6 @@ const CourseAdder = ({ subject }) => {
             // Do nothing, as the individual fields have already reported their validity
         } else if (formData.get('startTime') >= formData.get('endTime')) {
             const endTimeInput = document.querySelector(`#course_form_${subject.id} input[name='endTime']`);
-            endTimeInput.setCustomValidity("A végidőpontnak nagyobbnak kell lennie, mint a kezdőidőpont!");
             endTimeInput.reportValidity();
         } else {
             codeInput.setCustomValidity("");
@@ -62,30 +68,30 @@ const CourseAdder = ({ subject }) => {
 
     return (
         <form className='w-full' id={"course_form_" + subject.id} onSubmit={(e) => e.preventDefault()}>
-            <div className='grid grid-cols-12 gap-4'>
-                <fieldset className="col-span-1 fieldset">
+            <div className='flex flex-wrap justify-between w-full gap-2 p-2 h-28'>
+                <fieldset className="max-w-16 fieldset">
                     <legend className="fieldset-legend">Kurzus</legend>
-                    <input type="text" name='code' className="input input-sm input-bordered" placeholder="#" />
-                    <p className="text-sm label text-error">Kötelező</p>
+                    <input type="text" name='code' className={`input input-sm input-bordered ${errors.code ? "border-error" : ""}`} placeholder="#" />
+                    {errors.code && <p className="text-sm label text-error">Kötelező</p>}
                 </fieldset>
-                <fieldset className="col-span-1 fieldset">
+                <fieldset className="fieldset">
                     <legend className="fieldset-legend">Típus</legend>
                     <select name='type' className="w-full select select-sm select-bordered">
                         <option>Gyakorlat</option>
                         <option>Előadás</option>
                     </select>
                 </fieldset>
-                <fieldset className="col-span-2 fieldset">
+                <fieldset className="fieldset">
                     <legend className="fieldset-legend">Oktató</legend>
-                    <input type="text" name='instructor' className="input input-sm input-bordered" placeholder="Példa Béla" />
-                    <p className="text-sm label text-error">Kötelező</p>
+                    <input type="text" name='instructor' className={`input input-sm input-bordered ${errors.instructor ? "border-error" : ""}`} placeholder="Példa Béla" />
+                    {errors.instructor && <p className="text-sm label text-error">Kötelező</p>}
                 </fieldset>
-                <fieldset className="col-span-2 fieldset">
+                <fieldset className="fieldset">
                     <legend className="fieldset-legend">Helyszín</legend>
-                    <input type="text" name='location' className="input input-sm input-bordered" placeholder="Északi Tömb 7.15 (PC11)" />
-                    <p className="text-sm label text-error">Kötelező</p>
+                    <input type="text" name='location' className={`input input-sm input-bordered ${errors.location ? "border-error" : ""}`} placeholder="Északi Tömb 7.15 (PC11)" />
+                    {errors.location && <p className="text-sm label text-error">Kötelező</p>}
                 </fieldset>
-                <fieldset className="col-span-1 fieldset">
+                <fieldset className="fieldset">
                     <legend className="fieldset-legend">Nap</legend>
                     <select name='day' className="w-full select select-sm select-bordered">
                         <option>Hétfő</option>
@@ -96,28 +102,28 @@ const CourseAdder = ({ subject }) => {
                         {settings.saturday && <option>Szombat</option>}
                     </select>
                 </fieldset>
-                <fieldset className="col-span-2 fieldset">
+                <fieldset className="fieldset">
                     <legend className="fieldset-legend">Időpont</legend>
                     <div className='flex gap-1'>
                         <input
                             type="time"
                             name='startTime'
-                            className="input input-bordered input-sm invalid:border-error"
+                            className={`input input-bordered input-sm ${errors.startTime ? "border-error" : ""}`}
                         />
                         -
                         <input
                             type="time"
                             name='endTime'
-                            className="input input-bordered input-sm invalid:border-error"
+                            className={`input input-bordered input-sm ${errors.endTime ? "border-error" : ""}`}
                         />
                     </div>
-                    <p className="text-sm label text-error">Kötelező</p>
+                    {(errors.endTime || errors.startTime) && <p className="text-sm label text-error">Kötelező</p>}
                 </fieldset>
-                <fieldset className="col-span-2 fieldset">
+                <fieldset className="fieldset">
                     <legend className="fieldset-legend">Megjegyzés</legend>
                     <input type="text" name='notes' className="input input-sm input-bordered" placeholder="Megjegyzés" />
                 </fieldset>
-                <div className='flex justify-center col-span-1 my-auto'>
+                <div className='flex justify-center my-auto'>
                     <button className="mb-1 btn btn-circle btn-success" onClick={handleSubmit} title="Kurzus hozzáadása">
                         <i className="pi pi-plus" style={{ fontSize: '1.5rem' }}></i>
                     </button>

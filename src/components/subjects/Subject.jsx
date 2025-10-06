@@ -145,102 +145,32 @@ const Subject = ({ subject }) => {
                     <span className='pl-3'>{name}</span>
                 </div>
                 <div className="overflow-auto collapse-content">
-                    <div className="overflow-x-scroll">
-                        <form id={"course_form_" + subject.id} onSubmit={(e) => e.preventDefault()}>
-                            <table className="table table-auto xl:table-md table-sm table-pin-cols">
-                                <thead>
-                                    <tr>
-                                        <th>Kurzus</th>
-                                        <th>Típus</th>
-                                        <th>Oktató</th>
-                                        <th>Hely</th>
-                                        <th>Nap</th>
-                                        <th>Időpont</th>
-                                        <th>Megjegyzés</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {subject.courses.map((course, index) => (
-                                        <Courses
-                                            key={index}
-                                            subjectId={id}
-                                            choosen={subject.status.choosen}
-                                            course={course}
-                                            type={course.type}
-                                        />
-                                    ))}
-                                    {/* <tr>
-                                        <th className='w-1/12'>
-                                            <input
-                                                type="text"
-                                                name='code'
-                                                placeholder="#"
-                                                className="w-full max-w-xs input input-bordered input-sm invalid:border-error"
-                                            />
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <select name='type' className="w-full max-w-xs select select-bordered select-sm">
-                                                <option>Gyakorlat</option>
-                                                <option>Előadás</option>
-                                            </select>
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <input
-                                                type="text"
-                                                name='instructor'
-                                                placeholder="Példa Béla"
-                                                className="w-full max-w-xs input input-bordered input-sm invalid:border-error"
-                                            />
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <input
-                                                type="text"
-                                                name='location'
-                                                placeholder="Északi Tömb 7.15 (PC11)"
-                                                className="w-full max-w-xs input input-bordered input-sm invalid:border-error"
-                                            />
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <select name='day' className="w-full max-w-xs select select-bordered select-sm">
-                                                <option>Hétfő</option>
-                                                <option>Kedd</option>
-                                                <option>Szerda</option>
-                                                <option>Csütörtök</option>
-                                                <option>Péntek</option>
-                                                {settings.saturday && <option>Szombat</option>}
-                                            </select>
-                                        </th>
-                                        <th className='flex items-center w-2/12 h-24 gap-1'>
-                                            <input
-                                                type="time"
-                                                name='startTime'
-                                                className="input input-bordered input-sm invalid:border-error"
-                                            />
-                                            -
-                                            <input
-                                                type="time"
-                                                name='endTime'
-                                                className="input input-bordered input-sm invalid:border-error"
-                                            />
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <input
-                                                type="text"
-                                                name='notes'
-                                                placeholder="Megjegyzés"
-                                                className="w-full max-w-xs input input-bordered input-sm"
-                                            />
-                                        </th>
-                                        <th className='w-1/12 text-right'>
-                                            <button className="btn btn-circle btn-success" onClick={handleSubmit}>
-                                                <i className="pi pi-plus" style={{ fontSize: '1.5rem' }}></i>
-                                            </button>
-                                        </th>
-                                    </tr> */}
-                                </tbody>
-                            </table>
-                        </form>
+                    <div>
+                        <table className="table overflow-x-scroll table-auto xl:table-md table-sm table-pin-cols">
+                            <thead>
+                                <tr>
+                                    <th>Kurzus</th>
+                                    <th>Típus</th>
+                                    <th>Oktató</th>
+                                    <th>Hely</th>
+                                    <th>Nap</th>
+                                    <th>Időpont</th>
+                                    <th>Megjegyzés</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {subject.courses.map((course, index) => (
+                                    <Courses
+                                        key={index}
+                                        subjectId={id}
+                                        choosen={subject.status.choosen}
+                                        course={course}
+                                        type={course.type}
+                                    />
+                                ))}
+                            </tbody>
+                        </table>
                         <CourseAdder subject={subject} />
                     </div>
                 </div>

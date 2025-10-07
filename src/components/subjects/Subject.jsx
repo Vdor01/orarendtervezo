@@ -5,6 +5,7 @@ import SubjectModal from './SubjectModal';
 import CourseModal from './CourseModal';
 import { useTimetable, useSettings } from '../../contexts';
 import CourseAdder from './CourseAdder';
+import CourseTable from './CourseTable';
 
 /**
  * Subject component represents a single subject with its courses.
@@ -37,60 +38,6 @@ const Subject = ({ subject }) => {
     function handleChange() {
         show = !show;
         updateShowSubject(id, show);
-    }
-
-    /**
-     * Handles the submission of the course form.
-     * It collects the form data, validates the course code, and calls the addCourse function.
-     * 
-     * @param {Event} e - The event object from the form submission.
-     */
-    function handleSubmit(e) {
-        e.preventDefault();
-        const form = document.getElementById("course_form_" + subject.id);
-        const formData = new FormData(form);
-
-        let emptyFields = false;
-
-        const dataNames = ['code', 'instructor', 'location', 'startTime', 'endTime'];
-        dataNames.forEach(name => {
-            const input = form.querySelector(`#course_form_${subject.id} input[name='${name}']`);
-            if (!input.value) {
-                input.setCustomValidity("Ennek a mezőnek a kitöltése kötelező!");
-                input.reportValidity();
-                emptyFields = true;
-            } else {
-                input.setCustomValidity("");
-            }
-        });
-
-        const codeInput = document.querySelector(`#course_form_${subject.id} input[name='code']`);
-        const codeInputValue = codeInput.value;
-        const codeError = codeInputValue === "0" || codeInputValue === "-1";
-
-        if (codeError) {
-            codeInput.setCustomValidity("A kód nem lehet 0 vagy -1!");
-            codeInput.reportValidity();
-        } else if (emptyFields) {
-            // Do nothing, as the individual fields have already reported their validity
-        } else if (formData.get('startTime') >= formData.get('endTime')) {
-            const endTimeInput = document.querySelector(`#course_form_${subject.id} input[name='endTime']`);
-            endTimeInput.setCustomValidity("A végidőpontnak nagyobbnak kell lennie, mint a kezdőidőpont!");
-            endTimeInput.reportValidity();
-        } else {
-            codeInput.setCustomValidity("");
-            addCourse(
-                subject.id,
-                formData.get('code'),
-                formData.get('type'),
-                formData.get('instructor'),
-                formData.get('location'),
-                formData.get('day'),
-                formData.get('startTime'),
-                formData.get('endTime'),
-                formData.get('notes')
-            );
-        }
     }
 
     /**
@@ -146,7 +93,7 @@ const Subject = ({ subject }) => {
                 </div>
                 <div className="overflow-auto collapse-content">
                     <div>
-                        <table className="table overflow-x-scroll table-auto xl:table-md table-sm table-pin-cols">
+                        {/* <table className="table overflow-x-scroll table-auto xl:table-md table-sm table-pin-cols">
                             <thead>
                                 <tr>
                                     <th>Kurzus</th>
@@ -170,7 +117,8 @@ const Subject = ({ subject }) => {
                                     />
                                 ))}
                             </tbody>
-                        </table>
+                        </table> */}
+                        <CourseTable subject={subject} />
                         <CourseAdder subject={subject} />
                     </div>
                 </div>

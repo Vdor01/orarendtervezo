@@ -85,11 +85,27 @@ const Subject = ({ subject }) => {
         <div className='flex items-center justify-between gap-3'>
             <div className="collapse bg-base-200 collapse-arrow shrink">
                 <input type="checkbox" onClick={() => setIsOpen(!isOpen)} />
-                <div className={"flex items-center gap-4 text-xl font-medium collapse-title " + getStatus()}>
-                    <span className="w-6 h-6 btn-circle" style={{ backgroundColor: subject.status.color }}></span>
-                    <i className={'pi pi-' + getIcon()}></i>
-                    <span className="w-2/12 min-w-fit">{code}</span>
-                    <span className='pl-3'>{name}</span>
+                <div className={"flex justify-between items-center collapse-title after:start-5 after:top-8 pe-4 ps-12 " + getStatus()}>
+                    <div className='flex items-center w-full gap-3 text-xl font-medium'>
+                        <span className="w-6 h-6 px-3 btn-circle" style={{ backgroundColor: subject.status.color }}></span>
+                        <i className={'pi pi-' + getIcon()}></i>
+                        <span className="w-2/12 min-w-fit">{code}</span>
+                        <span className='pl-3'>{name}</span>
+                    </div>
+                    <div className={`flex  gap-2 mt-1 z-10 group`}>
+                        <label className={`btn btn-circle swap swap-rotate`}>
+                            <input type="checkbox" onChange={handleChange} checked={!show} />
+
+                            <div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}></div>
+                            <div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}></div>
+                        </label>
+                        <button className={`btn btn-circle btn-info`} onClick={() => updateButton(subject)}>
+                            <i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}></i>
+                        </button>
+                        <button className={`btn btn-circle btn-error`} onClick={() => removeSubject(id)}>
+                            <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
+                        </button>
+                    </div>
                 </div>
                 <div className="overflow-auto collapse-content">
                     <div>
@@ -97,24 +113,6 @@ const Subject = ({ subject }) => {
                         <CourseAdder subject={subject} />
                     </div>
                 </div>
-            </div>
-            <div className={`flex self-start gap-2 mt-1 transition-all duration-150 ease-in-out w-12 group ${isOpen ? 'h-48 flex-col' : 'h-12 overflow-hidden hover:w-48'}`}>
-                <div className={`btn btn-circle ${!isOpen ? 'group-hover:hidden' : 'hidden'}`}>
-                    <i className="pi pi-ellipsis-h" style={{ fontSize: '1.5rem' }}></i>
-                </div>
-
-                <label className={`btn btn-circle swap swap-rotate`}>
-                    <input type="checkbox" onChange={handleChange} checked={!show} />
-
-                    <div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}></div>
-                    <div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}></div>
-                </label>
-                <button className={`btn btn-circle btn-info`} onClick={() => updateButton(subject)}>
-                    <i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}></i>
-                </button>
-                <button className={`btn btn-circle btn-error`} onClick={() => removeSubject(id)}>
-                    <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
-                </button>
             </div>
             <SubjectModal subject={subject} />
             {subject.courses.map((course) => (

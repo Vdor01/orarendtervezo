@@ -75,3 +75,9 @@ h3 {
     margin-bottom: 0.25rem;
     padding: 0 0.25rem;
 }
+
+.collapse-arrow > .collapse-title:after {
+    height: 0.6rem;
+    width: 0.6rem;
+    top: 2.6rem;
+}

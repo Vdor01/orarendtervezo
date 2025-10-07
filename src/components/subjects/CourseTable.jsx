@@ -48,6 +48,13 @@ const CourseTable = ({ subject }) => {
                     if (b[sortField] == null) return -1;
                     if (a[sortField] == null && b[sortField] == null) return 0;
 
+                    if (sortField === "day") {
+                        const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"];
+                        const aDay = days.indexOf(a[sortField]);
+                        const bDay = days.indexOf(b[sortField]);
+                        return (aDay - bDay) * (sortOrder === "asc" ? 1 : -1);
+                    }
+
                     return (
                         a[sortField].toString().localeCompare(b[sortField].toString(), 'en', { numeric: true }) * (sortOrder === "asc" ? 1 : -1)
                     );

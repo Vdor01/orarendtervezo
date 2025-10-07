@@ -4,6 +4,8 @@ import Courses from '../../Courses';
 import SubjectModal from './SubjectModal';
 import CourseModal from './CourseModal';
 import { useTimetable, useSettings } from '../../contexts';
+import CourseAdder from './CourseAdder';
+import CourseTable from './CourseTable';
 
 /**
  * Subject component represents a single subject with its courses.
@@ -15,7 +17,7 @@ import { useTimetable, useSettings } from '../../contexts';
  */
 const Subject = ({ subject }) => {
     const { removeSubject, updateShowSubject, addCourse } = useTimetable();
-    const { settings } = useSettings();
+    const [isOpen, setIsOpen] = React.useState(false);
 
     const { id, code, name } = subject;
     let { show } = subject.status;
@@ -36,60 +38,6 @@ const Subject = ({ subject }) => {
     function handleChange() {
         show = !show;
         updateShowSubject(id, show);
-    }
-
-    /**
-     * Handles the submission of the course form.
-     * It collects the form data, validates the course code, and calls the addCourse function.
-     * 
-     * @param {Event} e - The event object from the form submission.
-     */
-    function handleSubmit(e) {
-        e.preventDefault();
-        const form = document.getElementById("course_form_" + subject.id);
-        const formData = new FormData(form);
-
-        let emptyFields = false;
-
-        const dataNames = ['code', 'instructor', 'location', 'startTime', 'endTime'];
-        dataNames.forEach(name => {
-            const input = form.querySelector(`#course_form_${subject.id} input[name='${name}']`);
-            if (!input.value) {
-                input.setCustomValidity("Ennek a mezőnek a kitöltése kötelező!");
-                input.reportValidity();
-                emptyFields = true;
-            } else {
-                input.setCustomValidity("");
-            }
-        });
-
-        const codeInput = document.querySelector(`#course_form_${subject.id} input[name='code']`);
-        const codeInputValue = codeInput.value;
-        const codeError = codeInputValue === "0" || codeInputValue === "-1";
-
-        if (codeError) {
-            codeInput.setCustomValidity("A kód nem lehet 0 vagy -1!");
-            codeInput.reportValidity();
-        } else if (emptyFields) {
-            // Do nothing, as the individual fields have already reported their validity
-        } else if (formData.get('startTime') >= formData.get('endTime')) {
-            const endTimeInput = document.querySelector(`#course_form_${subject.id} input[name='endTime']`);
-            endTimeInput.setCustomValidity("A végidőpontnak nagyobbnak kell lennie, mint a kezdőidőpont!");
-            endTimeInput.reportValidity();
-        } else {
-            codeInput.setCustomValidity("");
-            addCourse(
-                subject.id,
-                formData.get('code'),
-                formData.get('type'),
-                formData.get('instructor'),
-                formData.get('location'),
-                formData.get('day'),
-                formData.get('startTime'),
-                formData.get('endTime'),
-                formData.get('notes')
-            );
-        }
     }
 
     /**
@@ -136,126 +84,35 @@ const Subject = ({ subject }) => {
     return (
         <div className='flex items-center justify-between gap-3'>
             <div className="collapse bg-base-200 collapse-arrow shrink">
-                <input type="checkbox" />
-                <div className={"flex items-center gap-4 text-xl font-medium collapse-title " + getStatus()}>
-                    <span className="w-6 h-6 btn-circle" style={{ backgroundColor: subject.status.color }}></span>
-                    <i className={'pi pi-' + getIcon()}></i>
-                    <span className="w-2/12 min-w-fit">{code}</span>
-                    <span className='pl-3'>{name}</span>
-                </div>
-                <div className="overflow-auto collapse-content">
-                    <div className="overflow-x-scroll">
-                        <form id={"course_form_" + subject.id} onSubmit={(e) => e.preventDefault()}>
-                            <table className="table table-auto xl:table-md table-sm table-pin-cols">
-                                <thead>
-                                    <tr>
-                                        <th>Kurzus</th>
-                                        <th>Típus</th>
-                                        <th>Oktató</th>
-                                        <th>Hely</th>
-                                        <th>Nap</th>
-                                        <th>Időpont</th>
-                                        <th>Megjegyzés</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {subject.courses.map((course, index) => (
-                                        <Courses
-                                            key={index}
-                                            subjectId={id}
-                                            choosen={subject.status.choosen}
-                                            course={course}
-                                            type={course.type}
-                                        />
-                                    ))}
-                                    <tr>
-                                        <th className='w-1/12'>
-                                            <input
-                                                type="text"
-                                                name='code'
-                                                placeholder="#"
-                                                className="w-full max-w-xs input input-bordered input-sm invalid:border-error"
-                                            />
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <select name='type' className="w-full max-w-xs select select-bordered select-sm">
-                                                <option>Gyakorlat</option>
-                                                <option>Előadás</option>
-                                            </select>
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <input
-                                                type="text"
-                                                name='instructor'
-                                                placeholder="Példa Béla"
-                                                className="w-full max-w-xs input input-bordered input-sm invalid:border-error"
-                                            />
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <input
-                                                type="text"
-                                                name='location'
-                                                placeholder="Északi Tömb 7.15 (PC11)"
-                                                className="w-full max-w-xs input input-bordered input-sm invalid:border-error"
-                                            />
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <select name='day' className="w-full max-w-xs select select-bordered select-sm">
-                                                <option>Hétfő</option>
-                                                <option>Kedd</option>
-                                                <option>Szerda</option>
-                                                <option>Csütörtök</option>
-                                                <option>Péntek</option>
-                                                {settings.saturday && <option>Szombat</option>}
-                                            </select>
-                                        </th>
-                                        <th className='flex items-center w-2/12 h-24 gap-1'>
-                                            <input
-                                                type="time"
-                                                name='startTime'
-                                                className="input input-bordered input-sm invalid:border-error"
-                                            />
-                                            -
-                                            <input
-                                                type="time"
-                                                name='endTime'
-                                                className="input input-bordered input-sm invalid:border-error"
-                                            />
-                                        </th>
-                                        <th className='w-2/12'>
-                                            <input
-                                                type="text"
-                                                name='notes'
-                                                placeholder="Megjegyzés"
-                                                className="w-full max-w-xs input input-bordered input-sm"
-                                            />
-                                        </th>
-                                        <th className='w-1/12 text-right'>
-                                            <button className="btn btn-circle btn-success" onClick={handleSubmit}>
-                                                <i className="pi pi-plus" style={{ fontSize: '1.5rem' }}></i>
-                                            </button>
-                                        </th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </form>
+                <input type="checkbox" onClick={() => setIsOpen(!isOpen)} />
+                <div className={"flex justify-between items-center collapse-title after:start-5 after:top-8 pe-4 ps-12 " + getStatus()}>
+                    <div className='flex items-center w-full gap-3 text-xl font-medium'>
+                        <span className="w-6 h-6 px-3 btn-circle" style={{ backgroundColor: subject.status.color }}></span>
+                        <i className={'pi pi-' + getIcon()}></i>
+                        <span className="w-2/12 min-w-fit">{code}</span>
+                        <span className='pl-3'>{name}</span>
+                    </div>
+                    <div className={`flex  gap-2 mt-1 z-10 group`}>
+                        <label className={`btn btn-circle swap swap-rotate`}>
+                            <input type="checkbox" onChange={handleChange} checked={!show} />
+
+                            <div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}></div>
+                            <div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}></div>
+                        </label>
+                        <button className={`btn btn-circle btn-info`} onClick={() => updateButton(subject)}>
+                            <i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}></i>
+                        </button>
+                        <button className={`btn btn-circle btn-error`} onClick={() => removeSubject(id)}>
+                            <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
+                        </button>
                     </div>
                 </div>
-            </div>
-            <div className='flex self-start gap-2 mt-1'>
-                <label className="btn btn-circle swap swap-rotate">
-                    <input type="checkbox" onChange={handleChange} checked={!show} />
-
-                    <div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}></div>
-                    <div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}></div>
-                </label>
-                <button className="btn btn-circle btn-info" onClick={() => updateButton(subject)}>
-                    <i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}></i>
-                </button>
-                <button className="btn btn-circle btn-error" onClick={() => removeSubject(id)}>
-                    <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
-                </button>
+                <div className="overflow-auto collapse-content">
+                    <div>
+                        <CourseTable subject={subject} />
+                        <CourseAdder subject={subject} />
+                    </div>
+                </div>
             </div>
             <SubjectModal subject={subject} />
             {subject.courses.map((course) => (

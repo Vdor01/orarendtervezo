@@ -17,7 +17,7 @@ import CourseTable from './CourseTable';
  */
 const Subject = ({ subject }) => {
     const { removeSubject, updateShowSubject, addCourse } = useTimetable();
-    const { settings } = useSettings();
+    const [isOpen, setIsOpen] = React.useState(false);
 
     const { id, code, name } = subject;
     let { show } = subject.status;
@@ -84,7 +84,7 @@ const Subject = ({ subject }) => {
     return (
         <div className='flex items-center justify-between gap-3'>
             <div className="collapse bg-base-200 collapse-arrow shrink">
-                <input type="checkbox" />
+                <input type="checkbox" onClick={() => setIsOpen(!isOpen)} />
                 <div className={"flex items-center gap-4 text-xl font-medium collapse-title " + getStatus()}>
                     <span className="w-6 h-6 btn-circle" style={{ backgroundColor: subject.status.color }}></span>
                     <i className={'pi pi-' + getIcon()}></i>
@@ -93,47 +93,26 @@ const Subject = ({ subject }) => {
                 </div>
                 <div className="overflow-auto collapse-content">
                     <div>
-                        {/* <table className="table overflow-x-scroll table-auto xl:table-md table-sm table-pin-cols">
-                            <thead>
-                                <tr>
-                                    <th>Kurzus</th>
-                                    <th>Típus</th>
-                                    <th>Oktató</th>
-                                    <th>Hely</th>
-                                    <th>Nap</th>
-                                    <th>Időpont</th>
-                                    <th>Megjegyzés</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {subject.courses.map((course, index) => (
-                                    <Courses
-                                        key={index}
-                                        subjectId={id}
-                                        choosen={subject.status.choosen}
-                                        course={course}
-                                        type={course.type}
-                                    />
-                                ))}
-                            </tbody>
-                        </table> */}
                         <CourseTable subject={subject} />
                         <CourseAdder subject={subject} />
                     </div>
                 </div>
             </div>
-            <div className='flex self-start gap-2 mt-1'>
-                <label className="btn btn-circle swap swap-rotate">
+            <div className={`flex self-start gap-2 mt-1 transition-all duration-150 ease-in-out w-12 group ${isOpen ? 'h-48 flex-col' : 'h-12 overflow-hidden hover:w-48'}`}>
+                <div className={`btn btn-circle ${!isOpen ? 'group-hover:hidden' : 'hidden'}`}>
+                    <i className="pi pi-ellipsis-h" style={{ fontSize: '1.5rem' }}></i>
+                </div>
+
+                <label className={`btn btn-circle swap swap-rotate`}>
                     <input type="checkbox" onChange={handleChange} checked={!show} />
 
                     <div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}></div>
                     <div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}></div>
                 </label>
-                <button className="btn btn-circle btn-info" onClick={() => updateButton(subject)}>
+                <button className={`btn btn-circle btn-info`} onClick={() => updateButton(subject)}>
                     <i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}></i>
                 </button>
-                <button className="btn btn-circle btn-error" onClick={() => removeSubject(id)}>
+                <button className={`btn btn-circle btn-error`} onClick={() => removeSubject(id)}>
                     <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
                 </button>
             </div>

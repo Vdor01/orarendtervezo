@@ -4,16 +4,16 @@ import { useSettings } from "../contexts";
 /**
  * Custom hook for handling keyboard shortcuts throughout the application.
  * Currently handles:
- * - Ctrl + N: Toggle subject view between 'list' and 'timetable'
+ * - Ctrl + K: Toggle subject view between 'list' and 'timetable'
  */
 export const useKeyboardShortcuts = () => {
     const { settings, updateSettings } = useSettings();
 
     useEffect(() => {
         const handleKeyDown = (event) => {
-            // Ctrl + N: Toggle subject view
+            // Ctrl + K: Toggle subject view
             if (event.ctrlKey && event.key === "k") {
-                event.preventDefault(); // Prevent browser's default "New window" action
+                event.preventDefault();
 
                 const newSubjectView =
                     settings.subjectView === "list" ? "timetable" : "list";

@@ -6,6 +6,7 @@ import CourseModal from './CourseModal';
 import { useTimetable, useSettings } from '../../contexts';
 import CourseAdder from './CourseAdder';
 import CourseTable from './CourseTable';
+import SubjectTimetable from '../timetable/SubjectTimetable';
 
 /**
  * Subject component represents a single subject with its courses.
@@ -18,6 +19,7 @@ import CourseTable from './CourseTable';
 const Subject = ({ subject }) => {
     const { removeSubject, updateShowSubject, addCourse } = useTimetable();
     const [isOpen, setIsOpen] = React.useState(false);
+    const { settings } = useSettings();
 
     const { id, code, name } = subject;
     let { show } = subject.status;
@@ -109,7 +111,8 @@ const Subject = ({ subject }) => {
                 </div>
                 <div className="overflow-auto collapse-content">
                     <div>
-                        <CourseTable subject={subject} />
+                        {(settings.subjectView === 'list' || settings.subjectView == null) && <CourseTable subject={subject} />}
+                        {settings.subjectView === 'timetable' && <SubjectTimetable subject={subject} />}
                         <CourseAdder subject={subject} />
                     </div>
                 </div>

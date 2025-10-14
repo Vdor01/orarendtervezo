@@ -6,6 +6,7 @@ import { Timetable, Footer } from './components';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { AppProviders, useTimetable } from './contexts';
+import { useKeyboardShortcuts } from './hooks';
 
 /**
  * The main timetable component that handles calendar display and event interaction.
@@ -14,6 +15,9 @@ import { AppProviders, useTimetable } from './contexts';
  */
 function TimetableApp() {
     const { timetableRef } = useTimetable();
+
+    // Enable keyboard shortcuts
+    useKeyboardShortcuts();
 
     /**
      * Exports the timetable as a PNG image using different export methods.

@@ -23,7 +23,8 @@ export const StateProvider = ({ children }) => {
                 "notes": false
             },
             "saturday": false,
-            "slot": 20
+            "slot": 20,
+            "subjectView": "list"
         },
         "currentState": {
             "menu": "Hozzáadás",

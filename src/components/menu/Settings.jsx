@@ -148,6 +148,32 @@ const Settings = () => {
                             />
                         </label>
                     </div>
+                    <div className='flex w-1/4 gap-2 form-control'>
+                        <h3 className='mb-5 font-bold'>Tantárgy nézet</h3>
+                        <div className="flex items-center justify-between gap-6">
+                            <div className='flex'>
+                                <label className="gap-5 cursor-pointer label">
+                                    <span className="label-text">Lista</span>
+                                    <input
+                                        type="radio"
+                                        name="subjectView"
+                                        checked={settings.subjectView === 'list'}
+                                        onChange={() => updateSettings('misc', 'subjectView', 'list')}
+                                    />
+                                </label>
+                                <label className="gap-5 cursor-pointer label">
+                                    <input
+                                        type="radio"
+                                        name="subjectView"
+                                        checked={settings.subjectView === 'timetable'}
+                                        onChange={() => updateSettings('misc', 'subjectView', 'timetable')}
+                                    />
+                                    <span className="label-text">Rács</span>
+                                </label>
+                            </div>
+                            <div><kbd className="kbd kbd-sm">Ctrl</kbd> + <kbd className="kbd kbd-sm">K</kbd></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

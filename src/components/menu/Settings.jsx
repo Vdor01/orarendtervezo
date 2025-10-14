@@ -157,7 +157,7 @@ const Settings = () => {
                                     <input
                                         type="radio"
                                         name="subjectView"
-                                        checked={settings.subjectView === 'list'}
+                                        checked={settings.subjectView === 'list' || settings.subjectView == null}
                                         onChange={() => updateSettings('misc', 'subjectView', 'list')}
                                     />
                                 </label>
@@ -168,7 +168,7 @@ const Settings = () => {
                                         checked={settings.subjectView === 'timetable'}
                                         onChange={() => updateSettings('misc', 'subjectView', 'timetable')}
                                     />
-                                    <span className="label-text">Rács</span>
+                                    <span className="label-text">Naptár</span>
                                 </label>
                             </div>
                             <div><kbd className="kbd kbd-sm">Ctrl</kbd> + <kbd className="kbd kbd-sm">K</kbd></div>

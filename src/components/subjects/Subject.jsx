@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'primeicons/primeicons.css';
-import Courses from '../../Courses';
 import SubjectModal from './SubjectModal';
 import CourseModal from './CourseModal';
 import { useTimetable, useSettings } from '../../contexts';
@@ -17,19 +16,35 @@ import SubjectTimetable from '../timetable/SubjectTimetable';
  * @returns {JSX.Element} A div element containing the subject details and its courses.
  */
 const Subject = ({ subject }) => {
-    const { removeSubject, updateShowSubject, addCourse } = useTimetable();
-    const [isOpen, setIsOpen] = React.useState(false);
+    const { removeSubject, updateShowSubject, refreshSubjectCourses } = useTimetable();
+    const [isOpen, setIsOpen] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const { settings } = useSettings();
 
     const { id, code, name } = subject;
     let { show } = subject.status;
 
     /**
+     * Refreshes the subject's courses by fetching the latest data from the server.
+     * Shows a loading state while refreshing.
+     */
+    async function updateButton() {
+        setIsRefreshing(true);
+        try {
+            await refreshSubjectCourses(id);
+        } catch (error) {
+            console.error('Failed to refresh courses:', error);
+        } finally {
+            setIsRefreshing(false);
+        }
+    }
+
+    /**
      * Updates the subject modal to allow editing of the subject details.
      * 
      * @param {Object} subject - The subject object containing details like code and name.
      */
-    function updateButton(subject) {
+    function editButton(subject) {
         document.getElementById("subject_modal_" + subject.code).showModal();
     }
 
@@ -95,16 +110,19 @@ const Subject = ({ subject }) => {
                         <span className='pl-3'>{name}</span>
                     </div>
                     <div className={`flex  gap-2 mt-1 z-10 group`}>
-                        <label className={`btn btn-circle swap swap-rotate`}>
+                        <label className={`btn btn-circle swap swap-rotate`} title={show ? 'Elrejtés' : 'Mutatás'}>
                             <input type="checkbox" onChange={handleChange} checked={!show} />
 
                             <div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}></div>
                             <div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}></div>
                         </label>
-                        <button className={`btn btn-circle btn-info`} onClick={() => updateButton(subject)}>
+                        <button className="btn btn-circle btn-info" onClick={() => updateButton(subject)} title='Frissítés' disabled={isRefreshing}>
+                            <i className={`${isRefreshing ? 'loading' : 'pi pi-sync'}`} style={{ fontSize: '1.5rem' }}></i>
+                        </button>
+                        <button className={`btn btn-circle btn-warning`} onClick={() => editButton(subject)} title='Szerkesztés'>
                             <i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}></i>
                         </button>
-                        <button className={`btn btn-circle btn-error`} onClick={() => removeSubject(id)}>
+                        <button className={`btn btn-circle btn-error`} onClick={() => removeSubject(id)} title='Törlés'>
                             <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
                         </button>
                     </div>

@@ -56,16 +56,16 @@ const Courses = ({ subjectId, choosen, course, type }) => {
             <td>{course.startTime}-{course.endTime}</td>
             <td>{course.notes}</td>
             <th className='flex justify-end gap-2'>
-                <label className="btn btn-circle swap swap-rotate">
+                <label className="btn btn-circle swap swap-rotate" title={show ? 'Elrejtés' : 'Mutatás'}>
                     <input type="checkbox" onChange={handleChange} checked={!show} />
 
                     <div className="swap-on pi pi-eye-slash text-error" style={{ fontSize: '1.5rem' }}></div>
                     <div className="swap-off pi pi-eye" style={{ fontSize: '1.5rem' }}></div>
                 </label>
-                <button className="btn btn-circle btn-info" onClick={() => document.getElementById("course_modal_" + subjectId + "_" + course.id).showModal()}>
+                <button className="btn btn-circle btn-warning" onClick={() => document.getElementById("course_modal_" + subjectId + "_" + course.id).showModal()} title='Szerkesztés'>
                     <i className="pi pi-pen-to-square" style={{ fontSize: '1.5rem' }}></i>
                 </button>
-                <button className="btn btn-circle btn-error" onClick={() => removeCourse(subjectId, course.id)}>
+                <button className="btn btn-circle btn-error" onClick={() => removeCourse(subjectId, course.id)} title='Törlés'>
                     <i className="pi pi-trash" style={{ fontSize: '1.5rem' }}></i>
                 </button>
             </th>

@@ -39,9 +39,11 @@ export function parseCourseData(data, subjectsAccumulator) {
             .querySelector('[data-label="Oktató / Megjegyzés"]')
             .textContent.trim();
 
+        // Extract Hungarian day names (including common misspelling "Hétfo")
         const dayMatch = timeInfo.match(
             /(Hétfő|Hétfo|Kedd|Szerda|Csütörtök|Péntek|Szombat|Vasárnap)/,
         );
+        // Extract time range in HH:MM-HH:MM format (e.g., "14:00-15:30")
         const timeMatch = timeInfo.match(/(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/);
 
         if (dayMatch && timeMatch) {
@@ -51,16 +53,22 @@ export function parseCourseData(data, subjectsAccumulator) {
             const endHour = parseInt(timeMatch[3]);
             const endMin = parseInt(timeMatch[4]);
 
-            const codeMatch = codeInfo.match(/(.*?)\s+\((.*?)\)/);
+            // Parse course code format: "SUBJECT-NUMBER (TYPE)" e.g., "IP-18AN1G-1 (gyakorlat)"
+            const codeMatch = codeInfo.match(/(.*?)\s+\((.*?)\)/); // Extract code and type in parentheses
             let code = codeMatch ? codeMatch[1] : codeInfo;
-            const subjectMatch = code.match(/^(.*?)\s*-\s*\d+$/);
+
+            // Extract subject code from full code (e.g., "IP-18AN1G-1" -> "IP-18AN1G")
+            const subjectMatch = code.match(/^(.*?)\s*-\s*\d+$/); // Pattern: letters/words followed by dash and numbers
             let subject = subjectMatch ? subjectMatch[1] : code;
 
+            // If subject has spaces, take only the first part (handles multi-word subjects)
             if (subject.includes(" ")) {
                 subject = subject.split(" ")[0];
             }
 
-            const type = codeMatch ? codeMatch[2] : "";
+            const type = codeMatch ? codeMatch[2] : ""; // Course type (gyakorlat, előadás, etc.)
+
+            // Extract just the course number from the full code (e.g., "IP-18AN1G-1" -> "1")
             const numberMatch = code.match(/-(\d+)$/);
             code = numberMatch ? numberMatch[1] : code;
 
@@ -80,11 +88,13 @@ export function parseCourseData(data, subjectsAccumulator) {
                 subject: subject,
                 name: courseName,
                 course: code,
+                // Capitalize first letter, lowercase the rest (e.g., "gyakorlat" -> "Gyakorlat")
                 type:
                     type.charAt(0).toUpperCase() + type.slice(1).toLowerCase(),
                 instructor: instructor,
                 location: location,
-                day: day === "Hétfo" ? "Hétfő" : day,
+                day: day === "Hétfo" ? "Hétfő" : day, // Fix common misspelling
+                // Ensure times are formatted as HH:MM (pad single digits with 0)
                 startTime: `${startHour.toString().padStart(2, "0")}:${startMin.toString().padStart(2, "0")}`,
                 endTime: `${endHour.toString().padStart(2, "0")}:${endMin.toString().padStart(2, "0")}`,
                 notes: "",
@@ -100,22 +110,28 @@ export function parseCourseData(data, subjectsAccumulator) {
 
 /**
  * Generates a list of semesters based on the current date.
+ * Hungarian university system:
+ * - Semester 1: September-January (fall)
+ * - Semester 2: February-June (spring)
  *
  * @returns {Array} An array of semester strings in the format "YYYY-YYYY-X", where X is the semester number.
  */
 export function getSemesters() {
     const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
+    const currentMonth = new Date().getMonth(); // 0-indexed: 0=January, 5=June, 6=July, etc.
     const semesters = [];
 
+    // July onwards (month >= 6): Fall semester is upcoming/current
     if (currentMonth >= 6) {
-        semesters.push(`${currentYear}-${currentYear + 1}-1`);
-        semesters.push(`${currentYear - 1}-${currentYear}-2`);
-        semesters.push(`${currentYear - 1}-${currentYear}-1`);
-    } else {
-        semesters.push(`${currentYear - 1}-${currentYear}-2`);
-        semesters.push(`${currentYear - 1}-${currentYear}-1`);
-        semesters.push(`${currentYear - 2}-${currentYear - 1}-2`);
+        semesters.push(`${currentYear}-${currentYear + 1}-1`); // Current fall semester
+        semesters.push(`${currentYear - 1}-${currentYear}-2`); // Previous spring semester
+        semesters.push(`${currentYear - 1}-${currentYear}-1`); // Previous fall semester
+    }
+    // January-June (month < 6): Spring semester is current
+    else {
+        semesters.push(`${currentYear - 1}-${currentYear}-2`); // Current spring semester
+        semesters.push(`${currentYear - 1}-${currentYear}-1`); // Previous fall semester
+        semesters.push(`${currentYear - 2}-${currentYear - 1}-2`); // Previous spring semester
     }
 
     return semesters;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import TableHead from '../table/TableHead'
 import TableBody from '../table/TableBody';
 
@@ -72,7 +72,7 @@ const CourseTable = ({ subject }) => {
     return (
         <table className='table overflow-x-scroll table-auto xl:table-md table-sm table-pin-cols'>
             <TableHead columns={columns} handleSorting={handleSorting} />
-            <TableBody columns={columns} data={tableData} subject={subject} />
+            <TableBody data={tableData} subject={subject} />
         </table>
     )
 }

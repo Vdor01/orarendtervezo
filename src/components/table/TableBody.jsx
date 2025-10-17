@@ -1,7 +1,6 @@
-import React from 'react'
 import Courses from '../../Courses';
 
-const TableBody = ({ data, columns, subject }) => {
+const TableBody = ({ data, subject }) => {
     return (
         <tbody>
             {data.map((course) => {

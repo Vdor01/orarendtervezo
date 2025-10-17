@@ -1,4 +1,3 @@
-import React from 'react';
 import { exportTimetableWithCanvas } from './utils/CanvasExport';
 import Subjects from './Subjects';
 import Menu from './Menu';
@@ -21,15 +20,18 @@ function TimetableApp() {
 
     /**
      * Exports the timetable as a PNG image using different export methods.
+     * This function tries multiple ways to access the FullCalendar DOM element.
      */
     async function exportTimetableAsPNGHandler() {
         try {
             console.log("Export handler called");
 
-            const calendarElement = timetableRef.current?.elRef?.current?.querySelector('.fc') ||
-                timetableRef.current?.el?.querySelector('.fc') ||
-                timetableRef.current?.querySelector?.('.fc') ||
-                document.querySelector('.fc');
+            // Multiple fallback methods to find the FullCalendar element (.fc)
+            // Different FullCalendar versions might expose the DOM element differently
+            const calendarElement = timetableRef.current?.elRef?.current?.querySelector('.fc') ||  // Method 1: elRef.current
+                timetableRef.current?.el?.querySelector('.fc') ||                                    // Method 2: el property
+                timetableRef.current?.querySelector?.('.fc') ||                                      // Method 3: direct querySelector
+                document.querySelector('.fc');                                                       // Method 4: fallback to document search
 
             if (calendarElement) {
                 console.log("Exporting with Canvas...");

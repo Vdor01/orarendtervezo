@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import 'primeicons/primeicons.css';
 import SubjectModal from './SubjectModal';
 import CourseModal from './CourseModal';
@@ -59,42 +59,64 @@ const Subject = ({ subject }) => {
 
     /**
      * Determines the status of the subject based on the chosen courses.
+     * Returns CSS classes to visually indicate completion status:
+     * - bg-success: All courses selected (fully completed)
+     * - bg-info: Partially completed (some courses selected)
+     * - Empty string: No courses selected
      * 
      * @returns {string} A string representing the CSS class for the subject status.
      */
     function getStatus() {
+        // For subjects with "type-based" course selection (object-type choosen)
         if (typeof subject.status.choosen === 'object') {
             const courseTypes = subject.courses.map(course => course.type);
-            const types = [...new Set(courseTypes)];
+            const types = [...new Set(courseTypes)]; // Get unique course types (Gyakorlat, Előadás, Egyéb)
 
-            let choosen = 0;
+            let choosen = 0; // Counter for selected course types
             types.forEach(type => {
+                // Count non-zero selections (0 means no course selected for this type)
                 if (subject.status.choosen[type] !== 0) { choosen++; }
             });
 
+            // All course types have selections - fully completed (green)
             if (choosen === types.length) {
                 return 'bg-success text-base-300';
-            } else if (choosen > 0) {
+            }
+            // Some course types have selections - partially completed (blue)
+            else if (choosen > 0) {
                 return 'bg-info text-base-300';
             }
-        } else if (subject.status.choosen !== 0) {
-            return 'bg-success text-base-300';
         }
+        // For subjects with single course selection (non-zero means selected)
+        else if (subject.status.choosen !== 0) {
+            return 'bg-success text-base-300'; // Course selected - completed (green)
+        }
+
+        // No courses selected - default appearance
         return '';
     }
 
     /**
-     * Determines the icon to display based on the subject's status.
+     * Determines the icon to display based on the subject's course selection mode.
+     * Icons represent different selection strategies:
+     * - 'list': Multiple course types can be selected independently
+     * - 'check-circle': Single course selection mode
+     * - 'lock': All courses are automatically selected (locked mode)
      * 
-     * @return {string} A string representing the icon class for the subject status.
+     * @return {string} A string representing the PrimeIcons icon class for the subject status.
      */
     function getIcon() {
+        // Object-type choosen = "Type-based selection" (Gyakorlat, Előadás, etc.)
         if (typeof subject.status.choosen === 'object') {
-            return 'list';
-        } else if (subject.status.choosen >= 0) {
-            return 'check-circle';
-        } else {
-            return 'lock';
+            return 'list'; // List icon for multiple independent selections
+        }
+        // Non-negative number = "Single course selection" or "No selection"
+        else if (subject.status.choosen >= 0) {
+            return 'check-circle'; // Check circle for single course mode
+        }
+        // Negative number (-1) = "All courses selected" mode
+        else {
+            return 'lock'; // Lock icon indicates all courses are automatically selected
         }
     }
 

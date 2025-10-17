@@ -7,11 +7,14 @@ export async function exportTimetableWithCanvas(calendarElement) {
     try {
         console.log("Starting canvas export with direct rendering...");
 
-        // Create a high-resolution canvas
+        // Create a high-resolution canvas for crisp export quality
         const rect = calendarElement.getBoundingClientRect();
+        // Use device pixel ratio for sharp images on high-DPI displays (retina, etc.)
+        // Fallback to 2x scaling if devicePixelRatio is not available
         const scale = window.devicePixelRatio || 2;
 
         const canvas = document.createElement("canvas");
+        // Scale canvas dimensions by pixel ratio to maintain quality
         canvas.width = rect.width * scale;
         canvas.height = rect.height * scale;
 
@@ -27,7 +30,7 @@ export async function exportTimetableWithCanvas(calendarElement) {
         ctx.fillRect(0, 0, rect.width, rect.height);
 
         // Draw calendar grid and events directly
-        await drawCalendarToCanvas(ctx, calendarElement, rect);
+        await drawCalendarToCanvas(ctx, calendarElement);
 
         // Export the canvas
         canvas.toBlob(
@@ -51,11 +54,11 @@ export async function exportTimetableWithCanvas(calendarElement) {
     }
 }
 
-async function drawCalendarToCanvas(ctx, calendarElement, rect) {
-    // Set basic styles
+async function drawCalendarToCanvas(ctx, calendarElement) {
+    // Set basic styles using system font stack for consistency
     ctx.font =
-        "12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-    ctx.textBaseline = "top";
+        "12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"; // 12px base font size
+    ctx.textBaseline = "top"; // Align text from the top for consistent positioning
 
     // Draw calendar background
     ctx.strokeStyle = "#e5e7eb";
@@ -63,7 +66,7 @@ async function drawCalendarToCanvas(ctx, calendarElement, rect) {
 
     // Find and draw time slots
     const timeSlots = calendarElement.querySelectorAll(".fc-timegrid-slot");
-    timeSlots.forEach((slot, index) => {
+    timeSlots.forEach((slot) => {
         const slotRect = slot.getBoundingClientRect();
         const calendarRect = calendarElement.getBoundingClientRect();
 
@@ -90,12 +93,12 @@ async function drawCalendarToCanvas(ctx, calendarElement, rect) {
         const width = headerRect.width;
         const height = headerRect.height;
 
-        // Draw header background
+        // Draw header background with light gray color (#f3f4f6 = Tailwind gray-100)
         ctx.fillStyle = "#f3f4f6";
         ctx.fillRect(x, y, width, height);
 
         // Draw header text with capitalize transform
-        ctx.fillStyle = "#374151";
+        ctx.fillStyle = "#374151"; // Tailwind gray-700 for readable text
         ctx.font =
             "12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
         let text = header.textContent || "";
@@ -122,8 +125,8 @@ async function drawCalendarToCanvas(ctx, calendarElement, rect) {
 
         const text = label.textContent || "";
         if (text.trim()) {
-            ctx.fillStyle = "#6b7280";
-            ctx.fillText(text, x + 4, y + 4);
+            ctx.fillStyle = "#6b7280"; // Tailwind gray-500 for subtle time labels
+            ctx.fillText(text, x + 4, y + 4); // 4px padding from edges
         }
     });
 
@@ -138,8 +141,9 @@ async function drawCalendarToCanvas(ctx, calendarElement, rect) {
         const width = eventRect.width;
         const height = eventRect.height;
 
-        // Get event colors
+        // Get event colors from computed styles
         const computedStyle = window.getComputedStyle(event);
+        // Fallback to blue (#3b82f6 = Tailwind blue-500) if no background color set
         const backgroundColor = computedStyle.backgroundColor || "#3b82f6";
         const borderColor = computedStyle.borderColor || backgroundColor;
 
@@ -165,9 +169,9 @@ async function drawCalendarToCanvas(ctx, calendarElement, rect) {
             if (customContent) {
                 // Handle custom event content with multiple lines
                 const children = Array.from(customContent.children);
-                let lineY = y + 4;
-                const lineHeight = 14;
-                const maxWidth = width - 8;
+                let lineY = y + 4; // Start text 4px from top of event
+                const lineHeight = 14; // 14px spacing between text lines
+                const maxWidth = width - 8; // Leave 4px padding on each side (8px total)
 
                 // Calculate text color based on background
                 const textColor = isLightColor(backgroundColor)
@@ -177,8 +181,9 @@ async function drawCalendarToCanvas(ctx, calendarElement, rect) {
                 ctx.font =
                     "11px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
-                children.forEach((child, index) => {
+                children.forEach((child) => {
                     const text = child.textContent?.trim() || "";
+                    // Check if there's space for another line (4px bottom padding)
                     if (text && lineY + lineHeight <= y + height - 4) {
                         // Truncate text if too long
                         let displayText = text;
@@ -196,8 +201,8 @@ async function drawCalendarToCanvas(ctx, calendarElement, rect) {
                             displayText += "...";
                         }
 
-                        ctx.fillText(displayText, x + 4, lineY);
-                        lineY += lineHeight;
+                        ctx.fillText(displayText, x + 4, lineY); // 4px left padding
+                        lineY += lineHeight; // Move to next line
                     }
                 });
             } else {
@@ -224,7 +229,7 @@ async function drawCalendarToCanvas(ctx, calendarElement, rect) {
                     if (testWidth > maxWidth && n > 0) {
                         ctx.fillText(line, x + 4, lineY);
                         line = words[n] + " ";
-                        lineY += 14;
+                        lineY += 14; // 14px line height for text wrapping
                     } else {
                         line = testLine;
                     }
@@ -235,17 +240,29 @@ async function drawCalendarToCanvas(ctx, calendarElement, rect) {
     });
 }
 
+/**
+ * Determines if a color is light enough to require dark text for readability.
+ * Uses the same luminance calculation as isColorDark in timetableUtils.js.
+ *
+ * @param {string} color - CSS color string (rgb, rgba, or other format)
+ * @returns {boolean} True if the color is light, false otherwise
+ */
 function isLightColor(color) {
-    // Simple check for light colors
+    // Handle RGB/RGBA color format (e.g., "rgb(255, 0, 128)" or "rgba(255, 0, 128, 0.5)")
     if (color.startsWith("rgb")) {
-        const matches = color.match(/\d+/g);
+        const matches = color.match(/\d+/g); // Extract all numbers from the string
         if (matches && matches.length >= 3) {
-            const r = parseInt(matches[0]);
-            const g = parseInt(matches[1]);
-            const b = parseInt(matches[2]);
+            const r = parseInt(matches[0]); // Red component (0-255)
+            const g = parseInt(matches[1]); // Green component (0-255)
+            const b = parseInt(matches[2]); // Blue component (0-255)
+
+            // ITU-R BT.709 relative luminance formula (same as isColorDark)
             const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+
+            // Colors above 128 (middle threshold) are considered light
             return brightness > 128;
         }
     }
+    // Default to false for unknown color formats
     return false;
 }

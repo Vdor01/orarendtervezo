@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useMemo, createRef } from 'react';
+import { createContext, useContext, useState, useMemo, createRef } from 'react';
 import { fetchSubjectCourses } from '../utils/serverApi';
 
 const TimetableContext = createContext();

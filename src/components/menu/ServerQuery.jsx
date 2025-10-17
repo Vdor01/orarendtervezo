@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTimetable } from '../../contexts';
 import { getSemesters, searchCoursesBySubject, searchCoursesByInstructor } from '../../utils/serverApi';
 import ImportModal from './ImportModal';

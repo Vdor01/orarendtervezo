@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTimetable } from './contexts'
 
 /**
@@ -28,15 +27,21 @@ const Courses = ({ subjectId, choosen, course, type }) => {
 
     /**
      * Checks if the current course is the one chosen by the user.
+     * Handles both single-course selection and type-based selection modes.
      * 
      * @returns {boolean} True if the course is chosen, false otherwise.
      */
     function isChoosen() {
+        // Type-based selection: check if this course is selected for its type
         if (typeof choosen === 'object') {
-            return choosen[type] === course.course
-        } else if (choosen === course.course) {
+            return choosen[type] === course.course // Compare course code with selected course for this type
+        }
+        // Single course selection: direct comparison with chosen course
+        else if (choosen === course.course) {
             return true
         }
+        // Default: not chosen
+        return false;
     }
 
     /**

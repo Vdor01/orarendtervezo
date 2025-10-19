@@ -1,4 +1,3 @@
-import React from "react";
 import { TimetableProvider } from "./TimetableContext";
 import { StateProvider } from "./StateContext";
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Help component provides information about the website's purpose and how to use it.
  * It explains the functionality of the site, how to select courses, and the types of subjects available.

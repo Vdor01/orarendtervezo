@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Button component renders a button with an icon and text.
  * It applies different styles based on the current mode and whether the button is disabled.
@@ -13,8 +11,8 @@ import React from 'react';
 const Button = ({ text, icon, mode, set, isDisabled }) => {
     const isActive = mode === text;
     const buttonClass = `2xl:btn-lg justify-start w-full btn btn-md hover:border-primary flex-1 ${isActive
-            ? "bg-primary text-base-300 hover:bg-primary"
-            : "hover:bg-base-100"
+        ? "bg-primary text-base-300 hover:bg-primary"
+        : "hover:bg-base-100"
         }`;
 
     return (

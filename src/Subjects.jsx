@@ -1,6 +1,3 @@
-import React from 'react';
-import 'primeicons/primeicons.css';
-import Courses from './Courses';
 import Subject from './components/subjects/Subject';
 import { useTimetable } from './contexts';
 

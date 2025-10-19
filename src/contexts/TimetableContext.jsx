@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useMemo, createRef } from 'react';
+import { createContext, useContext, useState, useMemo, createRef } from 'react';
+import { fetchSubjectCourses } from '../utils/serverApi';
 
 const TimetableContext = createContext();
 
@@ -323,6 +324,85 @@ export const TimetableProvider = ({ children }) => {
         });
     }
 
+    /**
+     * Refreshes courses for a specific subject by fetching data from the server.
+     * This function performs the following operations:
+     * 1. Deletes all existing courses for the subject
+     * 2. Fetches new courses from the server
+     * 3. Updates the subject name if it has changed
+     * 4. Resets the chosen course selection
+     * 
+     * @param {number} subjectId - The ID of the subject to refresh.
+     * @param {string} semester - The semester to fetch data for (optional, defaults to current semester).
+     */
+    async function refreshSubjectCourses(subjectId, semester = null) {
+        const subject = eventsJSON.find(event => event.id === subjectId);
+        if (!subject) {
+            console.error('Subject not found');
+            return;
+        }
+
+        try {
+            const { courses: subjectCourses, subjects: subjectsData } = await fetchSubjectCourses(subject.code, semester);
+
+            const updatedSubjectInfo = subjectsData.find(s => s.code === subject.code);
+
+            setEventsJSON(prevEvents => {
+                return prevEvents.map(event => {
+                    if (event.id === subjectId) {
+                        let nextCourseId = 1;
+                        const updatedCourses = subjectCourses.map(course => ({
+                            id: nextCourseId++,
+                            course: course.course,
+                            type: course.type,
+                            instructor: course.instructor,
+                            location: course.location,
+                            day: course.day,
+                            startTime: course.startTime,
+                            endTime: course.endTime,
+                            notes: course.notes,
+                            show: true
+                        }));
+
+                        let resetChosenState;
+                        if (typeof event.status.choosen === 'object') {
+                            resetChosenState = {
+                                "Gyakorlat": 0,
+                                "Előadás": 0,
+                                "Egyéb": 0
+                            };
+                        } else if (event.status.choosen === -1) {
+                            resetChosenState = -1; // Keep "all courses selected" mode
+                        } else {
+                            resetChosenState = 0; // Reset to no course selected
+                        }
+
+                        return {
+                            ...event,
+                            name: updatedSubjectInfo ? updatedSubjectInfo.name : event.name, // Update name if available
+                            courses: updatedCourses, // Replace all courses with new ones
+                            status: {
+                                ...event.status,
+                                choosen: resetChosenState // Reset chosen courses
+                            }
+                        };
+                    }
+                    return event;
+                });
+            });
+
+            // Log the refresh operation details
+            // Might delete later
+            console.log(`Successfully refreshed courses for subject: ${subject.code}`);
+            console.log(`- Deleted old courses and added ${subjectCourses.length} new courses`);
+            console.log(`- Subject name updated: ${updatedSubjectInfo ? updatedSubjectInfo.name : 'No change'}`);
+            console.log(`- Chosen course selection has been reset`);
+        } catch (error) {
+            console.error('Error refreshing subject courses:', error);
+            throw error;
+        }
+    }
+
     const value = {
         eventsJSON,
         setEventsJSON,
@@ -337,6 +417,7 @@ export const TimetableProvider = ({ children }) => {
         updateShowCourse,
         setChoosenCourse,
         importFromArrays,
+        refreshSubjectCourses,
     };
 
     return (

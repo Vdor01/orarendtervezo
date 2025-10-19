@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { useTimetable, useSettings } from '../../contexts';
 
 /**
@@ -13,6 +13,14 @@ import { useTimetable, useSettings } from '../../contexts';
 const CourseModal = ({ subject, course_id }) => {
     const { updateCourse } = useTimetable();
     const { settings } = useSettings();
+
+    const [errors, setErrors] = useState({
+        code: false,
+        instructor: false,
+        location: false,
+        startTime: false,
+        endTime: false
+    });
 
     const course = subject.courses.find(course => course.id === course_id);
 
@@ -38,11 +46,31 @@ const CourseModal = ({ subject, course_id }) => {
         const form = document.getElementById("subject_form_" + subject.id + "_" + course.id);
         const formData = new FormData(form);
 
-        const error = formData.get('code') === "0" || formData.get('code') === "-1";
-        const codeInput = document.querySelector(`#subject_form_${subject.id}_${course.id} input[name='code']`);
+        let emptyFields = false;
 
-        if (error) {
+        const dataNames = ['code', 'instructor', 'location', 'startTime', 'endTime'];
+        dataNames.forEach(name => {
+            const input = form.querySelector(`#subject_form_${subject.id}_${course.id} input[name='${name}']`);
+            if (!input.value) {
+                setErrors(prev => ({ ...prev, [name]: true }));
+                emptyFields = true;
+            } else {
+                setErrors(prev => ({ ...prev, [name]: false }));
+            }
+        });
+
+        const codeInput = document.querySelector(`#subject_form_${subject.id}_${course.id} input[name='code']`);
+        const codeInputValue = codeInput.value;
+        const codeError = codeInputValue === "0" || codeInputValue === "-1";
+
+        if (codeError) {
             codeInput.setCustomValidity("A kód nem lehet 0 vagy -1!");
+            codeInput.reportValidity();
+        } else if (emptyFields) {
+            // Do nothing, as the individual fields have already reported their validity
+        } else if (formData.get('startTime') >= formData.get('endTime')) {
+            const endTimeInput = document.querySelector(`#subject_form_${subject.id}_${course.id} input[name='endTime']`);
+            endTimeInput.reportValidity();
         } else {
             codeInput.setCustomValidity("");
             document.getElementById("course_modal_" + subject.id + "_" + course.id).close();
@@ -59,7 +87,30 @@ const CourseModal = ({ subject, course_id }) => {
                 formData.get('notes')
             );
         }
-        codeInput.reportValidity();
+    };
+
+    const handleCancel = (e) => {
+        e.preventDefault();
+
+        const form = document.getElementById("subject_form_" + subject.id + "_" + course.id);
+        form.querySelector('input[name="code"]').value = code;
+        form.querySelector('select[name="type"]').value = type;
+        form.querySelector('input[name="instructor"]').value = instructor;
+        form.querySelector('input[name="location"]').value = location;
+        form.querySelector('select[name="day"]').value = day;
+        form.querySelector('input[name="startTime"]').value = startTime;
+        form.querySelector('input[name="endTime"]').value = endTime;
+        form.querySelector('input[name="notes"]').value = notes;
+
+        setErrors({
+            code: false,
+            instructor: false,
+            location: false,
+            startTime: false,
+            endTime: false
+        });
+
+        document.getElementById("course_modal_" + subject.id + "_" + course.id).close();
     };
 
     return (
@@ -68,7 +119,7 @@ const CourseModal = ({ subject, course_id }) => {
                 <h3 className="text-lg font-bold">Kurzus módosítása</h3>
                 <form method="dialog" id={"subject_form_" + subject.id + "_" + course.id} className='flex flex-col items-center justify-between gap-3'>
                     <div className="grid w-full grid-cols-12 gap-5 mt-5">
-                        <label className="w-full col-span-2 form-control">
+                        <label className="w-full h-16 col-span-2 form-control">
                             <div className="label">
                                 <span className="label-text">Kód</span>
                             </div>
@@ -77,10 +128,11 @@ const CourseModal = ({ subject, course_id }) => {
                                 name='code'
                                 placeholder="#"
                                 defaultValue={code}
-                                className="w-full input input-bordered input-sm invalid:border-error"
+                                className={`w-full input input-bordered input-sm ${errors.code ? "border-error" : ""}`}
                             />
+                            {errors.code && <p className="text-sm label text-error">Kötelező</p>}
                         </label>
-                        <label className="w-full col-span-5 form-control">
+                        <label className="w-full h-16 col-span-5 form-control">
                             <div className="label">
                                 <span className="label-text">Típus</span>
                             </div>
@@ -89,7 +141,7 @@ const CourseModal = ({ subject, course_id }) => {
                                 <option id='Előadás'>Előadás</option>
                             </select>
                         </label>
-                        <label className="w-full col-span-5 form-control">
+                        <label className="w-full h-16 col-span-5 form-control">
                             <div className="label">
                                 <span className="label-text">Oktató</span>
                             </div>
@@ -98,10 +150,11 @@ const CourseModal = ({ subject, course_id }) => {
                                 name='instructor'
                                 defaultValue={instructor}
                                 placeholder="Példa Béla"
-                                className="w-full input input-bordered input-sm"
+                                className={`w-full input input-bordered input-sm ${errors.instructor ? "border-error" : ""}`}
                             />
+                            {errors.instructor && <p className="text-sm label text-error">Kötelező</p>}
                         </label>
-                        <label className="w-full col-span-6 form-control">
+                        <label className="w-full h-16 col-span-6 form-control">
                             <div className="label">
                                 <span className="label-text">Nap</span>
                             </div>
@@ -114,7 +167,7 @@ const CourseModal = ({ subject, course_id }) => {
                                 {settings.saturday && <option id='Szombat'>Szombat</option>}
                             </select>
                         </label>
-                        <label className="w-full col-span-6 form-control">
+                        <label className="w-full h-16 col-span-6 form-control">
                             <div className="label">
                                 <span className="label-text">Idő</span>
                             </div>
@@ -123,18 +176,19 @@ const CourseModal = ({ subject, course_id }) => {
                                     type="time"
                                     name='startTime'
                                     defaultValue={startTime}
-                                    className="input input-bordered input-sm"
+                                    className={`input input-bordered input-sm ${errors.startTime ? "border-error" : ""}`}
                                 />
                                 -
                                 <input
                                     type="time"
                                     name='endTime'
                                     defaultValue={endTime}
-                                    className="input input-bordered input-sm"
+                                    className={`input input-bordered input-sm ${errors.endTime ? "border-error" : ""}`}
                                 />
                             </div>
+                            {(errors.endTime || errors.startTime) && <p className="text-sm label text-error">Kötelező</p>}
                         </label>
-                        <label className="w-full col-span-6 form-control">
+                        <label className="w-full h-16 col-span-6 form-control">
                             <div className="label">
                                 <span className="label-text">Helyszín</span>
                             </div>
@@ -143,10 +197,11 @@ const CourseModal = ({ subject, course_id }) => {
                                 name='location'
                                 defaultValue={location}
                                 placeholder="Északi Tömb 7.15 (PC11)"
-                                className="w-full input input-bordered input-sm"
+                                className={`w-full input input-bordered input-sm ${errors.location ? "border-error" : ""}`}
                             />
+                            {errors.location && <p className="text-sm label text-error">Kötelező</p>}
                         </label>
-                        <label className="w-full col-span-6 form-control">
+                        <label className="w-full h-16 col-span-6 form-control">
                             <div className="label">
                                 <span className="label-text">Megjegyzés</span>
                             </div>
@@ -160,7 +215,7 @@ const CourseModal = ({ subject, course_id }) => {
                         </label>
                     </div>
                     <div className="modal-action">
-                        <button className="btn btn-error">Mégsem</button>
+                        <button className="btn btn-error" onClick={handleCancel}>Mégsem</button>
                         <button className="btn btn-success" onClick={handleSave}>Mentés</button>
                     </div>
                 </form>

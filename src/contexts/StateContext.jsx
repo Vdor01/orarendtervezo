@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import { createContext, useContext, useState, useMemo } from 'react';
 
 const StateContext = createContext();
 
@@ -23,7 +23,8 @@ export const StateProvider = ({ children }) => {
                 "notes": false
             },
             "saturday": false,
-            "slot": 20
+            "slot": 20,
+            "subjectView": "list"
         },
         "currentState": {
             "menu": "Hozzáadás",

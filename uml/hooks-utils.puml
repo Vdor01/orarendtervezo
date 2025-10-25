@@ -1,0 +1,76 @@
+@startuml HooksAndUtils
+
+package "Custom Hooks" {
+    class useKeyboardShortcuts {
+        .. dependencies ..
+        + useSettings() hook
+        __
+        + void useEffect()
+        + void handleKeyPress(event)
+    }
+}
+
+package "Utility Functions" {
+    class serverApi {
+        + Object parseCourseData(data, subjectsAccumulator)
+        + Array getSemesters()
+        + string getCurrentSemester()
+        + Promise fetchSubjectCourses(subjectCode, semester)
+        + Promise searchCoursesBySubject(searchTerm, semester)
+        + Promise searchCoursesByInstructor(instructorName, semester)
+    }
+    
+    class timetableUtils {
+        + Date getDateOfThisWeeksDay(dayName)
+        + boolean isDisplayed(subject, course)
+        + boolean isChoosen(subject, course)
+        + boolean isColorDark(backgroundColor)
+    }
+    
+    class CanvasExport {
+        + Promise exportTimetableWithCanvas(calendarElement)
+    }
+}
+
+package "Context Hooks" {
+    class useTimetable {
+        + Object context
+        + error checking
+        + return TimetableContext
+    }
+    
+    class useAppState {
+        + Object context
+        + error checking
+        + return StateContext
+    }
+    
+    class useSettings {
+        + Object context
+        + error checking
+        + return StateContext
+    }
+}
+
+useKeyboardShortcuts ..> useSettings : uses
+serverApi ..> "ELTE API" : fetches data
+CanvasExport ..> "HTML5 Canvas" : uses
+
+note right of useKeyboardShortcuts
+    Kezeli a Ctrl+K billentyűparancsot
+    a nézet váltáshoz
+end note
+
+note right of serverApi
+    ELTE Tanrend API
+    integráció és
+    adatfeldolgozás
+end note
+
+note right of timetableUtils
+    Dátum számítások
+    Kurzus megjelenítési logika
+    Szín segédfüggvények
+end note
+
+@enduml

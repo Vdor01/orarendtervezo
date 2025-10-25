@@ -3,9 +3,50 @@
 !include menu.puml
 !include subjects.puml
 !include courses.puml
+!include timetable.puml
+!include hooks-utils.puml
 
-App o-- Menu
-App o-- Subjects
-Subject o-- "many" Courses
+' Context relationships
+AppProviders o-- TimetableContext
+AppProviders o-- StateContext
+
+' Main app relationships
+App o-- AppProviders
+App o-- TimetableApp
+TimetableApp o-- Menu
+TimetableApp o-- Subjects
+TimetableApp o-- Timetable
+
+' Menu relationships
+Menu o-- SubjectAdder
+Menu o-- ServerQuery
+Menu o-- ImportExport
+Menu o-- Settings
+Menu o-- Help
+
+' Subject relationships
+Subjects o-- "many" Subject
+Subject o-- SubjectModal
+Subject o-- CourseAdder
+Subject o-- CourseTable
+Subject o-- SubjectTimetable
+
+' Course relationships
+CourseTable o-- "many" CourseModal
+
+' Timetable relationships
+Timetable o-- FullCalendar
+
+' Hook usage relationships
+TimetableApp ..> useKeyboardShortcuts : uses
+ServerQuery ..> serverApi : uses
+Timetable ..> timetableUtils : uses
+ImportExport ..> CanvasExport : uses
+
+note top of AppProviders
+    Modern React architektúra
+    Context API-val az
+    állapot kezeléshez
+end note
 
 @enduml

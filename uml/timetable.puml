@@ -1,0 +1,84 @@
+@startuml Timetable
+
+class Timetable {
+    .. Context Usage ..
+    + useTimetable() hook
+    + useSettings() hook
+    .. computed from context ..
+    + Array eventsJSON
+    + Ref timetableRef
+    + function setChoosenCourse
+    + Object settings
+    __
+    + Array setCourses(subject)
+    + void onEventClick(info)
+    + JSX.Element render()
+}
+
+class SubjectTimetable {
+    .. props ..
+    + Subject subject
+    .. Context Usage ..
+    + useSettings() hook
+    __
+    + JSX.Element render()
+}
+
+class FullCalendar {
+    .. props ..
+    + Array plugins
+    + string initialView
+    + Array hiddenDays
+    + Array events
+    + string slotMinTime
+    + string slotMaxTime
+    + Object slotLabelFormat
+    + string slotDuration
+    + string height
+    + boolean headerToolbar
+    + boolean stickyHeaderDates
+    + boolean allDaySlot
+    + Object dayHeaderFormat
+    + Object locale
+    + string timeZone
+    + number firstDay
+    + function eventClick
+    + function eventContent
+    __
+    + JSX.Element render()
+}
+
+class timetableUtils {
+    + Date getDateOfThisWeeksDay(dayName)
+    + boolean isDisplayed(subject, course)
+    + boolean isChoosen(subject, course)
+    + boolean isColorDark(backgroundColor)
+}
+
+class CanvasExport {
+    + async exportTimetableWithCanvas(calendarElement)
+}
+
+Timetable --> FullCalendar
+Timetable --> timetableUtils
+SubjectTimetable --> FullCalendar
+Timetable ..> CanvasExport : uses for export
+
+note right of Timetable
+    Fő naptár komponens
+    FullCalendar React wrapper komponens
+    Esemény kezelés és megjelenítés
+end note
+
+note right of timetableUtils
+    Segédfüggvények dátum
+    számításokhoz és kurzus
+    megjelenítési logikához
+end note
+
+note right of CanvasExport
+    HTML5 Canvas alapú
+    PNG export funkcionalitás
+end note
+
+@enduml

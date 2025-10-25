@@ -6,9 +6,10 @@
   "courses": [
     {
       "id": 1,
-      "course": 90,
+      "course": "90",
       "type": "Előadás",
       "instructor": "Példa Béla",
+      "location": "2-123",
       "day": "Péntek",
       "startTime": "12:00",
       "endTime": "14:00",
@@ -17,9 +18,10 @@
     },
     {
       "id": 2,
-      "course": 1,
+      "course": "1",
       "type": "Gyakorlat",
       "instructor": "Teszt Dia",
+      "location": "1-456",
       "day": "Szerda",
       "startTime": "10:00",
       "endTime": "12:00",
@@ -30,9 +32,9 @@
   "status": {
     "color": "#0E2F90",
     "show": true,
-    "choosen": {
+    "chosen": {
       "Gyakorlat": 1,
-      "Előadás": 0,
+      "Előadás": 90,
       "Egyéb": 0
     }
   }

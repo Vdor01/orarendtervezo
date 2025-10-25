@@ -1,29 +1,65 @@
 @startuml App
 
 class App {
-    + JSON eventsJSON
-    + JSON settings
-    - JSON events
+    + JSX.Element render()
+    + AppProviders provider
+}
 
-    - number getNewSubjectId()
-    - number getNewCourseId(subject)
+class TimetableApp {
+    + useKeyboardShortcuts()
+    + async exportTimetableAsPNGHandler()
+    + JSX.Element render()
+}
+
+class TimetableContext {
+    + Array eventsJSON
+    + Ref timetableRef
+    + string getRandomHexColor()
+    + number getNewSubjectId()
+    + number getNewCourseId(subject)
     + void addSubject(code, name)
     + void removeSubject(id)
     + void updateSubject(id, newCode, newName, newColor, type)
     + void updateShowSubject(id, show)
-    - Date getDateOfThisWeeksDay(dayName)
-    - boolean isDisplayed(subject, course)
-    - boolean isChoosen(subject, course)
-    - Course[] setCourses(subject)
-    - void setChoosenCourse(subjectId, courseId, type)
     + void addCourse(subjectId, code, type, instructor, location, day, startTime, endTime, notes)
     + void removeCourse(subjectId, courseId)
     + void updateCourse(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
     + void updateShowCourse(subjectId, courseId, show)
-    + void updateSettings(type, event, value)
-    - string getRandomHexColor()
-    + void onEventClick(info)
+    + void setChoosenCourse(subjectId, courseId, type)
     + void importFromArrays(subjects, courses)
+    + async refreshSubjectCourses(subjectId, semester)
 }
+
+class StateContext {
+    + Object state
+    + void updateState(type, event, value)
+    + Object settings
+    + void updateSettings(type, event, value)
+}
+
+class AppProviders {
+    + TimetableProvider wrapper
+    + StateProvider wrapper
+    + JSX.Element render()
+}
+
+App --> AppProviders
+AppProviders --> TimetableContext
+AppProviders --> StateContext
+App --> TimetableApp
+TimetableApp ..> TimetableContext : uses
+TimetableApp ..> StateContext : uses
+
+note right of TimetableContext
+    Modern Context API
+    localStorage integráció
+    Funkcionális megközelítés
+end note
+
+note right of StateContext
+    Elkülönített felelősségek
+    Beállítások kezelése
+    Jelenlegi állapot követése
+end note
 
 @enduml

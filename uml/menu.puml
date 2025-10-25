@@ -2,100 +2,122 @@
 
 class Menu {
     .. props ..
-    + void adder(code, name)
-    + JSON events
-    + void setter()
-    + JSON settings
-    + void setSettings(type, event, value)
-    + void importer(subjects, courses)
-    __
+    + function exportTimetable
+    .. Context Usage ..
+    + useSettings() hook
+    .. state ..
     + string mode
     __
-    - Component modeSwitch(param)
+    + void handleModeChange(newMode)
+    + Component modeSwitch(param)
+    + JSX.Element render()
 }
 
 class Button {
     .. props ..
-    - string text
-    - string icon
-    - string mode
-    - void set(mode)
-    - boolean isDisabled
+    + string text
+    + string icon
+    + string mode
+    + function set
+    __
+    + JSX.Element render()
 }
 
 class SubjectAdder {
-    .. props ..
-    + void adder(code, name)
+    .. Context Usage ..
+    + useTimetable() hook
+    .. state ..
+    + string subjectName
+    + string subjectCode
     __
-    - string subjectName
-    - string subjectCode
-    __
-    - void onClick(event)
+    + void handleSubmit(event)
+    + JSX.Element render()
 }
 
-class ServerQuerry {
-    .. props ..
-    + void importer(subjects, courses)
-    __
-    - string subjectNameCode
-    - string subjectInstructor
-    + Course[] courses
-    + Subject[] subjects
+class ServerQuery {
+    .. Context Usage ..
+    + useTimetable() hook
+    .. state ..
+    + string subjectNameCode
+    + string instructorName
+    + Array courses
+    + Array subjects
     + boolean dataIsLoaded
+    + string semester
     __
-    - Courses[] parseCourseData(data, subjectsAccumulator)
-    - void fetchData()
-    - void onClick(event)
+    + async fetchData()
+    + void handleSubmit(event)
+    + JSX.Element render()
 }
 
 class ImportExport {
     .. props ..
-    - JSON file
-    - void setter()
+    + function exportTimetable
+    .. Context Usage ..
+    + useTimetable() hook
     __
-    - void downloadJSON()
-    - void uploadJSON(event)
+    + void downloadJSON()
+    + void uploadJSON(event)
+    + JSX.Element render()
+}
+
+class ImportModal {
+    .. props ..
+    + Array courses
+    + Array subjects
+    + boolean dataIsLoaded
+    .. Context Usage ..
+    + useTimetable() hook
+    .. state ..
+    + Array selectedSubjects
+    + Object selectedCourses
+    __
+    + Array getCourseIdsForSubject(subjectCode)
+    + void handleSubjectChange(subjectId, subjectCode, checked)
+    + void handleCourseChange(courseId, subjectId, subjectCode, checked)
+    + void handleImport()
+    + JSX.Element render()
 }
 
 class Settings {
-    .. props ..
-    - JSON settings
-    - void setSettings(type, event, value)
+    .. Context Usage ..
+    + useSettings() hook
+    .. computed from context ..
+    + Object show
+    + boolean saturday
+    + number slot
     __
-    - boolean code
-    - boolean time
-    - boolean type
-    - boolean instructor
-    - boolean location
-    - boolean notes
-    __
-    - void setShowSettings(event, value)
+    + void setShowSettings(event, value)
+    + JSX.Element render()
 }
 
-class Help {}
-
-class Modal {
-    .. props ..
-    - Course[] courses
-    - Subject[] subjects
-    - boolean dataIsLoaded
-    - void importer(subjects, courses)
-    __
-    - Subject[] selectedSubjects
-    - Course[] selectedCourses
-    __
-    - void getCourseIdsForSubject(subjectCode)
-    - void handleSubjectChange(subjectId, subjectCode, checked)
-    - void handleCourseChange(courseId, subjectId, subjectCode, checked)
-    - void handleImport()
+class Help {
+    + JSX.Element render()
 }
 
 Menu o-- "many" Button
 Menu o-- SubjectAdder
-Menu o-- ServerQuerry
+Menu o-- ServerQuery
 Menu o-- ImportExport
 Menu o-- Settings
 Menu o-- Help
-ServerQuerry o-- Modal
+ServerQuery o-- ImportModal
+
+note right of Menu
+    Modern funkcionális komponens
+    Context API integráció
+    Állapot kezelés hook-okkal
+end note
+
+note right of ServerQuery
+    Kibővítve szemeszter támogatással
+    Több keresési mód
+    Hibakezelés
+end note
+
+note right of ImportExport
+    Canvas-alapú PNG export
+    JSON import/export
+end note
 
 @enduml

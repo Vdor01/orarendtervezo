@@ -1,49 +1,23 @@
-@startuml component-diagram
+@startuml architecture-diagram
 
 !theme plain
 
-package "Context Providers" {
+package "Context Layer" {
     [TimetableContext] #lightblue
     [StateContext] #lightblue
     [AppProviders] #lightblue
 }
 
-package "Main Application" {
+package "Application Layer" {
     [App] #lightgreen
     [TimetableApp] #lightgreen
 }
 
-package "UI Components" {
+package "Core UI Components" {
     [Menu] #yellow
     [Subjects] #yellow
     [Timetable] #yellow
     [Footer] #yellow
-}
-
-package "Menu Components" {
-    [SubjectAdder] #orange
-    [ServerQuery] #orange
-    [ImportExport] #orange
-    [Settings] #orange
-    [Help] #orange
-    [Button] #orange
-    [ImportModal] #orange
-}
-
-package "Subject Components" {
-    [Subject] #pink
-    [SubjectModal] #pink
-    [CourseAdder] #pink
-    [CourseTable] #pink
-}
-
-package "Course Components" {
-    [CourseModal] #lightcyan
-}
-
-package "Timetable Components" {
-    [SubjectTimetable] #lightyellow
-    [FullCalendar] #lightyellow
 }
 
 package "Utils & Hooks" {
@@ -65,44 +39,19 @@ package "Utils & Hooks" {
 [TimetableApp] --> [Timetable]
 [TimetableApp] --> [Footer]
 
-' Menu relationships
-[Menu] --> [SubjectAdder]
-[Menu] --> [ServerQuery]
-[Menu] --> [ImportExport]
-[Menu] --> [Settings]
-[Menu] --> [Help]
-[Menu] --> [Button]
-
-[ServerQuery] --> [ImportModal]
-[ImportExport] --> [CanvasExport]
-
-' Subject relationships
-[Subjects] --> [Subject]
-[Subject] --> [SubjectModal]
-[Subject] --> [CourseAdder]
-[Subject] --> [CourseTable]
-[Subject] --> [SubjectTimetable]
-
-[CourseAdder] --> [CourseModal]
-[CourseTable] --> [CourseModal]
-
-' Timetable relationships
-[Timetable] --> [FullCalendar]
-[Timetable] --> [timetableUtils]
-
-' Hook usage
+' Hook and utility usage
 [TimetableApp] --> [useKeyboardShortcuts]
-[ServerQuery] --> [serverApi]
+[Menu] --> [serverApi]
+[Menu] --> [CanvasExport]
+[Timetable] --> [timetableUtils]
 
 ' Context usage (dashed lines for context consumption)
 [TimetableApp] ..> [TimetableContext] : uses
 [TimetableApp] ..> [StateContext] : uses
 [Menu] ..> [StateContext] : uses
 [Subjects] ..> [TimetableContext] : uses
-[Subject] ..> [TimetableContext] : uses
 [Timetable] ..> [TimetableContext] : uses
 [Timetable] ..> [StateContext] : uses
-[Settings] ..> [StateContext] : uses
 
 note right of [TimetableContext]
     Kezeli:

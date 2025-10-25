@@ -1,0 +1,85 @@
+@startuml detailed-components
+
+!theme plain
+
+package "Menu System" {
+    [Menu] #yellow
+    [SubjectAdder] #orange
+    [ServerQuery] #orange
+    [ImportExport] #orange
+    [Settings] #orange
+    [Help] #orange
+    [Button] #orange
+    [ImportModal] #orange
+}
+
+package "Subject Management" {
+    [Subjects] #yellow
+    [Subject] #pink
+    [SubjectModal] #pink
+    [CourseAdder] #pink
+    [CourseTable] #pink
+    [CourseModal] #lightcyan
+}
+
+package "Timetable System" {
+    [Timetable] #yellow
+    [SubjectTimetable] #lightyellow
+    [FullCalendar] #lightyellow
+}
+
+package "Table Components" {
+    [TableHead] #lightgray
+    [TableBody] #lightgray
+}
+
+' Menu relationships
+[Menu] --> [SubjectAdder]
+[Menu] --> [ServerQuery]
+[Menu] --> [ImportExport]
+[Menu] --> [Settings]
+[Menu] --> [Help]
+[Menu] --> [Button]
+
+[ServerQuery] --> [ImportModal]
+
+' Subject relationships
+[Subjects] --> [Subject]
+[Subject] --> [SubjectModal]
+[Subject] --> [CourseAdder]
+[Subject] --> [CourseTable]
+[Subject] --> [SubjectTimetable]
+
+[CourseAdder] --> [CourseModal]
+[CourseTable] --> [CourseModal]
+[CourseTable] --> [TableHead]
+[CourseTable] --> [TableBody]
+
+' Timetable relationships
+[Timetable] --> [FullCalendar]
+[SubjectTimetable] --> [FullCalendar]
+
+note right of [Menu]
+    Dinamikus nézet váltás
+    Context API integráció
+end note
+
+note right of [Subject]
+    Összecsukható panelek
+    Frissítési funkcionalitás
+    Vizuális állapot jelzők
+end note
+
+note right of [CourseTable]
+    Újrafelhasználható táblázat komponensek
+    CRUD műveletek
+    Láthatóság kezelés
+end note
+
+note right of [FullCalendar]
+    Professzionális naptár
+    Esemény kezelés
+    Több nézet típus
+end note
+
+@enduml

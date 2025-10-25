@@ -1,57 +1,98 @@
 @startuml Subjects
 
 class Subjects {
-    .. props ..
-    + Subject[] subjects
-    + void subjectUpdater(id, newCode, newName, newColor, type)
-    + void subjectRemover(id)
-    + void subjectShow(id, show)
-    + void courseAdder(subjectId, code, type, instructor, location, day, startTime, endTime, notes)
-    + void courseRemover(subjectId, courseId)
-    + void courseUpdater(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
-    + void courseShow(subjectId, courseId, show)
-    + JSON settings
+    .. Context Usage ..
+    + useTimetable() hook
+    + useSettings() hook
+    __
+    - JSX.Element render()
 }
 
 class Subject {
     .. props ..
     + Subject subject
-    - void subjectUpdater(id, newCode, newName, newColor, type)
-    - void subjectRemover(id)
-    - void subjectShow(id, show)
-    - void courseAdder(subjectId, code, type, instructor, location, day, startTime, endTime, notes)
-    + void courseRemover(subjectId, courseId)
-    + void courseUpdater(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
-    + void courseShow(subjectId, courseId, show)
-    + JSON settings
+    .. Context Usage ..
+    + useTimetable() hook
+    + useSettings() hook
+    .. state ..
+    + boolean isOpen
+    + boolean isRefreshing
     __
-    - void updateButton(subject)
-    - void handleChange()
-    - void handleSubmit(event)
-    - void getStatus()
-    - string getIcon()
+    + async updateButton()
+    + void editButton(subject)
+    + void handleChange()
+    + string getStatus()
+    + string getIcon()
+    + JSX.Element render()
 }
 
 class SubjectModal {
     .. props ..
-    - Subject subject
-    - void updater(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
+    + Subject subject
+    .. Context Usage ..
+    + useTimetable() hook
     __
-    - void handleSave(event)
+    + void handleSave(event)
+    + JSX.Element render()
+}
+
+class SubjectTimetable {
+    .. props ..
+    + Subject subject
+    .. Context Usage ..
+    + useSettings() hook
+    __
+    + JSX.Element render()
+}
+
+class CourseAdder {
+    .. props ..
+    + number subjectId
+    .. Context Usage ..
+    + useTimetable() hook
+    __
+    + void handleSubmit(event)
+    + JSX.Element render()
+}
+
+class CourseTable {
+    .. props ..
+    + Subject subject
+    .. Context Usage ..
+    + useTimetable() hook
+    + useSettings() hook
+    __
+    + JSX.Element render()
 }
 
 class CourseModal {
     .. props ..
-    - Subject subject
-    - string course_id
-    - void updater(subjectId, courseId, code, type, instructor, location, day, startTime, endTime, notes)
-    - JSON settings
+    + Subject subject
+    + string courseId
+    .. Context Usage ..
+    + useTimetable() hook
+    + useSettings() hook
     __
-    - Course course
-    __
-    - void handleSave(event)
+    + void handleSave(event)
+    + JSX.Element render()
 }
 
 Subjects o-- "many" Subject
 Subject o-- SubjectModal
-Subject o-- "many" CourseModal
+Subject o-- SubjectTimetable
+Subject o-- CourseAdder
+Subject o-- CourseTable
+CourseTable o-- "many" CourseModal
+
+note right of Subject
+    Modern funkcionális komponens
+    hook-okkal és Context API-val
+    Frissítési funkcionalitás hozzáadva
+end note
+
+note right of SubjectTimetable
+    Alternatív órarend nézet
+    egyedi tárgyakhoz
+end note
+
+@enduml

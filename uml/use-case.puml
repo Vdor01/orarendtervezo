@@ -21,6 +21,7 @@ rectangle "Órarend-tervező rendszer" {
         usecase "Tárgy törlése" as UC3
         usecase "Tárgy lekérdezése" as UC4
         usecase "Tárgy hozzáadása\nlekérdezésből" as UC5
+        usecase "Tárgy frissítése" as UC16
     }
     
     package "Kurzus kezelés" {
@@ -35,11 +36,18 @@ rectangle "Órarend-tervező rendszer" {
         usecase "Órarend megtekintése" as UC11
         usecase "Órarend exportálása\n(JSON)" as UC12
         usecase "Órarend importálása\n(JSON)" as UC13
+        usecase "Órarend exportálása\n(PNG)" as UC17
     }
     
     package "Rendszer beállítások" {
         usecase "Beállítások módosítása" as UC14
         usecase "Súgó megtekintése" as UC15
+        usecase "Billentyűparancsok" as UC18
+    }
+    
+    package "Nézet kezelés" {
+        usecase "Lista/naptár váltás" as UC19
+        usecase "Kurzus részletek\nmegjelenítése" as UC20
     }
 }
 
@@ -59,9 +67,15 @@ Student --> UC12
 Student --> UC13
 Student --> UC14
 Student --> UC15
+Student --> UC16
+Student --> UC17
+Student --> UC18
+Student --> UC19
+Student --> UC20
 
 ' Kapcsolat az API-val
 API --> UC4 : szolgáltatja az adatokat
+API --> UC16 : frissített adatok
 
 ' Kapcsolatok a tárgy kezeléssel
 TC <|-- UC1
@@ -72,13 +86,17 @@ UC3 .> UC8 : <<include>>
 UC13 .> UC1 : <<include>>
 UC13 .> UC6 : <<include>>
 UC5 .> UC6 : <<include>>
+UC16 .> UC4 : <<include>>
 
 ' Extend kapcsolatok
 UC4 .> UC5 : <<extend>>
+UC14 .> UC19 : <<extend>>
+UC18 .> UC19 : <<extend>>
 
 note right of UC4
     Tárgy neve/kódja vagy
     oktató neve alapján
+    Context API használat
 end note
 
 note right of UC9
@@ -94,6 +112,17 @@ note right of UC14
     - Órarend beállítások
     - Szombat megjelenítése
     - Időintervallum
+    - Tantárgy nézet
+end note
+
+note right of UC17
+    Canvas alapú
+    képexportálás
+end note
+
+note right of UC18
+    Ctrl+K: Lista/naptár váltás
+    Custom hook implementáció
 end note
 
 @enduml

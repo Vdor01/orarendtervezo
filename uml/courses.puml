@@ -1,18 +1,71 @@
 @startuml Courses
 
-class Courses {
+class CourseTable {
     .. props ..
-    - string subjectId
-    - JSON choosen
-    - Course course
-    - void remover(subjectId, courseId)
-    - string type
-    - void showF(subjectId, courseId, show)
+    + Subject subject
+    .. Context Usage ..
+    + useTimetable() hook
+    + useSettings() hook
     __
-    - boolean show
-    __
-    - void handleChange()
-    - boolean isChoosen()
+    + JSX.Element render()
 }
+
+class CourseModal {
+    .. props ..
+    + Subject subject
+    + string courseId
+    .. Context Usage ..
+    + useTimetable() hook
+    + useSettings() hook
+    .. computed ..
+    + Course course
+    __
+    + void handleSave(event)
+    + JSX.Element render()
+}
+
+class CourseAdder {
+    .. props ..
+    + number subjectId
+    .. Context Usage ..
+    + useTimetable() hook
+    __
+    + void handleSubmit(event)
+    + JSX.Element render()
+}
+
+class TableHead {
+    .. props ..
+    + Array headers
+    __
+    + JSX.Element render()
+}
+
+class TableBody {
+    .. props ..
+    + Array data
+    + Array headers
+    + function onEdit
+    + function onDelete
+    + function onToggleVisibility
+    + function onSelect
+    __
+    + JSX.Element render()
+}
+
+CourseTable o-- TableHead
+CourseTable o-- TableBody
+CourseTable o-- "many" CourseModal
+
+note right of CourseTable
+    Lecseréli a régi Courses komponenst
+    Újrafelhasználható táblázat komponenseket használ
+    Context API integráció
+end note
+
+note right of CourseAdder
+    Űrlap komponens új kurzusok
+    hozzáadásához a tárgyakhoz
+end note
 
 @enduml

@@ -72,8 +72,15 @@ export const TimetableProvider = ({ children }) => {
      * 
      * @param {string} code - The code of the subject.
      * @param {string} name - The name of the subject.
+     * @returns {boolean} - Returns true if the subject was added successfully, false if the code already exists.
      */
     function addSubject(code, name) {
+        // Check if a subject with the given code already exists
+        const isDuplicate = eventsJSON.some(subject => subject.code === code);
+        if (isDuplicate) {
+            return false;
+        }
+
         setEventsJSON(prevEvents => [
             ...prevEvents,
             {
@@ -92,6 +99,7 @@ export const TimetableProvider = ({ children }) => {
                 }
             }
         ]);
+        return true;
     }
 
     /** 

@@ -12,7 +12,8 @@ const SubjectAdder = () => {
 
     const [subjectName, setName] = useState('');
     const [subjectCode, setCode] = useState('');
-    const [isError, setIsError] = useState(false);
+    const [status, setStatus] = useState('');
+    const [lastCreated, setLastCreated] = useState({ code: '', name: '' });
 
     /**
      * Handles the click event for adding a subject.
@@ -27,15 +28,23 @@ const SubjectAdder = () => {
         let code = subjectCode;
         let name = subjectName;
         if (code === '' && name === '') {
-            setIsError(true);
+            setStatus('empty');
             return;
         }
-        setIsError(false);
         if (name === '') { name = code; }
         if (code === '') { code = name.replace(/\s+/g, '_').toLowerCase(); }
 
         console.log(`Adding subject: ${name} (${code})`);
-        addSubject(code, name);
+        const success = addSubject(code, name);
+
+        if (success) {
+            setLastCreated({ code, name });
+            setStatus('created');
+            setName('');
+            setCode('');
+        } else {
+            setStatus('duplicate');
+        }
     };
 
     return (
@@ -73,11 +82,21 @@ const SubjectAdder = () => {
                                 Hozzáadás
                             </button>
                         </div>
-                        {isError &&
+                        {status === 'empty' && (
                             <p className="mt-3 text-center text-error">
                                 Tárgy hozzáadásához legalább a név vagy a kód megadása szükséges!
                             </p>
-                        }
+                        )}
+                        {status === 'duplicate' && (
+                            <p className="mt-3 text-center text-error">
+                                Az adott kódhoz már tartozik tárgy!
+                            </p>
+                        )}
+                        {status === 'created' && (
+                            <p className="mt-3 text-center text-success">
+                                Tárgy sikeresen létrehozva ({lastCreated.code}, {lastCreated.name})
+                            </p>
+                        )}
                     </div>
                     {(settings.tips ?? true) && (
                         <>

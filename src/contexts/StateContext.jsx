@@ -11,7 +11,7 @@ export const useAppState = () => {
 };
 
 export const StateProvider = ({ children }) => {
-    const [state, setState] = useState({
+    const defaultState = {
         "settings": {
             "show": {
                 "name": true,
@@ -24,19 +24,37 @@ export const StateProvider = ({ children }) => {
             },
             "saturday": false,
             "slot": 20,
-            "subjectView": "list"
+            "subjectView": "list",
+            "tips": true
         },
         "currentState": {
             "menu": "Hozzáadás",
             "settings": "show"
         }
-    });
+    };
 
-    // Initialize from localStorage
+    const [state, setState] = useState(defaultState);
+
+    // Initialize from localStorage with backward compatibility
     useMemo(() => {
         const savedState = localStorage.getItem('state');
         if (savedState) {
-            setState(JSON.parse(savedState));
+            const parsed = JSON.parse(savedState);
+            // Merge saved state with default state to ensure all new properties exist
+            setState({
+                settings: {
+                    ...defaultState.settings,
+                    ...parsed.settings,
+                    show: {
+                        ...defaultState.settings.show,
+                        ...parsed.settings?.show
+                    }
+                },
+                currentState: {
+                    ...defaultState.currentState,
+                    ...parsed.currentState
+                }
+            });
         }
     }, []);
 

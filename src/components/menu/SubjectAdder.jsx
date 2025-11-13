@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTimetable } from '../../contexts';
+import { useTimetable, useSettings } from '../../contexts';
 
 /**
  * SubjectAdder component allows users to add a new subject by providing its name and code.
@@ -8,6 +8,7 @@ import { useTimetable } from '../../contexts';
  */
 const SubjectAdder = () => {
     const { addSubject } = useTimetable();
+    const { settings } = useSettings();
 
     const [subjectName, setName] = useState('');
     const [subjectCode, setCode] = useState('');
@@ -41,40 +42,55 @@ const SubjectAdder = () => {
         <div className="w-full shadow-xl card bg-base-300 card-compact">
             <form className="card-body" id='subject_adder_form'>
                 <h2 className="card-title">Tárgy hozzáadása</h2>
-                <label className="w-full form-control">
-                    <div className="label">
-                        <span className="label-text">Tárgy neve</span>
+                <div className='flex flex-row grow'>
+                    <div className='flex flex-col w-full gap-2'>
+                        <label className="w-full form-control">
+                            <div className="label">
+                                <span className="label-text">Tárgy neve</span>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Tárgy neve"
+                                value={subjectName}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full input input-bordered"
+                            />
+                        </label>
+                        <label className="w-full form-control">
+                            <div className="label">
+                                <span className="label-text">Tárgy kódja</span>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Tárgy kódja"
+                                value={subjectCode}
+                                onChange={(e) => setCode(e.target.value)}
+                                className="w-full input input-bordered"
+                            />
+                        </label>
+                        <div className="justify-center mt-5 card-actions">
+                            <button className="btn btn-primary" onClick={(e) => onClick(e)}>
+                                Hozzáadás
+                            </button>
+                        </div>
+                        {isError &&
+                            <p className="mt-3 text-center text-error">
+                                Tárgy hozzáadásához legalább a név vagy a kód megadása szükséges!
+                            </p>
+                        }
                     </div>
-                    <input
-                        type="text"
-                        placeholder="Tárgy neve"
-                        value={subjectName}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full input input-bordered"
-                    />
-                </label>
-                <label className="w-full form-control">
-                    <div className="label">
-                        <span className="label-text">Tárgy kódja</span>
-                    </div>
-                    <input
-                        type="text"
-                        placeholder="Tárgy kódja"
-                        value={subjectCode}
-                        onChange={(e) => setCode(e.target.value)}
-                        className="w-full input input-bordered"
-                    />
-                </label>
-                <div className="justify-center mt-5 card-actions">
-                    <button className="btn btn-primary" onClick={(e) => onClick(e)}>
-                        Hozzáadás
-                    </button>
+                    {(settings.tips ?? true) && (
+                        <>
+                            <div className="divider divider-horizontal"></div>
+                            <div className="grid w-1/4 gap-3 text-sm place-content-start">
+                                <p>A tárgy hozzáadásához add meg a tárgy nevét és/vagy kódját.</p>
+                                <p>Ha csak az egyik mezőt töltöd ki, a másik automatikusan generálódik.</p>
+                                <p>Mindkét mező kitöltése esetén a megadott értékek kerülnek használatra.</p>
+                                <p>Ügyelj arra, hogy a kód egyedi legyen az ütközések elkerülése érdekében.</p>
+                            </div>
+                        </>
+                    )}
                 </div>
-                {isError &&
-                    <p className="mt-3 text-center text-error">
-                        Tárgy hozzáadásához legalább a név vagy a kód megadása szükséges!
-                    </p>
-                }
             </form>
         </div>
     );

@@ -72,8 +72,15 @@ export const TimetableProvider = ({ children }) => {
      * 
      * @param {string} code - The code of the subject.
      * @param {string} name - The name of the subject.
+     * @returns {boolean} - Returns true if the subject was added successfully, false if the code already exists.
      */
     function addSubject(code, name) {
+        // Check if a subject with the given code already exists
+        const isDuplicate = eventsJSON.some(subject => subject.code === code);
+        if (isDuplicate) {
+            return false;
+        }
+
         setEventsJSON(prevEvents => [
             ...prevEvents,
             {
@@ -92,6 +99,7 @@ export const TimetableProvider = ({ children }) => {
                 }
             }
         ]);
+        return true;
     }
 
     /** 
@@ -274,53 +282,57 @@ export const TimetableProvider = ({ children }) => {
 
     /**
      * Imports subjects and courses from arrays into the eventsJSON state.
-     * It checks for existing subjects to avoid duplicates, assigns new IDs, and organizes courses under their respective subjects.
+     * It overwrites existing subjects with the same code, assigns new IDs, and organizes courses under their respective subjects.
      * 
      * @param {Array} subjects - An array of subject objects to be imported.
      * @param {Array} courses - An array of course objects to be imported.
      */
     function importFromArrays(subjects, courses) {
         setEventsJSON(prevEvents => {
-            const existingSubjectCodes = prevEvents.map(subject => subject.code);
+            const existingSubjectMap = new Map(prevEvents.map(s => [s.code, s]));
             let nextSubjectId = prevEvents.length > 0 ? Math.max(...prevEvents.map(s => s.id)) + 1 : 1;
 
-            const newSubjects = subjects
-                .filter(subject => !existingSubjectCodes.includes(subject.code))
-                .map(subject => {
-                    const relevantCourses = courses.filter(course => course.subject === subject.code);
+            const importedSubjects = subjects.map(subject => {
+                const relevantCourses = courses.filter(course => course.subject === subject.code);
+                const existingSubject = existingSubjectMap.get(subject.code);
 
-                    let nextCourseId = 1;
-                    const courseArr = relevantCourses.map(course => ({
-                        id: nextCourseId++,
-                        course: course.course,
-                        type: course.type,
-                        instructor: course.instructor,
-                        location: course.location,
-                        day: course.day,
-                        startTime: course.startTime,
-                        endTime: course.endTime,
-                        notes: course.notes,
-                        show: true
-                    }));
+                let nextCourseId = 1;
+                const courseArr = relevantCourses.map(course => ({
+                    id: nextCourseId++,
+                    course: course.course,
+                    type: course.type,
+                    instructor: course.instructor,
+                    location: course.location,
+                    day: course.day,
+                    startTime: course.startTime,
+                    endTime: course.endTime,
+                    notes: course.notes,
+                    show: true
+                }));
 
-                    return {
-                        id: nextSubjectId++,
-                        code: subject.code,
-                        name: subject.name,
-                        courses: courseArr,
-                        status: {
-                            color: getRandomHexColor(),
-                            show: true,
-                            choosen: {
-                                "Gyakorlat": 0,
-                                "Előadás": 0,
-                                "Egyéb": 0
-                            }
+                // If subject exists, preserve its ID and color, otherwise assign new ones
+                return {
+                    id: existingSubject ? existingSubject.id : nextSubjectId++,
+                    code: subject.code,
+                    name: subject.name,
+                    courses: courseArr,
+                    status: {
+                        color: existingSubject ? existingSubject.status.color : getRandomHexColor(),
+                        show: true,
+                        choosen: {
+                            "Gyakorlat": 0,
+                            "Előadás": 0,
+                            "Egyéb": 0
                         }
-                    };
-                });
+                    }
+                };
+            });
 
-            return [...prevEvents, ...newSubjects];
+            // Keep subjects that are not being overwritten
+            const importedCodes = new Set(subjects.map(s => s.code));
+            const retainedSubjects = prevEvents.filter(s => !importedCodes.has(s.code));
+
+            return [...retainedSubjects, ...importedSubjects];
         });
     }
 

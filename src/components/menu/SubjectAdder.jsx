@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTimetable } from '../../contexts';
+import { useTimetable, useSettings } from '../../contexts';
 
 /**
  * SubjectAdder component allows users to add a new subject by providing its name and code.
@@ -8,10 +8,12 @@ import { useTimetable } from '../../contexts';
  */
 const SubjectAdder = () => {
     const { addSubject } = useTimetable();
+    const { settings } = useSettings();
 
     const [subjectName, setName] = useState('');
     const [subjectCode, setCode] = useState('');
-    const [isError, setIsError] = useState(false);
+    const [status, setStatus] = useState('');
+    const [lastCreated, setLastCreated] = useState({ code: '', name: '' });
 
     /**
      * Handles the click event for adding a subject.
@@ -26,55 +28,88 @@ const SubjectAdder = () => {
         let code = subjectCode;
         let name = subjectName;
         if (code === '' && name === '') {
-            setIsError(true);
+            setStatus('empty');
             return;
         }
-        setIsError(false);
         if (name === '') { name = code; }
         if (code === '') { code = name.replace(/\s+/g, '_').toLowerCase(); }
 
         console.log(`Adding subject: ${name} (${code})`);
-        addSubject(code, name);
+        const success = addSubject(code, name);
+
+        if (success) {
+            setLastCreated({ code, name });
+            setStatus('created');
+            setName('');
+            setCode('');
+        } else {
+            setStatus('duplicate');
+        }
     };
 
     return (
         <div className="w-full shadow-xl card bg-base-300 card-compact">
             <form className="card-body" id='subject_adder_form'>
                 <h2 className="card-title">Tárgy hozzáadása</h2>
-                <label className="w-full form-control">
-                    <div className="label">
-                        <span className="label-text">Tárgy neve</span>
+                <div className='flex flex-row grow'>
+                    <div className='flex flex-col w-full gap-2'>
+                        <label className="w-full form-control">
+                            <div className="label">
+                                <span className="label-text">Tárgy neve</span>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Tárgy neve"
+                                value={subjectName}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full input input-bordered"
+                            />
+                        </label>
+                        <label className="w-full form-control">
+                            <div className="label">
+                                <span className="label-text">Tárgy kódja</span>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Tárgy kódja"
+                                value={subjectCode}
+                                onChange={(e) => setCode(e.target.value)}
+                                className="w-full input input-bordered"
+                            />
+                        </label>
+                        <div className="justify-center mt-5 card-actions">
+                            <button className="btn btn-primary" onClick={(e) => onClick(e)}>
+                                Hozzáadás
+                            </button>
+                        </div>
+                        {status === 'empty' && (
+                            <p className="mt-3 text-center text-error">
+                                Tárgy hozzáadásához legalább a név vagy a kód megadása szükséges!
+                            </p>
+                        )}
+                        {status === 'duplicate' && (
+                            <p className="mt-3 text-center text-error">
+                                Az adott kódhoz már tartozik tárgy!
+                            </p>
+                        )}
+                        {status === 'created' && (
+                            <p className="mt-3 text-center text-success">
+                                Tárgy sikeresen létrehozva ({lastCreated.code}, {lastCreated.name})
+                            </p>
+                        )}
                     </div>
-                    <input
-                        type="text"
-                        placeholder="Tárgy neve"
-                        value={subjectName}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full input input-bordered"
-                    />
-                </label>
-                <label className="w-full form-control">
-                    <div className="label">
-                        <span className="label-text">Tárgy kódja</span>
-                    </div>
-                    <input
-                        type="text"
-                        placeholder="Tárgy kódja"
-                        value={subjectCode}
-                        onChange={(e) => setCode(e.target.value)}
-                        className="w-full input input-bordered"
-                    />
-                </label>
-                <div className="justify-center mt-5 card-actions">
-                    <button className="btn btn-primary" onClick={(e) => onClick(e)}>
-                        Hozzáadás
-                    </button>
+                    {(settings.tips ?? true) && (
+                        <>
+                            <div className="divider divider-horizontal"></div>
+                            <div className="grid w-1/4 gap-3 text-sm place-content-start">
+                                <p>A tárgy hozzáadásához add meg a tárgy nevét és/vagy kódját.</p>
+                                <p>Ha csak az egyik mezőt töltöd ki, a másik automatikusan generálódik.</p>
+                                <p>Mindkét mező kitöltése esetén a megadott értékek kerülnek használatra.</p>
+                                <p>Ügyelj arra, hogy a kód egyedi legyen az ütközések elkerülése érdekében.</p>
+                            </div>
+                        </>
+                    )}
                 </div>
-                {isError &&
-                    <p className="mt-3 text-center text-error">
-                        Tárgy hozzáadásához legalább a név vagy a kód megadása szükséges!
-                    </p>
-                }
             </form>
         </div>
     );

@@ -174,6 +174,18 @@ const Settings = () => {
                             <div><kbd className="kbd kbd-sm">Ctrl</kbd> + <kbd className="kbd kbd-sm">K</kbd></div>
                         </div>
                     </div>
+                    <div className='flex w-1/4 gap-2 form-control'>
+                        <h3 className='mb-5 font-bold'>Egyéb</h3>
+                        <label className="justify-start gap-3 cursor-pointer label">
+                            <input
+                                type="checkbox"
+                                checked={settings.tips ?? true}
+                                onChange={() => updateSettings('misc', 'tips', !(settings.tips ?? true))}
+                                className="checkbox"
+                            />
+                            <span className="label-text">Tippek megjelenítése</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>

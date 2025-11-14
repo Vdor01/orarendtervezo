@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTimetable } from '../../contexts';
+import { useTimetable, useSettings } from '../../contexts';
 import { getSemesters, searchCoursesBySubject, searchCoursesByInstructor } from '../../utils/serverApi';
 import ImportModal from './ImportModal';
 
@@ -9,7 +9,8 @@ import ImportModal from './ImportModal';
  * @returns {JSX.Element} A form for searching subjects with input fields for name/code and instructor.
  */
 const ServerQuery = () => {
-    const { importFromArrays } = useTimetable();
+    const { importFromArrays, eventsJSON } = useTimetable();
+    const { settings } = useSettings();
 
     const [subjectNameCode, setNameCode] = useState('');
     const [subjectInstructor, setInstructor] = useState('');
@@ -68,43 +69,57 @@ const ServerQuery = () => {
         <div className="w-full shadow-xl card bg-base-300 card-compact">
             <form className="card-body" id='subject_search_form'>
                 <h2 className="card-title">Tárgy importálása ELTE Tanrend adatbázisból</h2>
-                <label className="w-full form-control">
-                    <div className="label">
-                        <span className="label-text">Tárgy neve / kódja</span>
+                <div className='flex flex-row grow'>
+                    <div className='flex flex-col w-full gap-2'>
+                        <label className="w-full form-control">
+                            <div className="label">
+                                <span className="label-text">Tárgy neve / kódja</span>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Tárgy neve / kódja"
+                                value={subjectNameCode}
+                                onChange={(e) => setNameCode(e.target.value)}
+                                className="w-full input input-bordered"
+                            />
+                        </label>
+                        <label className="w-full form-control">
+                            <div className="label">
+                                <span className="label-text">Oktató neve</span>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Oktató neve"
+                                value={subjectInstructor}
+                                onChange={(e) => setInstructor(e.target.value)}
+                                className="w-full input input-bordered"
+                            />
+                        </label>
+                        <div className="justify-center mt-5 card-actions">
+                            <select
+                                className="select"
+                                value={semester}
+                                onChange={(e) => setSemester(e.target.value)}
+                            >
+                                {semester && getSemesters().map((sem, index) => (
+                                    <option key={index} value={sem}>{sem}</option>
+                                ))}
+                            </select>
+                            <button className="btn btn-primary" onClick={(e) => onClick(e)}>
+                                Keresés
+                            </button>
+                        </div>
                     </div>
-                    <input
-                        type="text"
-                        placeholder="Tárgy neve / kódja"
-                        value={subjectNameCode}
-                        onChange={(e) => setNameCode(e.target.value)}
-                        className="w-full input input-bordered"
-                    />
-                </label>
-                <label className="w-full form-control">
-                    <div className="label">
-                        <span className="label-text">Oktató neve</span>
-                    </div>
-                    <input
-                        type="text"
-                        placeholder="Oktató neve"
-                        value={subjectInstructor}
-                        onChange={(e) => setInstructor(e.target.value)}
-                        className="w-full input input-bordered"
-                    />
-                </label>
-                <div className="justify-center mt-5 card-actions">
-                    <select
-                        className="select"
-                        value={semester}
-                        onChange={(e) => setSemester(e.target.value)}
-                    >
-                        {semester && getSemesters().map((sem, index) => (
-                            <option key={index} value={sem}>{sem}</option>
-                        ))}
-                    </select>
-                    <button className="btn btn-primary" onClick={(e) => onClick(e)}>
-                        Keresés
-                    </button>
+                    {(settings.tips ?? true) && (
+                        <>
+                            <div className="divider divider-horizontal"></div>
+                            <div className="grid w-1/4 gap-3 text-sm place-content-start">
+                                <p>Indítható lekérés tárgy (név, vagy kód) vagy oktató neve alapján.</p>
+                                <p>A keresés a megadott szemeszterre vonatkozik.</p>
+                                <p>Az eredmények egy felugró ablakban jelennek meg, ahol kiválaszthatod a kívánt kurzusokat.</p>
+                            </div>
+                        </>
+                    )}
                 </div>
             </form>
 
@@ -113,6 +128,7 @@ const ServerQuery = () => {
                 subjects={subjects}
                 dataIsLoaded={dataIsLoaded}
                 importer={importFromArrays}
+                existingSubjectCodes={eventsJSON.map(s => s.code)}
             />
         </div>
     );

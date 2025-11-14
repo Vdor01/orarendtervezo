@@ -9,7 +9,7 @@ import ImportModal from './ImportModal';
  * @returns {JSX.Element} A form for searching subjects with input fields for name/code and instructor.
  */
 const ServerQuery = () => {
-    const { importFromArrays } = useTimetable();
+    const { importFromArrays, eventsJSON } = useTimetable();
     const { settings } = useSettings();
 
     const [subjectNameCode, setNameCode] = useState('');
@@ -128,6 +128,7 @@ const ServerQuery = () => {
                 subjects={subjects}
                 dataIsLoaded={dataIsLoaded}
                 importer={importFromArrays}
+                existingSubjectCodes={eventsJSON.map(s => s.code)}
             />
         </div>
     );

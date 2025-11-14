@@ -16,6 +16,16 @@ const ImportModal = (props) => {
     }, [props.courses]);
 
     /**
+     * Checks if a subject code already exists in the current eventsJSON.
+     * 
+     * @param {string} subjectCode - The code of the subject to check.
+     * @returns {boolean} True if the subject code exists, false otherwise.
+     */
+    const subjectExists = (subjectCode) => {
+        return props.existingSubjectCodes && props.existingSubjectCodes.includes(subjectCode);
+    };
+
+    /**
      * Gets all course IDs for a given subject code.
      * 
      * @param {string} subjectCode - The code of the subject for which to get course IDs.
@@ -108,8 +118,13 @@ const ImportModal = (props) => {
                                                     </th>
                                                     <th colSpan="3" className='text-lg font-bold'>{subject.code}</th>
                                                     <th colSpan="3" className='text-lg font-bold'>{subject.name}</th>
-                                                    <th></th>
-                                                    <th></th>
+                                                    {subjectExists(subject.code) ? (
+                                                        <th colSpan="2" className='text-warning'>
+                                                            Már létezik! <i className='pl-4 pi pi-question-circle' title='Felül fogja írni a már létező tárgyat!' style={{ fontSize: '1rem' }}></i>
+                                                        </th>
+                                                    ) : (
+                                                        <th colSpan="2"></th>
+                                                    )}
                                                     <th>{courseIds.length} db</th>
                                                 </tr>
                                             </thead>

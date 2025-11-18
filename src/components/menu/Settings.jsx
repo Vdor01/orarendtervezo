@@ -183,7 +183,7 @@ const Settings = () => {
                                 onChange={() => updateSettings('misc', 'tips', !(settings.tips ?? true))}
                                 className="checkbox"
                             />
-                            <span className="label-text">Tippek megjelenítése</span>
+                            <span className="label-text">Magyarázatok megjelenítése</span>
                         </label>
                     </div>
                 </div>

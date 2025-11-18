@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTimetable, useSettings } from '../../contexts';
-import { getSemesters, searchCoursesBySubject, searchCoursesByInstructor } from '../../utils/serverApi';
+import { getSemesters, searchCoursesBySubject, searchCoursesByInstructor, searchCoursesBySubjectAndInstructor } from '../../utils/serverApi';
 import ImportModal from './ImportModal';
 
 /**
@@ -28,7 +28,10 @@ const ServerQuery = () => {
 
         try {
             if (subjectNameCode !== '' && subjectInstructor !== '') {
-                console.error('TODO : Implement search by subject name and instructor');
+                const { courses: fetchedCourses, subjects: fetchedSubjects } = await searchCoursesBySubjectAndInstructor(subjectNameCode, subjectInstructor, semester);
+                setCourses(fetchedCourses);
+                setSubjects(fetchedSubjects);
+                setDataIsLoaded(true);
             }
             else if (subjectNameCode !== '') {
                 const { courses: fetchedCourses, subjects: fetchedSubjects } = await searchCoursesBySubject(subjectNameCode, semester);

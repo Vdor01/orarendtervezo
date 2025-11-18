@@ -53,7 +53,7 @@ const Courses = ({ subjectId, choosen, course, type }) => {
 
     return (
         <tr className={isChoosen() ? 'ring-4 ring-success ring-inset' : ''}>
-            <th><button className={'btn btn-circle btn-sm ' + (isChoosen() ? 'btn-success' : 'btn-neutral')} onClick={() => setCourse()}>{course.course}</button></th>
+            <th>{course.course}</th>
             <td>{course.type}</td>
             <td>{course.instructor}</td>
             <td>{course.location}</td>
@@ -61,6 +61,12 @@ const Courses = ({ subjectId, choosen, course, type }) => {
             <td>{course.startTime}-{course.endTime}</td>
             <td>{course.notes}</td>
             <th className='flex justify-end gap-2'>
+                <label className={`btn btn-circle swap swap-rotate ${isChoosen() ? 'btn-success' : 'btn-neutral'}`} title={isChoosen() ? 'Ejtés' : 'Kiválasztás'}>
+                    <input type="checkbox" onChange={() => setCourse()} checked={isChoosen()} />
+
+                    <div className="swap-on pi pi-times" style={{ fontSize: '1.5rem' }}></div>
+                    <div className="swap-off pi pi-check" style={{ fontSize: '1.5rem' }}></div>
+                </label>
                 <label className="btn btn-circle swap swap-rotate" title={show ? 'Elrejtés' : 'Mutatás'}>
                     <input type="checkbox" onChange={handleChange} checked={!show} />
 

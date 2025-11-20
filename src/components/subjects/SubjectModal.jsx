@@ -41,11 +41,27 @@ const SubjectModal = ({ subject }) => {
         document.getElementById("subject_modal_" + subject.code).close();
     };
 
+    /**
+     * Handles the cancel action when the user closes the modal without saving.
+     * It resets all form fields to their original values and closes the modal.
+     * 
+     * @param {Event} e - The event object from the button click.
+     */
+    const handleCancel = (e) => {
+        e.preventDefault();
+        const form = document.getElementById("subject_form_" + subject.code);
+        form.querySelector('input[name="color"]').value = color;
+        form.querySelector('input[name="code"]').value = initialCode;
+        form.querySelector('input[name="name"]').value = initialName;
+        form.querySelector('select[name="type"]').value = type;
+        document.getElementById("subject_modal_" + subject.code).close();
+    };
+
     return (
         <dialog id={"subject_modal_" + subject.code} className="modal">
             <div className="w-11/12 max-w-7xl modal-box">
                 <h3 className="text-lg font-bold">Tárgy módosítása</h3>
-                <form method="dialog" id={"subject_form_" + subject.code} className='flex flex-col items-center justify-between gap-3'>
+                <form id={"subject_form_" + subject.code} onSubmit={handleSave} className='flex flex-col items-center justify-between gap-3'>
                     <div className="flex w-full gap-3 mt-5">
                         <label className="w-1/12 form-control">
                             <div className="label">
@@ -94,8 +110,8 @@ const SubjectModal = ({ subject }) => {
                         </label>
                     </div>
                     <div className="modal-action">
-                        <button className="btn btn-error">Mégsem</button>
-                        <button className="btn btn-success" onClick={handleSave}>Mentés</button>
+                        <button type="button" className="btn btn-error" onClick={handleCancel}>Mégsem</button>
+                        <button type="submit" className="btn btn-success">Mentés</button>
                     </div>
                 </form>
             </div>

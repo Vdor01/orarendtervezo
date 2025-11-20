@@ -19,7 +19,8 @@ const CourseModal = ({ subject, course_id }) => {
         instructor: false,
         location: false,
         startTime: false,
-        endTime: false
+        endTime: false,
+        invalidTime: false
     });
 
     const course = subject.courses.find(course => course.id === course_id);
@@ -69,10 +70,12 @@ const CourseModal = ({ subject, course_id }) => {
         } else if (emptyFields) {
             // Do nothing, as the individual fields have already reported their validity
         } else if (formData.get('startTime') >= formData.get('endTime')) {
+            setErrors(prev => ({ ...prev, invalidTime: true }));
             const endTimeInput = document.querySelector(`#subject_form_${subject.id}_${course.id} input[name='endTime']`);
             endTimeInput.reportValidity();
         } else {
             codeInput.setCustomValidity("");
+            setErrors(prev => ({ ...prev, invalidTime: false }));
             document.getElementById("course_modal_" + subject.id + "_" + course.id).close();
             updateCourse(
                 subject.id,
@@ -107,7 +110,8 @@ const CourseModal = ({ subject, course_id }) => {
             instructor: false,
             location: false,
             startTime: false,
-            endTime: false
+            endTime: false,
+            invalidTime: false
         });
 
         document.getElementById("course_modal_" + subject.id + "_" + course.id).close();
@@ -117,7 +121,7 @@ const CourseModal = ({ subject, course_id }) => {
         <dialog id={"course_modal_" + subject.id + "_" + course.id} className="modal">
             <div className="w-11/12 max-w-7xl modal-box">
                 <h3 className="text-lg font-bold">Kurzus módosítása</h3>
-                <form method="dialog" id={"subject_form_" + subject.id + "_" + course.id} className='flex flex-col items-center justify-between gap-3'>
+                <form id={"subject_form_" + subject.id + "_" + course.id} onSubmit={handleSave} className='flex flex-col items-center justify-between gap-3'>
                     <div className="grid w-full grid-cols-12 gap-5 mt-5">
                         <label className="w-full h-16 col-span-2 form-control">
                             <div className="label">
@@ -187,6 +191,7 @@ const CourseModal = ({ subject, course_id }) => {
                                 />
                             </div>
                             {(errors.endTime || errors.startTime) && <p className="text-sm label text-error">Kötelező</p>}
+                            {errors.invalidTime && <p className="text-sm label text-error">A kezdési idő nem lehet későbbi, mint a befejezési idő!</p>}
                         </label>
                         <label className="w-full h-16 col-span-6 form-control">
                             <div className="label">
@@ -215,8 +220,8 @@ const CourseModal = ({ subject, course_id }) => {
                         </label>
                     </div>
                     <div className="modal-action">
-                        <button className="btn btn-error" onClick={handleCancel}>Mégsem</button>
-                        <button className="btn btn-success" onClick={handleSave}>Mentés</button>
+                        <button type="button" className="btn btn-error" onClick={handleCancel}>Mégsem</button>
+                        <button type="submit" className="btn btn-success">Mentés</button>
                     </div>
                 </form>
             </div>

@@ -62,11 +62,16 @@ const Subject = ({ subject }) => {
      * Returns CSS classes to visually indicate completion status:
      * - bg-success: All courses selected (fully completed)
      * - bg-info: Partially completed (some courses selected)
+     * - bg-error: No courses available (error state)
      * - Empty string: No courses selected
      * 
      * @returns {string} A string representing the CSS class for the subject status.
      */
     function getStatus() {
+        // No courses available - error state
+        if (!subject.courses || subject.courses.length === 0) {
+            return 'bg-error text-base-300';
+        }
         // For subjects with "type-based" course selection (object-type choosen)
         if (typeof subject.status.choosen === 'object') {
             const courseTypes = subject.courses.map(course => course.type);

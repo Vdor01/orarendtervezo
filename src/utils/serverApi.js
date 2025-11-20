@@ -262,6 +262,73 @@ export async function searchCoursesBySubject(searchTerm, semester = null) {
 }
 
 /**
+ * Searches for courses that match both subject and instructor criteria.
+ * Fetches both subject and instructor results separately, then returns the intersection.
+ *
+ * @param {string} subjectTerm - The search term for subject (name or code).
+ * @param {string} instructorName - The name of the instructor.
+ * @param {string} semester - The semester to fetch data for (optional, defaults to current semester).
+ * @returns {Promise<{courses: Array, subjects: Array}>} Promise that resolves to an object containing courses and subjects arrays.
+ */
+export async function searchCoursesBySubjectAndInstructor(
+    subjectTerm,
+    instructorName,
+    semester = null,
+) {
+    if (!semester) {
+        semester = getCurrentSemester();
+    }
+
+    try {
+        // Fetch courses by subject
+        const { courses: subjectCourses, subjects: subjectSubjects } =
+            await searchCoursesBySubject(subjectTerm, semester);
+
+        // Fetch courses by instructor
+        const { courses: instructorCourses } = await searchCoursesByInstructor(
+            instructorName,
+            semester,
+        );
+
+        // Find intersection: courses that appear in both results
+        const intersectionCourses = subjectCourses.filter((subjectCourse) => {
+            return instructorCourses.some(
+                (instructorCourse) =>
+                    subjectCourse.subject === instructorCourse.subject &&
+                    subjectCourse.course === instructorCourse.course &&
+                    subjectCourse.type === instructorCourse.type &&
+                    subjectCourse.day === instructorCourse.day &&
+                    subjectCourse.startTime === instructorCourse.startTime &&
+                    subjectCourse.endTime === instructorCourse.endTime &&
+                    subjectCourse.instructor === instructorCourse.instructor &&
+                    subjectCourse.location === instructorCourse.location,
+            );
+        });
+
+        // Filter subjects to only include those that have matching courses
+        const relevantSubjects = subjectSubjects.filter((subject) =>
+            intersectionCourses.some(
+                (course) => course.subject === subject.code,
+            ),
+        );
+
+        return {
+            courses: intersectionCourses.map((course, index) => ({
+                ...course,
+                id: index,
+            })),
+            subjects: relevantSubjects,
+        };
+    } catch (error) {
+        console.error(
+            "Error searching courses by subject and instructor:",
+            error,
+        );
+        throw error;
+    }
+}
+
+/**
  * Searches for courses by instructor name.
  *
  * @param {string} instructorName - The name of the instructor to search for.

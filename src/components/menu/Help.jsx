@@ -46,6 +46,10 @@ const Help = () => {
                             <p className='text-lg'>Nincs kiválasztva kurzus</p>
                         </div>
                         <div className='flex flex-row items-center gap-5 mt-5 mb-2'>
+                            <span className="w-6 h-6 px-3 btn-circle bg-error"></span>
+                            <p className='text-lg'>Nincs kurzus</p>
+                        </div>
+                        <div className='flex flex-row items-center gap-5 mt-5 mb-2'>
                             <span className="w-6 h-6 px-3 btn-circle bg-info"></span>
                             <p className='text-lg'>Egy kurzus már ki van választva</p>
                         </div>

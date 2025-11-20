@@ -11,7 +11,8 @@ const CourseAdder = ({ subject }) => {
         instructor: false,
         location: false,
         startTime: false,
-        endTime: false
+        endTime: false,
+        invalidTime: false
     });
 
     /**
@@ -48,10 +49,12 @@ const CourseAdder = ({ subject }) => {
         } else if (emptyFields) {
             // Do nothing, as the individual fields have already reported their validity
         } else if (formData.get('startTime') >= formData.get('endTime')) {
+            setErrors(prev => ({ ...prev, invalidTime: true }));
             const endTimeInput = document.querySelector(`#course_form_${subject.id} input[name='endTime']`);
             endTimeInput.reportValidity();
         } else {
             codeInput.setCustomValidity("");
+            setErrors(prev => ({ ...prev, invalidTime: false }));
             addCourse(
                 subject.id,
                 formData.get('code'),
@@ -118,6 +121,7 @@ const CourseAdder = ({ subject }) => {
                         />
                     </div>
                     {(errors.endTime || errors.startTime) && <p className="text-sm label text-error">Kötelező</p>}
+                    {(errors.invalidTime && !errors.endTime && !errors.startTime) && <p className="text-sm label text-error">Hibás időintervallum! <i className='pl-4 pi pi-question-circle' title='A befejezési időnek később kell lennie, mint a kezdésnek!' style={{ fontSize: '1rem' }}></i></p>}
                 </fieldset>
                 <fieldset className="fieldset">
                     <legend className="fieldset-legend">Megjegyzés</legend>

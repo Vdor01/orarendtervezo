@@ -16,7 +16,10 @@ export function getDateOfThisWeeksDay(dayName) {
         Vasárnap: 0, // Note: 0 for Sunday in JavaScript Date, but we convert below
     };
 
+    // Create date at noon local time to avoid timezone issues
     const today = new Date();
+    today.setHours(12, 0, 0, 0); // Set to noon to avoid DST and midnight boundary issues
+
     const dayIndex = daysOfWeek[dayName];
     // Convert JavaScript's Sunday=0 system to ISO Monday=1 system
     // JavaScript: Sun=0, Mon=1, Tue=2, ..., Sat=6

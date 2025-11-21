@@ -22,28 +22,37 @@ const Timetable = () => {
      */
     function setCourses(subject) {
         if (!subject.status.show) return [];
-        return subject.courses.map(course => ({
-            title: subject.name,
-            // Create ISO datetime string: YYYY-MM-DDTHH:MM:SS format for FullCalendar
-            start: getDateOfThisWeeksDay(course.day).toISOString().split('T')[0] + 'T' + course.startTime + ':00',
-            end: getDateOfThisWeeksDay(course.day).toISOString().split('T')[0] + 'T' + course.endTime + ':00',
-            borderColor: subject.status.color,
-            // Chosen courses get subject color, non-chosen get black (#000000)
-            backgroundColor: isChoosen(subject, course) ? subject.status.color : '#000000',
-            // Hide events that shouldn't be displayed based on selection rules
-            display: isDisplayed(subject, course) ? '' : 'none',
-            // Add CSS classes: cursor pointer for all, dashed border for lectures
-            classNames: ['cursor-pointer', (course.type === 'Előadás') ? 'border-dashed' : ''],
-            extendedProps: {
+        return subject.courses.map(course => {
+            const date = getDateOfThisWeeksDay(course.day);
+            // Format date as YYYY-MM-DD in local timezone to avoid UTC conversion issues
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const dateString = `${year}-${month}-${day}`;
+
+            return {
                 title: subject.name,
-                subjectId: subject.id,
-                instructor: course.instructor,
-                location: course.location,
-                course: course.course,
-                type: course.type,
-                notes: course.notes,
-            }
-        }));
+                // Create ISO datetime string: YYYY-MM-DDTHH:MM:SS format for FullCalendar
+                start: dateString + 'T' + course.startTime + ':00',
+                end: dateString + 'T' + course.endTime + ':00',
+                borderColor: subject.status.color,
+                // Chosen courses get subject color, non-chosen get black (#000000)
+                backgroundColor: isChoosen(subject, course) ? subject.status.color : '#000000',
+                // Hide events that shouldn't be displayed based on selection rules
+                display: isDisplayed(subject, course) ? '' : 'none',
+                // Add CSS classes: cursor pointer for all, dashed border for lectures
+                classNames: ['cursor-pointer', (course.type === 'Előadás') ? 'border-dashed' : ''],
+                extendedProps: {
+                    title: subject.name,
+                    subjectId: subject.id,
+                    instructor: course.instructor,
+                    location: course.location,
+                    course: course.course,
+                    type: course.type,
+                    notes: course.notes,
+                }
+            };
+        });
     }
 
     /**
